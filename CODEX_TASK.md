@@ -45,7 +45,7 @@ Não aguarde confirmação intermediária para decisões que já estão definida
 # STATUS
 
 - Task ID: `BRX-LAB-001`
-- Estado: `READY`
+- Estado: `DONE`
 - Prioridade: `ALTA`
 - Implementação ativa: `Guerreiro + Assassino`
 - Bot/slot adversário do laboratório: `sempre Guerreiro`
@@ -754,24 +754,18 @@ Se forem necessários commits intermediários, usar mensagens objetivas.
 
 # RELATÓRIO DO CODEX
 
-> NÃO preencher antes de executar a tarefa.
-
-Ao terminar, substitua o conteúdo desta seção por:
-
-- Estado: `DONE` / `PARTIAL` / `BLOCKED`
-- Commit final:
-- Branch:
-- Arquivos criados:
-- Arquivos alterados:
-- Compilação inicial:
-- Compilação final:
-- Testes executados:
-- Testes aprovados:
-- Testes falhos:
-- Regressões encontradas:
-- Problemas não resolvidos:
-- Decisões técnicas tomadas:
-- Diferenças em relação à especificação:
-- Próxima recomendação objetiva:
-
-Se algum item ficar PARTIAL/BLOCKED, explique a causa concreta e não declare a tarefa concluída.
+- Estado: `DONE`
+- Commit final: `aa33961` — `feat: add combat lab controls and test infrastructure`
+- Branch: `main`
+- Arquivos criados: `HealthRegenerationController.cs`, `WorldHealthBar.cs`, `PrototypeCombatLabController.cs`, `PrototypeLiveTests.Lab001.cs`, respectivos `.meta` e `Docs/TEST_RESULTS_LAB_001.md`.
+- Arquivos alterados: `.gitignore`; `PrototypeDataFactory.cs`; `PrototypeSceneBuilder.cs`; `PrototypePolishTools.cs`; `AbilityController.cs`; `AbilityController.Hunt.cs`; `CharacterMotor25D.cs`; `CharacterRuntime.cs`; `CharacterStateController.cs`; `CombatResolver.cs`; `AbilityDefinition.cs`; `ItemDefinition.cs`; `PrototypeDebugHUD.cs`; `PrototypeLiveTests.cs`; `PrototypeLiveTests.MobileV4.cs`; `PrototypeMobileTouchControls.Settings.cs`; `InventoryController.cs`; `Docs/TEST_MATRIX.md`; dados gerados de Guerreiro, Assassino e cura; `Prototype01_Arena.unity`. O commit também versiona a base Unity/URP, os assets Quaternius com suas licenças e os arquivos do protótipo que já existiam localmente mas ainda não estavam registrados no Git.
+- Compilação inicial: passou no Unity 6000.6.1f1, sem erro C# pré-existente.
+- Compilação final: passou no Unity 6000.6.1f1, sem erro C#.
+- Testes executados: `Create Default Data`; `Build Test Scene`; validação estrutural/visual; matriz de Play Mode; locks; cancelamento Basic x Skill; SkillLock; corrida de 5 s; HoT; barras de vida; painel/trocas; regressão de combate, inventário, bot, mobile e VFX.
+- Testes aprovados: validação estrutural/visual `40/40`; matriz de Play Mode `154/154`.
+- Testes falhos: `0` na rodada final.
+- Regressões encontradas: a expectativa antiga do botão mobile trocava o ator controlado; foi adaptada ao laboratório, que mantém o slot adversário como Guerreiro e alterna a classe no slot do jogador. A checagem antiga de VFX dependia de timing fixo do editor; foi separada em seleção determinística das 18 variações e limite global de VFX.
+- Problemas não resolvidos: nenhum problema funcional conhecido no escopo. Sensação de controle, legibilidade e balanceamento ainda exigem avaliação humana no aparelho.
+- Decisões técnicas tomadas: locks separados e compatibilidade de `InputLocked`; interrupção ofensiva sem hard stun; SkillLock data-driven; HoT em componente dedicado, renovável e sem stacking; barras mundiais somente observadoras de `HealthComponent.Changed`; método explícito `EquipLabVariation`; dois visuais pré-configurados no slot do jogador para troca instantânea sem importar assets em runtime.
+- Diferenças em relação à especificação: o controlador foi nomeado `PrototypeCombatLabController` e a barra foi colocada em `Runtime/UI/WorldHealthBar.cs`; ambos mantêm a responsabilidade isolada solicitada. Nenhum kit, classe futura, multiplayer ou IA nova foi implementado.
+- Próxima recomendação objetiva: abrir a arena no celular e validar manualmente conforto dos controles, leitura das barras e clareza da troca de classe/variações antes de qualquer novo balanceamento.
