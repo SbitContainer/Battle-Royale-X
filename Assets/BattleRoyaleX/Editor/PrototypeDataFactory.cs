@@ -19,40 +19,109 @@ namespace BattleRoyaleX.EditorTools
 
             AbilityDefinition assassinAttack = Ability("Assassin_Basic", "Corte Rápido", AbilitySlot.BasicAttack, AbilityBehavior.MeleeAttack, 1.2f, 0f, 15f, 1.65f, 0.8f);
             assassinAttack.canDestroyMagicalProjectiles = true; assassinAttack.attackInteractionCooldown = 30f;
-            AbilityDefinition assassinDefense = Defense("Assassin_Defense_Base", "Esquiva Sombria", AbilityBehavior.Dodge, DefenseKind.None, 5f, 14f, 0.18f, 3.4f, 0.15f);
+            assassinAttack.comboSteps = 3; assassinAttack.comboInputBuffer = 0.20f; assassinAttack.comboSecondDamageMultiplier = 1.05f; assassinAttack.comboThirdDamageMultiplier = 1.38f;
+            assassinAttack.startup = 0.10f; assassinAttack.recovery = 0.18f;
+            AbilityDefinition assassinDefense = Defense("Assassin_Defense_Base", "Esquiva Sombria", AbilityBehavior.Dodge, DefenseKind.None, 5f, 14f, 0.12f, 2.6f, 0.16f);
             AbilityDefinition assassinCounter = Defense("Assassin_Defense_A", "Contra-Sombra", AbilityBehavior.Parry, DefenseKind.Parry, 7f, 10f, 0f, 0f, 0f, 0.18f, 0.1f, 0.2f);
             AbilityDefinition assassinDouble = Defense("Assassin_Defense_B", "Duplo Passo", AbilityBehavior.Dodge, DefenseKind.None, 3.2f, 13f, 0.16f, 2.6f, 0.14f);
-            AbilityDefinition assassinMove = Move("Assassin_Move_Base", "Passo Fantasma", AbilityBehavior.Dash, 5f, 10f, 4.2f, 0.14f, false);
+            AbilityDefinition assassinMove = Move("Assassin_Move_Base", "Passo Fantasma", AbilityBehavior.DashThrough, 5f, 10f, 4.2f, 0.18f, true);
             AbilityDefinition assassinTravel = Move("Assassin_Move_A", "Travessia", AbilityBehavior.DashThrough, 6f, 12f, 4.6f, 0.15f, true);
             AbilityDefinition assassinReturn = Move("Assassin_Move_B", "Retorno", AbilityBehavior.DashReturn, 7f, 12f, 4f, 0.15f, true, 1.8f);
-            AbilityDefinition assassinUlt = Buff("Assassin_Ult_Base", "Execução Fantasma", 28f, 45f, 4f, 1.2f, 1.05f, 1f, 1f, 1f);
+            AbilityDefinition assassinUlt = Move("Assassin_Ult_Base", "Cinco Cortes", AbilityBehavior.ChargedDashSequence, 28f, 45f, 4.2f, 0.16f, true);
+            assassinUlt.damage = 12f; assassinUlt.chargeCount = 5; assassinUlt.chargeWindow = 6f;
+            assassinUlt.slot = AbilitySlot.Ultimate;
+            assassinUlt.startup = 0.06f; assassinUlt.recovery = 0.12f; assassinUlt.width = 0.9f;
             AbilityDefinition assassinExec = Buff("Assassin_Ult_A", "Execução", 32f, 50f, 4f, 1.35f, 0.92f, 1f, 1f, 1f);
             AbilityDefinition assassinHunt = Buff("Assassin_Ult_B", "Caçada", 28f, 45f, 6f, 0.82f, 1.22f, 1.15f, 1f, 0.55f);
 
             AbilityDefinition warriorAttack = Ability("Warrior_Basic", "Corte Pesado", AbilitySlot.BasicAttack, AbilityBehavior.MeleeAttack, 1.55f, 0f, 13f, 2.2f, 1.25f);
             warriorAttack.canDestroyMagicalProjectiles = true; warriorAttack.attackInteractionCooldown = 30f;
             warriorAttack.startup = 0.15f; warriorAttack.recovery = 0.25f; warriorAttack.knockback = 1.5f;
-            AbilityDefinition warriorGuard = Defense("Warrior_Defense_Base", "Guarda", AbilityBehavior.Guard, DefenseKind.Guard, 3.2f, 7f, 0f, 0f, 0f, 0.7f, 0.08f, 0.75f);
+            warriorAttack.skillLockOnHit = 0.10f;
+            warriorAttack.comboSteps = 3; warriorAttack.comboInputBuffer = 0.20f; warriorAttack.comboSecondDamageMultiplier = 1.12f; warriorAttack.comboThirdDamageMultiplier = 1.55f;
+            AbilityDefinition warriorGuard = Defense("Warrior_Defense_Base", "Guarda de Aço", AbilityBehavior.Parry, DefenseKind.Parry, 3.2f, 7f, 0f, 0f, 0f, 0.7f, 0.12f, 0.75f);
+            warriorGuard.counterBonusDamage = 6f; warriorGuard.counterWindow = 1f;
             AbilityDefinition warriorParry = Defense("Warrior_Defense_A", "Parry", AbilityBehavior.Parry, DefenseKind.Parry, 6.5f, 9f, 0f, 0f, 0f, 0.35f, 0.12f, 0.5f);
             warriorParry.specialInteractionCooldown = 8f;
+            warriorParry.counterBonusDamage = 6f; warriorParry.counterWindow = 1f;
             AbilityDefinition warriorFortress = Defense("Warrior_Defense_B", "Fortaleza", AbilityBehavior.Guard, DefenseKind.Guard, 6f, 12f, 0f, 0f, 0f, 1.1f, 0.05f, 0.85f);
-            AbilityDefinition warriorMove = Move("Warrior_Move_Base", "Investida", AbilityBehavior.Dash, 7f, 10f, 3f, 0.22f, false);
+            AbilityDefinition warriorMove = Move("Warrior_Move_Base", "Investida de Escudo", AbilityBehavior.Dash, 7f, 10f, 3f, 0.24f, false);
             AbilityDefinition warriorImpact = Move("Warrior_Move_A", "Impacto", AbilityBehavior.Dash, 8f, 12f, 3.3f, 0.22f, false);
             AbilityDefinition warriorAdvance = Move("Warrior_Move_B", "Avanço Defensivo", AbilityBehavior.Dodge, 9f, 14f, 3f, 0.24f, false);
             warriorAdvance.invulnerabilityDuration = 0.12f;
             AbilityDefinition warriorUlt = Buff("Warrior_Ult_Base", "Postura de Guerra", 30f, 45f, 5f, 1.12f, 1f, 1.35f, 1.1f, 1f);
+            warriorUlt.startup = 0.24f; warriorUlt.activeTime = 0.12f; warriorUlt.recovery = 0.16f;
             AbilityDefinition warriorRet = Buff("Warrior_Ult_A", "Retaliação", 32f, 50f, 5f, 1.08f, 1f, 1.3f, 1.35f, 1f);
             AbilityDefinition warriorPush = Buff("Warrior_Ult_B", "Avanço Implacável", 32f, 50f, 6f, 1.18f, 1.08f, 1.8f, 1f, 1f);
+
+            // Contact damage is part of the ability data, never driven by animation or VFX.
+            foreach (var move in new[] { assassinMove, assassinTravel, assassinReturn })
+            { move.damage = 24f; move.passThroughCharacters = true; move.knockback = 0f; }
+            assassinMove.startup = 0.06f; assassinMove.recovery = 0.10f;
+            warriorMove.startup = 0.10f; warriorMove.recovery = 0.16f;
+            assassinDefense.startup = 0.03f; assassinDefense.recovery = 0.08f;
+            foreach (var dodge in new[] { assassinDefense, assassinDouble })
+            { dodge.damage = dodge == assassinDefense ? 2f : 3f; dodge.passThroughCharacters = true; dodge.knockback = 0f; }
+            foreach (var move in new[] { warriorMove, warriorImpact, warriorAdvance })
+            { move.damage = 6f; move.knockback = 0f; }
+            foreach (var guard in new[] { warriorParry, warriorFortress, assassinCounter })
+            { guard.damage = 0f; guard.knockback = 0f; guard.clashable = false; }
+            warriorGuard.damage = 0f; warriorGuard.knockback = 0f; warriorGuard.clashable = false;
+            foreach (var guard in new[] { warriorGuard, warriorParry, warriorFortress })
+            {
+                guard.startup = 0.03f;
+                guard.counterBonusDamage = guard == warriorFortress ? 3f : 6f;
+                guard.counterWindow = 1.15f;
+                guard.counterKnockback = guard == warriorParry ? 4.5f : guard == warriorFortress ? 3.5f : 4f;
+                guard.counterOnBlock = guard == warriorFortress;
+                guard.redirectOnDefense = false;
+            }
+            foreach (var evade in new[] { assassinDefense, assassinDouble, assassinCounter })
+            {
+                evade.redirectOnDefense = true;
+                evade.redirectDistance = evade == assassinDouble ? 3.6f : 3.2f;
+                evade.redirectDuration = evade == assassinDouble ? 0.16f : 0.18f;
+                evade.passThroughCharacters = true;
+                evade.damage = evade == assassinDouble ? 3f : 2f;
+                evade.clashable = false;
+                evade.counterBonusDamage = evade.counterKnockback = evade.counterWindow = 0f;
+                evade.counterOnBlock = false;
+                evade.startup = 0.03f;
+                evade.recovery = 0.08f;
+            }
+            foreach (var ult in new[] { warriorUlt, warriorRet, warriorPush, assassinExec, assassinHunt })
+            { ult.damage = 8f; ult.range = 0f; ult.explosionRadius = 1.8f; ult.knockback = 0f; ult.clashable = false; }
+
+            // V4: explicit values override prior generated assets as well as fresh installs.
+            foreach (var evade in new[] { assassinDefense, assassinDouble })
+            {
+                evade.defenseDuration = 1f; evade.redirectDistance = 10f;
+                evade.redirectDuration = 0.25f; evade.invulnerabilityDuration = 1f;
+                evade.movementDistance = 1.2f; evade.movementDuration = 0.18f;
+            }
+            assassinCounter.behavior = AbilityBehavior.SmokeEscape;
+            assassinCounter.defenseKind = DefenseKind.None;
+            assassinCounter.redirectOnDefense = false; assassinCounter.damage = 0f;
+            assassinCounter.smokeRadius = 6f; assassinCounter.smokeDuration = 4f;
+            assassinCounter.cooldown = 12f; assassinCounter.energyCost = 18f;
+            assassinTravel.speedBonusDuration = 2f; assassinTravel.speedBonusMultiplier = 1.35f;
+            assassinHunt.behavior = AbilityBehavior.HuntSequence;
+            assassinHunt.damage = 18f; assassinHunt.huntFirstDamage = 6f; assassinHunt.huntFirstPush = 2f;
+            assassinHunt.huntAcquireRange = 12f; assassinHunt.huntSpeed = 22f;
+            assassinHunt.huntMaxDuration = 1.5f; assassinHunt.huntOvershoot = 3.5f;
+            assassinHunt.chargeWindow = 5f; assassinHunt.startup = 0.08f; assassinHunt.recovery = 0.12f;
+            assassinHunt.passThroughCharacters = true;
+            assassinHunt.damageMultiplier = assassinHunt.moveSpeedMultiplier = assassinHunt.movementCooldownMultiplier = 1f;
 
             Restrict(CharacterClass.Assassin, assassinAttack, assassinDefense, assassinCounter, assassinDouble, assassinMove, assassinTravel, assassinReturn, assassinUlt, assassinExec, assassinHunt);
             Restrict(CharacterClass.Warrior, warriorAttack, warriorGuard, warriorParry, warriorFortress, warriorMove, warriorImpact, warriorAdvance, warriorUlt, warriorRet, warriorPush);
 
-            CharacterDefinition assassin = Character("Assassin", "Assassino", CharacterClass.Assassin, 85f, 110f, 11f, 6.2f);
+            CharacterDefinition assassin = Character("Assassin", "Assassino", CharacterClass.Assassin, 85f, 110f, 11f, 6.6f);
             SetLoadout(assassin, assassinAttack, assassinDefense, assassinMove, assassinUlt, assassinCounter, assassinDouble, assassinTravel, assassinReturn, assassinExec, assassinHunt);
             CharacterDefinition warrior = Character("Warrior", "Guerreiro", CharacterClass.Warrior, 125f, 90f, 7f, 4.9f);
             SetLoadout(warrior, warriorAttack, warriorGuard, warriorMove, warriorUlt, warriorParry, warriorFortress, warriorImpact, warriorAdvance, warriorRet, warriorPush);
 
-            ItemDefinition heal = Item("Heal", "Poção de Cura", ItemKind.Heal, 24f); heal.useDuration = 1.6f; heal.interruptible = true;
+            ItemDefinition heal = Item("Heal", "Poção de Cura", ItemKind.Heal, 30f); heal.healDuration = 5f; heal.useDuration = 0f; heal.interruptible = false;
             ItemDefinition energyItem = Item("Energy", "Poção de Essência", ItemKind.Energy, 32f); energyItem.useDuration = 0.75f; energyItem.interruptible = true;
             ItemDefinition cooldownItem = Item("Cooldown", "Orbe de Recarga", ItemKind.CooldownRefresh, 0f, 2.5f); cooldownItem.useDuration = 0.5f; cooldownItem.interruptible = true;
             ItemDefinition backpack = Item("Backpack4", "Mochila 4 Espaços", ItemKind.BackpackUpgrade, 0f, 0f, null, 4); backpack.useDuration = 0.2f; backpack.interruptible = false;

@@ -23,6 +23,9 @@ namespace BattleRoyaleX
         public void ApplyDamage(float amount)
         {
             if (IsDead || amount <= 0f) return;
+            // Final safety gate: clashes, reflections and area damage must also respect dodge immunity.
+            var state = GetComponent<CharacterStateController>();
+            if (state != null && state.IsInvulnerable) return;
             LastDamageTime = Time.time;
             CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
             Changed?.Invoke(CurrentHealth, MaxHealth);
@@ -33,6 +36,14 @@ namespace BattleRoyaleX
         {
             if (IsDead || amount <= 0f) return;
             CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
+            Changed?.Invoke(CurrentHealth, MaxHealth);
+        }
+
+        // Training rounds use this explicit reset instead of changing normal combat damage or healing rules.
+        public void RestoreFull()
+        {
+            CurrentHealth = MaxHealth;
+            LastDamageTime = -999f;
             Changed?.Invoke(CurrentHealth, MaxHealth);
         }
     }

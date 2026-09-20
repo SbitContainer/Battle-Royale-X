@@ -1,0 +1,160 @@
+# Matriz ao vivo — 20/09/2026 18:20:46
+
+Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
+
+- PASSOU: Câmera enquadra o corpo inteiro dos dois no spawn
+- PASSOU: Câmera mantém corpos inteiros com maior separação
+- PASSOU: P1: mapeamento WASD (entrada física verificada separadamente)
+- PASSOU: P2: mapeamento setas (entrada física verificada separadamente)
+- PASSOU: Motor do Guerreiro responde ao movimento
+- PASSOU: Motor do Assassino responde ao movimento
+- PASSOU: Personagens permanecem no plano XZ
+- PASSOU: Ataque do Guerreiro causa dano uma vez por ativação via física
+- PASSOU: Cooldown impede spam
+- PASSOU: Ataque do Assassino causa dano uma vez por ativação via física
+- PASSOU: Sem friendly fire na mesma equipe
+- PASSOU: Dois ataques físicos colidem em Clash
+- PASSOU: Clash causa apenas dano reduzido nos dois
+- PASSOU: Micro-stagger do Clash inicia e expira
+- PASSOU: Clash cancela ambas as hitboxes
+- PASSOU: Guarda reduz dano
+- PASSOU: Parry perfeito zera dano e aplica micro-stagger no atacante
+- PASSOU: Parry fora da janela perfeita defende parcialmente
+- PASSOU: Esquiva reativa evita o golpe recebido na janela
+- PASSOU: Dash percorre a distância configurada
+- PASSOU: Travessia cruza o adversário
+- PASSOU: Retorno volta dentro da janela
+- PASSOU: Retorno expira e respeita cooldown
+- PASSOU: Travessia do Assassino causa 24 de dano uma única vez
+- PASSOU: Guarda reduz travessia de 24 para 6 de dano
+- PASSOU: Parry nega travessia e abre contra-ataque manual
+- PASSOU: Contra-ataque do Guerreiro exige básico e adiciona 6 de dano uma vez
+- PASSOU: Investida do Guerreiro causa apenas 6 de dano uma vez
+- PASSOU: Travessia não causa friendly fire
+- PASSOU: Travessia fora do trajeto não acerta
+- PASSOU: Parede bloqueia dash e dano além dela
+- PASSOU: Buff de ultimate inicia
+- PASSOU: Buff expira e todos os modificadores voltam a 1.0
+- PASSOU: Cinco Cortes cobra energia uma vez e aceita exatamente cinco dashes manuais
+- PASSOU: Cinco Cortes causa 12 por travessia e 60 no total sem defesa
+- PASSOU: Cinco Cortes encerra cargas e mantém cooldown iniciado no primeiro cast
+- PASSOU: Execução aumenta ameaça e preserva controle do oponente
+- PASSOU: Mochila inicia com três slots
+- PASSOU: Quarto item recusado sem upgrade
+- PASSOU: Usar mochila de drop aumenta capacidade para quatro
+- PASSOU: Item consumido desaparece
+- PASSOU: Cura começa progressivamente, é consumida e dano não interrompe o HoT
+- PASSOU: Cura contínua restaura 30 HP totais em 5 s
+- PASSOU: Essência mantém seu uso temporizado e restaura energia
+- PASSOU: Todas as 12 variações existem como pickups no chão
+- PASSOU: Runa de outra classe é recusada e permanece no chão
+- PASSOU: Botão de coleta adiciona uma runa compatível e emite identificação do item
+- PASSOU: Usar runa coletada muda a habilidade de movimento exibida e consome o item
+- PASSOU: Troca de runa aguarda e pode ser interrompida por dano
+- PASSOU: Runa só é consumida ao concluir troca de cerca de 0.8 s
+- PASSOU: Coleta real de poção por colisão entra no inventário
+- PASSOU: Poção do chão inicia cura progressiva e é consumida
+- PASSOU: Repulsão desloca o adversário
+- PASSOU: Barreira bloqueia movimento e expira
+- PASSOU: Granada cria nuvem de fumaça suave com volume legível
+- PASSOU: Fumaça bloqueia a linha de visão usada pelo bot
+- PASSOU: Campo nulo cancela ataque nullifiable via física
+- PASSOU: Airdrop aguarda relógio configurado (12 s padrão; limiar de teste reduzido)
+- PASSOU: Airdrop apresenta três opções
+- PASSOU: Pegar uma escolha elimina as outras duas
+- PASSOU: Airdrop não concede a mesma recompensa duas vezes
+- PASSOU: Magia versus magia explode em área sem dano duplicado
+- PASSOU: Ataque físico marcado anula magia via física
+- PASSOU: Anulação entra em cooldown separado de 30 s
+- PASSOU: Durante cooldown novo ataque não anula magia
+- PASSOU: Warrior_Defense_Base: defesa real abre counter sem causar dano automático
+- PASSOU: Warrior_Defense_Base: próximo básico empurra longe, dano único e controle preservado
+- PASSOU: Warrior_Defense_A: defesa real abre counter sem causar dano automático
+- PASSOU: Warrior_Defense_A: próximo básico empurra longe, dano único e controle preservado
+- PASSOU: Warrior_Defense_B: defesa real abre counter sem causar dano automático
+- PASSOU: Warrior_Defense_B: próximo básico empurra longe, dano único e controle preservado
+- PASSOU: Counter também pode ser bloqueado: dano e empurrão reduzidos
+- PASSOU: Oportunidade de counter expira sem ataque automático
+- PASSOU: Assassin_Defense_Base: defesa no contato muda direção e atravessa o atacante
+- PASSOU: Assassin_Defense_Base: travessia defensiva causa só 2–3 de dano uma vez
+- PASSOU: Assassin_Defense_Base: viagem encerra sem invulnerabilidade ou ação presa
+- PASSOU: Assassin_Defense_B: defesa no contato muda direção e atravessa o atacante
+- PASSOU: Assassin_Defense_B: travessia defensiva causa só 2–3 de dano uma vez
+- PASSOU: Assassin_Defense_B: viagem encerra sem invulnerabilidade ou ação presa
+- PASSOU: Esquiva defensiva respeita paredes e não causa dano atrás delas
+- PASSOU: Bot se aproxima por movimento e investida usando APIs normais
+- PASSOU: Bot observa skill real, mas não reage antes do atraso humano
+- PASSOU: Bot identifica cast com preparação de 0,65 s e reage após pelo menos 0,20 s
+- PASSOU: Bot não lê habilidades inimigas através da fumaça
+- PASSOU: Bot busca nova posição sem ler skill através da parede
+- PASSOU: Bot reconhece uso público de variação defensiva
+- PASSOU: Reset cancela viagem, iframe e efeitos defensivos transitórios
+- PASSOU: Caçada 1 segue dash lateral, causa dano leve e libera segundo acionamento
+- PASSOU: Caçada 1 empurra e não repete dano durante perseguição
+- PASSOU: Caçada aguarda segundo toque sem buff antigo nem avanço automático
+- PASSOU: Caçada 2 cobra energia só no primeiro uso e aplica dano de travessia uma vez
+- PASSOU: Caçada 2 termina no lado oposto além do alvo; terceiro toque recusado
+- PASSOU: Caçada: segunda etapa expira e mantém recarga
+- PASSOU: Caçada sem alvo em alcance não consome energia
+- PASSOU: Caçada encontra parede: termina por limite sem atravessar cenário nem causar dano remoto
+- PASSOU: Assassino bot utiliza a segunda etapa da Caçada pela mesma API do jogador
+- PASSOU: Travessia aplica +35% velocidade após avanço sem substituir buff de ultimate
+- PASSOU: Bônus de Travessia expira após 2 segundos independentemente da ultimate
+- PASSOU: Assassin_Defense_Base: golpe aos 0,72 s dispara travessia longa com dano único baixo
+- PASSOU: Assassin_Defense_B: golpe aos 0,72 s dispara travessia longa com dano único baixo
+- PASSOU: Esquiva expirada não evita golpe nem dispara travessia
+- PASSOU: Esquiva já protege no acionamento, inclusive antes do primeiro frame ativo
+- PASSOU: Esquiva ignora golpes físicos, projéteis, área, magia e dano direto repetidos durante 1 segundo
+- PASSOU: Imunidade da esquiva expira e dano volta a funcionar
+- PASSOU: Travessia disparada no fim da janela mantém imunidade até a chegada
+- PASSOU: Contra-Sombra cria fumaça densa de 12 m de diâmetro, sem ataque ou parry automático
+- PASSOU: Dentro da fumaça: ataque/ultimate bloqueados, sem invulnerabilidade
+- PASSOU: Ataque lançado de fora acerta personagem oculto dentro da fumaça
+- PASSOU: Fumaça impede ambos de atacar; inimigo oculto e personagem local visível
+- PASSOU: Personagem local recebe acabamento fosco enquanto oculto
+- PASSOU: Hitbox existente de atacante dentro da fumaça não causa dano
+- PASSOU: Fim da fumaça restaura visibilidade e possibilidade de ataque
+- PASSOU: Menu mobile pausa combate e identifica jogador Assassino
+- PASSOU: Seletor mobile troca a classe do slot jogador para Guerreiro e mantém oponente Guerreiro bot
+- PASSOU: Troca de volta restaura Assassino no slot jogador e Guerreiro no slot bot
+- PASSOU: Informações técnicas são geradas dos valores reais das habilidades
+- PASSOU: Botões padrão têm diâmetro duplicado: ataque 328 e defesa 232
+- PASSOU: Arrastar/redimensionar e serializar/restaurar layout mantém posição/tamanho sem lançar habilidade
+- PASSOU: Salvar layout persiste preferências locais e retoma combate
+- PASSOU: SkillLock bloqueia skill sem impedir movimento
+- PASSOU: MovementLock não bloqueia skill e impede apenas deslocamento
+- PASSOU: Defesa cancela basic em startup e inicia no mesmo input
+- PASSOU: Movimento cancela basic ativo sem manter hitbox fantasma
+- PASSOU: Ultimate assume prioridade no recovery do basic e recovery não congela movimento
+- PASSOU: Basic não inicia durante skill incompatível
+- PASSOU: Corte Pesado aplica SkillLock de 0,10 s sem hard stun de movimento
+- PASSOU: Parry interrompe ataque, preserva feedback e não trava movimento
+- PASSOU: Corrida de 5 s aplica Guerreiro 4,9 e Assassino 6,6 com vantagem clara do Assassino
+- PASSOU: HoT permite movimento/ataque/skill, resiste a dano, renova sem stacking e notifica a vida por ticks
+- PASSOU: Barras mundiais respondem ao dano e a MaxHealth diferente nas duas classes
+- PASSOU: Laboratório alterna Guerreiro/Assassino, rejeita classes futuras e mantém oponente Guerreiro
+- PASSOU: Defesa/Movimento/Ultimate Base-A-B trocam grátis; basic e inventário permanecem intactos
+- PASSOU: Sistema normal de runas continua disponível fora da troca livre do laboratório
+- PASSOU: Warrior_Defense_Base: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Defense_A: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Defense_B: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Move_Base: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Move_A: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Move_B: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Ult_Base: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Ult_A: variação está disponível e equipa no slot correto
+- PASSOU: Warrior_Ult_B: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Defense_Base: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Defense_A: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Defense_B: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Move_Base: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Move_A: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Move_B: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Ult_Base: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Ult_A: variação está disponível e equipa no slot correto
+- PASSOU: Assassin_Ult_B: variação está disponível e equipa no slot correto
+- PASSOU: Efeitos das variações respeitam o limite compartilhado de 70 objetos
+- PASSOU: Golpe final gera vitória do Guerreiro na HUD
+- PASSOU: Nenhum erro ou exceção durante a execução
+
+Resultado: 154 passaram; 0 falharam.

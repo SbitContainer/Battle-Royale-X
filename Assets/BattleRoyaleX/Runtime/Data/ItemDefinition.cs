@@ -12,6 +12,7 @@ namespace BattleRoyaleX
 
         [Header("Consumable Values")]
         public float amount = 20f;
+        [Min(0f)] public float healDuration = 5f;
         public float cooldownReductionSeconds = 2f;
         [Min(0f)] public float useDuration = 0f;
         public bool interruptible = true;

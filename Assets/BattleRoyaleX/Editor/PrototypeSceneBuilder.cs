@@ -12,6 +12,7 @@ namespace BattleRoyaleX.EditorTools
         [MenuItem("Battle Royale X/Prototype 01/Build Test Scene")]
         public static void BuildScene()
         {
+            PrototypeVisualFactory.ConfigureVisualAssets();
             PrototypeDataFactory.CreateDefaultData();
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -30,8 +31,9 @@ namespace BattleRoyaleX.EditorTools
 
             CharacterDefinition warrior = Find<CharacterDefinition>("Warrior");
             CharacterDefinition assassin = Find<CharacterDefinition>("Assassin");
-            CharacterRuntime p1 = CreateCharacter("P1_Warrior", warrior, TeamId.PlayerOne, new Vector3(-7f,1f,0f), false);
-            CharacterRuntime p2 = CreateCharacter("P2_Assassin", assassin, TeamId.PlayerTwo, new Vector3(7f,1f,0f), true);
+            CharacterRuntime p1 = CreateCharacter("Opponent_Warrior_Slot", warrior, TeamId.PlayerOne, new Vector3(-7f,1f,0f), false);
+            CharacterRuntime p2 = CreateCharacter("Player_Lab_Slot", assassin, TeamId.PlayerTwo, new Vector3(7f,1f,0f), true, true);
+            p1.gameObject.AddComponent<PrototypeTrainingBot>();
             p1.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
             p2.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
 
@@ -45,8 +47,14 @@ namespace BattleRoyaleX.EditorTools
             light.type = LightType.Directional; light.intensity = 1.2f; light.transform.rotation = Quaternion.Euler(50f,-35f,0f);
 
             GameObject systems = new GameObject("Prototype_Systems");
-            PrototypeDebugHUD hud = systems.AddComponent<PrototypeDebugHUD>(); hud.playerOne=p1; hud.playerTwo=p2;
+            PrototypeCombatHUD hud = systems.AddComponent<PrototypeCombatHUD>(); hud.playerOne=p1; hud.playerTwo=p2;
+            PrototypeCombatLabController lab = systems.AddComponent<PrototypeCombatLabController>();
+            lab.fixedOpponent=p1; lab.playerSlot=p2; lab.warriorDefinition=warrior; lab.assassinDefinition=assassin;
+            PrototypeDebugHUD debugHud = systems.AddComponent<PrototypeDebugHUD>(); debugHud.playerOne=p1; debugHud.playerTwo=p2; debugHud.lab=lab;
+            systems.AddComponent<PrototypeMobileTouchControls>();
+            systems.AddComponent<CombatEventVfxPresenter>();
             AirdropManager drop = systems.AddComponent<AirdropManager>();
+            drop.firstDropDelay = 12f;
             drop.itemPool = AssetDatabase.FindAssets("t:ItemDefinition", new[]{"Assets/BattleRoyaleX/GeneratedData/Items"}).Select(g=>AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(g))).Where(x=>x!=null).ToList();
 
             CreateGroundPickups();
@@ -58,10 +66,9 @@ namespace BattleRoyaleX.EditorTools
             Debug.Log("Battle Royale X: test scene generated. Press Play. P1 WASD/F/G/H/R, P2 arrows/numpad.");
         }
 
-        static CharacterRuntime CreateCharacter(string name, CharacterDefinition def, TeamId team, Vector3 position, bool playerTwo)
+        static CharacterRuntime CreateCharacter(string name, CharacterDefinition def, TeamId team, Vector3 position, bool playerTwo, bool createLabVisuals=false)
         {
-            GameObject go=GameObject.CreatePrimitive(PrimitiveType.Capsule); go.name=name; go.transform.position=position;
-            Object.DestroyImmediate(go.GetComponent<CapsuleCollider>());
+            GameObject go=new GameObject(name); go.transform.position=position;
             CharacterController cc=go.AddComponent<CharacterController>(); cc.height=2f; cc.radius=0.45f; cc.center=Vector3.up;
             GameObject hurtboxObject = new GameObject("Hurtbox");
             hurtboxObject.transform.SetParent(go.transform, false);
@@ -70,7 +77,23 @@ namespace BattleRoyaleX.EditorTools
             hurt.height = 2f; hurt.radius = 0.45f; hurt.center = Vector3.zero; hurt.isTrigger = true;
             hurtboxObject.AddComponent<Hurtbox>();
             CharacterRuntime runtime=go.AddComponent<CharacterRuntime>(); runtime.definition=def; runtime.teamId=team;
-            PrototypeLocalInput input=go.AddComponent<PrototypeLocalInput>(); if(playerTwo) input.ConfigurePlayerTwo();
+            GameObject primaryVisual = PrototypeVisualFactory.CreateCharacterVisual(go.transform, def.characterClass);
+            if (primaryVisual != null && createLabVisuals)
+            {
+                CharacterClass other = def.characterClass == CharacterClass.Assassin ? CharacterClass.Warrior : CharacterClass.Assassin;
+                GameObject alternate = PrototypeVisualFactory.CreateCharacterVisual(go.transform, other);
+                if (alternate != null) { alternate.name = "LabVisual_" + other; alternate.SetActive(false); }
+            }
+            if (primaryVisual == null)
+            {
+                GameObject fallback=GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                fallback.name="FallbackCapsuleVisual";
+                fallback.transform.SetParent(go.transform, false);
+                Object.DestroyImmediate(fallback.GetComponent<Collider>());
+            }
+            PrototypeLocalInput input=go.AddComponent<PrototypeLocalInput>();
+            if(playerTwo) input.ConfigurePlayerTwo(); else input.enabled=false;
+            go.AddComponent<WorldHealthBar>();
             return runtime;
         }
 
@@ -78,12 +101,28 @@ namespace BattleRoyaleX.EditorTools
 
         static void CreateGroundPickups()
         {
-            string[] ids={"Heal","Energy","Cooldown","Smoke","Repulsion","Barrier","Var_Assassin_Counter","Var_Assassin_Return","Var_Warrior_Parry","Var_Warrior_Impact"};
-            Vector3[] positions={new Vector3(-14,0.6f,-14),new Vector3(14,0.6f,-14),new Vector3(-14,0.6f,14),new Vector3(14,0.6f,14),new Vector3(0,0.6f,-16),new Vector3(0,0.6f,16),new Vector3(-16,0.6f,0),new Vector3(16,0.6f,0),new Vector3(-7,0.6f,8),new Vector3(7,0.6f,-8)};
+            // Two readable class lanes plus neutral consumables. Every authored variation is available in the arena.
+            string[] ids={
+                "Var_Assassin_Counter","Var_Assassin_Double","Var_Assassin_Travel","Var_Assassin_Return","Var_Assassin_Exec","Var_Assassin_Hunt",
+                "Var_Warrior_Parry","Var_Warrior_Fortress","Var_Warrior_Impact","Var_Warrior_Advance","Var_Warrior_Ret","Var_Warrior_Push",
+                "Heal","Heal","Smoke","Smoke","Energy","Cooldown","Backpack4","Repulsion","Barrier","Null"
+            };
+            Vector3[] positions={
+                new Vector3(-15,0.25f,-11),new Vector3(-11,0.25f,-11),new Vector3(-7,0.25f,-11),
+                new Vector3(-15,0.25f,-7),new Vector3(-11,0.25f,-7),new Vector3(-7,0.25f,-7),
+                new Vector3(7,0.25f,7),new Vector3(11,0.25f,7),new Vector3(15,0.25f,7),
+                new Vector3(7,0.25f,11),new Vector3(11,0.25f,11),new Vector3(15,0.25f,11),
+                new Vector3(-4,0.25f,14),new Vector3(4,0.25f,-14),new Vector3(0,0.25f,14),new Vector3(0,0.25f,-14),
+                new Vector3(-4,0.25f,-14),new Vector3(4,0.25f,14),new Vector3(-15,0.25f,3),
+                new Vector3(15,0.25f,-3),new Vector3(15,0.25f,3),new Vector3(-15,0.25f,-3)
+            };
             for(int i=0;i<ids.Length;i++)
             {
-                ItemDefinition item=Find<ItemDefinition>(ids[i]); if(item==null) continue;
-                GameObject go=GameObject.CreatePrimitive(PrimitiveType.Sphere);go.name="Pickup_"+item.displayName;go.transform.position=positions[i];go.transform.localScale=Vector3.one*0.65f;go.GetComponent<Collider>().isTrigger=true;WorldPickup wp=go.AddComponent<WorldPickup>();wp.item=item;
+                ItemDefinition item=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/BattleRoyaleX/GeneratedData/Items/"+ids[i]+".asset");
+                if(item==null) continue;
+                GameObject go=new GameObject("Pickup_"+item.itemId+"_"+i);go.transform.position=positions[i];
+                SphereCollider trigger=go.AddComponent<SphereCollider>();trigger.isTrigger=true;trigger.radius=1.25f;trigger.center=Vector3.up*0.55f;
+                WorldPickup wp=go.AddComponent<WorldPickup>();wp.item=item;
             }
         }
 

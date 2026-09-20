@@ -18,10 +18,14 @@ namespace BattleRoyaleX
         public float attackInteractionCooldown;
         public float explosionRadius;
         public Vector3 direction;
+        public AbilityDefinition ability;
+        public bool isCounter;
 
         public DamagePacket(CharacterRuntime source, AbilityDefinition ability, Vector3 direction)
         {
             this.source = source;
+            this.ability = ability;
+            isCounter = false;
             attackKind = ability.attackKind;
             damage = ability.damage * (source != null ? source.Modifiers.damageMultiplier : 1f);
             knockback = ability.knockback;

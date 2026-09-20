@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 452c1c18d490c654eb6f3e28a97e1ab8, type: 3}
+  m_Name: Warrior
+  m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.CharacterDefinition
+  characterId: Warrior
+  displayName: Guerreiro
+  characterClass: 0
+  maxHealth: 125
+  maxEnergy: 90
+  energyRegenPerSecond: 7
+  moveSpeed: 4.9
+  rotationSpeed: 900
+  basicAttack: {fileID: 11400000, guid: c21b36c5cdd6b0c4c90783d1a72e2dca, type: 2}
+  defenseBase: {fileID: 11400000, guid: cc581ceca1f594c48976abd9130229e7, type: 2}
+  movementBase: {fileID: 11400000, guid: 6a67f1fefa7d60f46a10b86207f965ab, type: 2}
+  ultimateBase: {fileID: 11400000, guid: 8b8006739174b7442bcd527e5d9d1553, type: 2}
+  defenseVariantA: {fileID: 11400000, guid: a235c57ae70d6124b9ca21997674f6f5, type: 2}
+  defenseVariantB: {fileID: 11400000, guid: 0768950da21591f4883ed04e144ba631, type: 2}
+  movementVariantA: {fileID: 11400000, guid: bb57a924199fd93459c5faf0b3eb7a6d, type: 2}
+  movementVariantB: {fileID: 11400000, guid: b1b3d406e15461e429de9757e1dc53c4, type: 2}
+  ultimateVariantA: {fileID: 11400000, guid: 93ae61ed1197f004684f3ab240ab55a1, type: 2}
+  ultimateVariantB: {fileID: 11400000, guid: 085e01e38bfbdd54591f047d4b7edb1f, type: 2}

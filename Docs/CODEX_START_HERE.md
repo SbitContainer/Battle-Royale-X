@@ -1,5 +1,11 @@
 # Codex / Astra — Start Here
 
+## Current continuation — 19/09/2026
+
+The latest authorized implementation is defensive counterplay and a more reactive local bot. Read [DEFENSE_AI_V3.md](DEFENSE_AI_V3.md) for the current rules and [TEST_RESULTS_DEFENSE_AI_V3.md](TEST_RESULTS_DEFENSE_AI_V3.md) for measured validation. V3 explicitly supersedes the earlier defensive-damage numbers: Assassin defenses deal 2–3 damage with contact-triggered redirection; Warrior defenses grant a manual counter with knockback. The mobile V2 specification below is historical context, not a request to undo later changes.
+
+The user has authorized mobile controls and combat V2. The code-reviewed specification is [MOBILE_COMBAT_V2_SPEC.md](MOBILE_COMBAT_V2_SPEC.md), with the implementation handoff in [SOL_NEXT_STEP.md](SOL_NEXT_STEP.md). Both are specifications, not completed functionality. Use them for the next step; the original integration instructions below remain historical context and architectural constraints. In particular, V2 explicitly changes the Assassin base ultimate and Warrior defensive counterplay without authorizing unrelated systems.
+
 This repository is the handoff package for **Battle Royale X — Prototype 01 (Warrior vs Assassin)**.
 
 ## First objective

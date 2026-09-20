@@ -11,23 +11,49 @@ namespace BattleRoyaleX
         float perfectUntil;
         float damageReduction;
         float specialCooldown;
+        bool perfectConsumed;
+        public AbilityDefinition ActiveAbility { get; private set; }
+        public bool IsActive => activeKind != DefenseKind.None && Time.time < activeUntil;
+        public float Remaining => IsActive ? Mathf.Max(0f, activeUntil - Time.time) : 0f;
         readonly Dictionary<DefenseKind, float> specialReadyAt = new Dictionary<DefenseKind, float>();
 
         void Awake() => runtime = GetComponent<CharacterRuntime>();
 
-        public void Activate(DefenseKind kind, float duration, float perfectWindow, float reduction, float specialInteractionCooldown)
+        public void Activate(DefenseKind kind, float duration, float perfectWindow, float reduction, float specialInteractionCooldown,
+            AbilityDefinition ability = null)
         {
             activeKind = kind;
+            ActiveAbility = ability;
             float multiplier = runtime != null ? runtime.Modifiers.defenseWindowMultiplier : 1f;
             activeUntil = Time.time + duration * multiplier;
             perfectUntil = Time.time + perfectWindow * multiplier;
             damageReduction = Mathf.Clamp01(reduction);
             specialCooldown = Mathf.Max(0f, specialInteractionCooldown);
+            perfectConsumed = false;
+        }
+
+        public void Deactivate()
+        {
+            activeKind = DefenseKind.None;
+            ActiveAbility = null;
+            activeUntil = perfectUntil = 0f;
+            perfectConsumed = false;
+        }
+
+        public void ResetTransientState()
+        {
+            Deactivate();
+            specialReadyAt.Clear();
         }
 
         public CombatOutcome ResolveIncoming(DamagePacket packet, out float damageAfterDefense)
         {
             damageAfterDefense = packet.damage;
+            if (packet.source != null && runtime.Abilities.TryDefensiveRedirect(packet.source, false))
+            {
+                damageAfterDefense = 0f;
+                return CombatOutcome.Dodged;
+            }
             if (runtime != null && runtime.State.IsInvulnerable)
             {
                 damageAfterDefense = 0f;
@@ -46,13 +72,14 @@ namespace BattleRoyaleX
 
                 case DefenseKind.Parry:
                     if (!packet.parryable) return CombatOutcome.Hit;
-                    if (Time.time <= perfectUntil && IsSpecialReady(DefenseKind.Parry))
+                    if (!perfectConsumed && Time.time <= perfectUntil && IsSpecialReady(DefenseKind.Parry))
                     {
+                        perfectConsumed = true;
                         ConsumeSpecial(DefenseKind.Parry);
                         damageAfterDefense = 0f;
                         return CombatOutcome.Parried;
                     }
-                    damageAfterDefense = packet.damage * 0.5f;
+                    damageAfterDefense = packet.damage * (1f - damageReduction);
                     return CombatOutcome.Blocked;
 
                 case DefenseKind.Nullify:

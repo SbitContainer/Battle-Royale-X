@@ -10,7 +10,8 @@ namespace BattleRoyaleX
         public DamagePacket Packet { get; private set; }
         public bool Cancelled { get; private set; }
 
-        readonly HashSet<int> resolvedIds = new HashSet<int>();
+        readonly HashSet<EntityId> resolvedIds = new HashSet<EntityId>();
+        public void UpdatePacket(DamagePacket packet) => Packet = packet;
 
         public void Configure(CharacterRuntime owner, DamagePacket packet, Vector3 size, float lifetime)
         {
@@ -35,18 +36,25 @@ namespace BattleRoyaleX
             Hitbox otherHitbox = other.GetComponent<Hitbox>();
             if (otherHitbox != null)
             {
-                if (otherHitbox.Owner != null && otherHitbox.Owner != Owner && MarkResolved(otherHitbox.GetInstanceID()))
+                if (otherHitbox.Owner != null && otherHitbox.Owner != Owner && MarkResolved(otherHitbox.GetEntityId()))
                     CombatResolver.ResolveHitboxInteraction(this, otherHitbox);
                 return;
             }
 
-            Hurtbox hurtbox = other.GetComponent<Hurtbox>();
+            TryResolveHurtbox(other.GetComponent<Hurtbox>());
+        }
+
+        // Shared by trigger contacts and swept movement attacks (including between low-FPS frames).
+        public void TryResolveHurtbox(Hurtbox hurtbox)
+        {
+            if (Cancelled || Owner == null || Owner.Health.IsDead || SmokeField.PreventsAttack(Owner)) return;
             if (hurtbox == null || hurtbox.Owner == null || hurtbox.Owner == Owner) return;
-            if (!MarkResolved(hurtbox.Owner.GetInstanceID())) return;
+            if (hurtbox.Owner.TeamId == Owner.TeamId || hurtbox.Owner.Health.IsDead) return;
+            if (!MarkResolved(hurtbox.Owner.GetEntityId())) return;
             CombatResolver.ResolveAttack(this, hurtbox);
         }
 
-        bool MarkResolved(int id)
+        bool MarkResolved(EntityId id)
         {
             if (resolvedIds.Contains(id)) return false;
             resolvedIds.Add(id);

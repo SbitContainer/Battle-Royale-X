@@ -9,11 +9,16 @@ UserSettings/
 MemoryCaptures/
 Recordings/
 
+# Accidental nested Unity projects; the repository root is the playable project.
+/BTX/
+/My project/
+
 # IDE
 .vscode/
 .idea/
 *.csproj
 *.sln
+*.slnx
 *.suo
 *.user
 *.userprefs

@@ -12,7 +12,7 @@ namespace BattleRoyaleX
             switch (item.tacticalKind)
             {
                 case TacticalKind.Smoke:
-                    SpawnTimedPrimitive("Smoke_Field", PrimitiveType.Cylinder, center, new Vector3(item.tacticalRadius * 2f, 0.25f, item.tacticalRadius * 2f), item.tacticalDuration, false);
+                    SmokeField.Spawn(center, item.tacticalRadius, item.tacticalDuration);
                     break;
                 case TacticalKind.Repulsion:
                     Repulse(user, center, item.tacticalRadius, item.tacticalForce);

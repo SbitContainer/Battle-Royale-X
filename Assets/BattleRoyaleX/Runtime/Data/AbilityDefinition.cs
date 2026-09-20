@@ -19,6 +19,14 @@ namespace BattleRoyaleX
         [Min(0f)] public float startup = 0.08f;
         [Min(0.01f)] public float activeTime = 0.12f;
         [Min(0f)] public float recovery = 0.16f;
+        [Tooltip("Temporarily prevents the victim from starting skills after this attack hits. Movement remains available.")]
+        [Min(0f)] public float skillLockOnHit;
+
+        [Header("Basic Combo")]
+        [Range(1, 3)] public int comboSteps = 1;
+        [Range(0.05f, 0.35f)] public float comboInputBuffer = 0.18f;
+        [Min(0.1f)] public float comboSecondDamageMultiplier = 1f;
+        [Min(0.1f)] public float comboThirdDamageMultiplier = 1.25f;
 
         [Header("Attack")]
         public AttackKind attackKind = AttackKind.Physical;
@@ -51,6 +59,37 @@ namespace BattleRoyaleX
         [Min(0f)] public float invulnerabilityDuration = 0f;
         [Min(0f)] public float returnWindow = 1.8f;
         public bool passThroughCharacters = false;
+
+        [Header("Post-dash movement bonus (independent of ultimate)")]
+        [Min(0f)] public float speedBonusDuration;
+        [Min(1f)] public float speedBonusMultiplier = 1f;
+
+        [Header("Two-stage hunt")]
+        [Min(1f)] public float huntAcquireRange = 12f;
+        [Min(1f)] public float huntSpeed = 22f;
+        [Min(0.1f)] public float huntMaxDuration = 1.5f;
+        [Min(0f)] public float huntFirstDamage = 6f;
+        [Min(0f)] public float huntFirstPush = 2f;
+        [Min(0f)] public float huntOvershoot = 3.5f;
+
+        [Header("Escape smoke")]
+        [Min(1f)] public float smokeRadius = 6f;
+        [Min(0.1f)] public float smokeDuration = 4f;
+
+        [Header("Charged dash sequence")]
+        [Range(1, 8)] public int chargeCount = 5;
+        [Min(0.1f)] public float chargeWindow = 6f;
+
+        [Header("Manual counter opportunity")]
+        [Min(0f)] public float counterBonusDamage = 0f;
+        [Min(0f)] public float counterWindow = 0f;
+        [Min(0f)] public float counterKnockback = 0f;
+        public bool counterOnBlock;
+
+        [Header("Defensive redirection")]
+        public bool redirectOnDefense;
+        [Min(0f)] public float redirectDistance = 3f;
+        [Min(0.05f)] public float redirectDuration = 0.18f;
 
         [Header("Ultimate / Temporary Modifier")]
         [Min(0f)] public float buffDuration = 5f;
