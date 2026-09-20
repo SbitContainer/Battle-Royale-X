@@ -118,8 +118,8 @@ namespace BattleRoyaleX.EditorTools
         static void Build()
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Stop Play Mode first.");
-            PlayerSettings.bundleVersion="0.5.0-mobile-v4";
-            PlayerSettings.Android.bundleVersionCode=5;
+            PlayerSettings.bundleVersion="0.6.0-lab-001";
+            PlayerSettings.Android.bundleVersionCode=6;
             // The prototype uses Input + StandaloneInputModule. Android does not support Both.
             var settings=new SerializedObject(Unsupported.GetSerializedAssetInterfaceSingleton("PlayerSettings"));
             var input=settings.FindProperty("activeInputHandler");
@@ -127,7 +127,7 @@ namespace BattleRoyaleX.EditorTools
             input.intValue=0;settings.ApplyModifiedPropertiesWithoutUndo();AssetDatabase.SaveAssets();
             var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions {
                 scenes=new[]{"Assets/BattleRoyaleX/GeneratedScenes/Prototype01_Arena.unity"},
-                locationPathName="Builds/BattleRoyaleX-mobile-v4.apk",target=BuildTarget.Android,options=BuildOptions.None });
+                locationPathName="Builds/BattleRoyaleX-lab-001.apk",target=BuildTarget.Android,options=BuildOptions.None });
             File.WriteAllText("Logs/polish-build.txt",result.summary.result+" errors="+result.summary.totalErrors+" bytes="+result.summary.totalSize);
             if(result.summary.result!=UnityEditor.Build.Reporting.BuildResult.Succeeded)throw new InvalidOperationException("Android build failed");
         }
