@@ -14,9 +14,11 @@ namespace BattleRoyaleX
         [Serializable] public sealed class LayoutData { public List<LayoutEntry> entries = new List<LayoutEntry>(); }
         readonly List<RectTransform> editableButtons = new List<RectTransform>();
         readonly Dictionary<string, Vector2> defaultPositions = new Dictionary<string, Vector2>();
+        readonly Dictionary<AbilitySlot, Text> labVariationLabels = new Dictionary<AbilitySlot, Text>();
         RectTransform settingsPanel, editToolbar;
         RectTransform selectedButton;
-        Text infoText, editStatus, playerLabel;
+        Text infoText, editStatus, playerLabel, botModeLabel;
+        PrototypeCombatLabController combatLab;
         bool menuOpen, editingLayout, ownsPause;
         float previousTimeScale;
         public bool IsEditingLayout => editingLayout;
@@ -28,6 +30,7 @@ namespace BattleRoyaleX
             foreach (var view in itemButtons) RegisterEditable(view.rect);
             RegisterEditable(pickupButton);
             LoadLayout();
+            BuildLabTestControls();
 
             var menu = MenuButton(safeRoot, "MENU / SKILLS", new Vector2(0f, -60f), new Vector2(290f, 80f), OpenSettings);
             menu.anchorMin = menu.anchorMax = new Vector2(0.5f, 1f);
@@ -58,6 +61,86 @@ namespace BattleRoyaleX
             editStatus = AddLabel(editToolbar, "Arraste os botões. Toque para selecionar; use MENOR / MAIOR.", 25);
             editStatus.rectTransform.offsetMax = new Vector2(0f, -100f);
             settingsPanel.gameObject.SetActive(false); editToolbar.gameObject.SetActive(false);
+        }
+
+        void BuildLabTestControls()
+        {
+            combatLab = FindAnyObjectByType<PrototypeCombatLabController>();
+            CreateLabVariationButton(AbilitySlot.Defense, 1, new Vector2(100f, 92f), "DEF");
+            CreateLabVariationButton(AbilitySlot.Movement, 2, new Vector2(230f, 92f), "MOV");
+            CreateLabVariationButton(AbilitySlot.Ultimate, 3, new Vector2(360f, 92f), "ULT");
+
+            RectTransform bot = CreateRect(safeRoot, "LabBotMode");
+            bot.anchorMin = bot.anchorMax = bot.pivot = Vector2.zero;
+            bot.anchoredPosition = new Vector2(230f, 194f);
+            bot.sizeDelta = new Vector2(390f, 72f);
+            bot.gameObject.AddComponent<Image>().color = new Color(0.08f, 0.18f, 0.25f, 0.92f);
+            bot.gameObject.AddComponent<Button>().onClick.AddListener(() => CycleBotMode());
+            botModeLabel = AddLabel(bot, "BOT: NORMAL", 23);
+            RefreshLabControls();
+        }
+
+        void CreateLabVariationButton(AbilitySlot slot, int number, Vector2 position, string shortName)
+        {
+            RectTransform rect = CreateCircle(safeRoot, "LabSkill_" + number, position, 116f,
+                new Color(0.10f, 0.22f, 0.34f, 0.94f), true);
+            rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.zero;
+            Text label = AddLabel(rect, number + "\n" + shortName + " BASE", 19);
+            EventTrigger trigger = rect.gameObject.AddComponent<EventTrigger>();
+            trigger.triggers = new List<EventTrigger.Entry>();
+            AddTrigger(trigger, EventTriggerType.PointerDown, data => CycleLabVariation(slot));
+            labVariationLabels[slot] = label;
+        }
+
+        public bool CycleLabVariation(AbilitySlot slot)
+        {
+            if (combatLab == null) combatLab = FindAnyObjectByType<PrototypeCombatLabController>();
+            if (combatLab == null || slot == AbilitySlot.BasicAttack) return false;
+            int next = (combatLab.GetVariationIndex(slot) + 1) % 3;
+            bool changed = combatLab.EquipVariation(slot, next);
+            if (changed) RefreshLabControls();
+            return changed;
+        }
+
+        public PrototypeTrainingBot.TrainingMode CycleBotMode()
+        {
+            if (combatLab == null) combatLab = FindAnyObjectByType<PrototypeCombatLabController>();
+            PrototypeTrainingBot.TrainingMode result = combatLab != null
+                ? combatLab.CycleBotMode() : PrototypeTrainingBot.TrainingMode.Normal;
+            RefreshLabControls();
+            return result;
+        }
+
+        public PrototypeTrainingBot.TrainingMode CurrentBotMode => combatLab != null
+            ? combatLab.BotMode : PrototypeTrainingBot.TrainingMode.Normal;
+
+        void UpdateLabControls()
+        {
+            if (combatLab == null) combatLab = FindAnyObjectByType<PrototypeCombatLabController>();
+            RefreshLabControls();
+        }
+
+        void RefreshLabControls()
+        {
+            if (combatLab == null) return;
+            SetLabVariationLabel(AbilitySlot.Defense, 1, "DEF");
+            SetLabVariationLabel(AbilitySlot.Movement, 2, "MOV");
+            SetLabVariationLabel(AbilitySlot.Ultimate, 3, "ULT");
+            if (botModeLabel != null) botModeLabel.text = "BOT: " + BotModeName(combatLab.BotMode);
+        }
+
+        void SetLabVariationLabel(AbilitySlot slot, int number, string shortName)
+        {
+            if (!labVariationLabels.TryGetValue(slot, out Text label) || label == null) return;
+            int index = combatLab.GetVariationIndex(slot);
+            label.text = number + "\n" + shortName + " " + (index == 0 ? "BASE" : index == 1 ? "A" : "B");
+        }
+
+        static string BotModeName(PrototypeTrainingBot.TrainingMode mode)
+        {
+            if (mode == PrototypeTrainingBot.TrainingMode.Stationary) return "PARADO";
+            if (mode == PrototypeTrainingBot.TrainingMode.StationaryAttack) return "PARADO + ATAQUE";
+            return "NORMAL";
         }
 
         RectTransform MenuButton(RectTransform parent, string title, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action)
@@ -168,7 +251,7 @@ namespace BattleRoyaleX
 
         public void SwitchPlayer()
         {
-            PrototypeCombatLabController lab = FindFirstObjectByType<PrototypeCombatLabController>();
+            PrototypeCombatLabController lab = FindAnyObjectByType<PrototypeCombatLabController>();
             if (lab != null && lab.playerSlot != null)
             {
                 CharacterClass next = lab.PlayerClass == CharacterClass.Assassin ? CharacterClass.Warrior : CharacterClass.Assassin;
@@ -193,6 +276,7 @@ namespace BattleRoyaleX
             }
             SmokeVisibility.LocalPlayer = chosen;
             if (playerLabel != null) playerLabel.text = "VOCÊ: " + chosen.Definition.displayName.ToUpperInvariant();
+            RefreshLabControls();
         }
 
         void RefreshSkillInfo()

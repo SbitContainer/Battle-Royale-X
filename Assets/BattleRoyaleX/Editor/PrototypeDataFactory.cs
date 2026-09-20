@@ -63,7 +63,10 @@ namespace BattleRoyaleX.EditorTools
             foreach (var dodge in new[] { assassinDefense, assassinDouble })
             { dodge.damage = dodge == assassinDefense ? 2f : 3f; dodge.passThroughCharacters = true; dodge.knockback = 0f; }
             foreach (var move in new[] { warriorMove, warriorImpact, warriorAdvance })
-            { move.damage = 6f; move.knockback = 0f; }
+            { move.damage = 6f; move.pursueTarget = true; move.pursuitStopDistance = 0.72f; }
+            warriorMove.pursuitAcquireRange = 7f; warriorMove.pursuitSpeed = 14f; warriorMove.pursuitMaxDuration = 0.55f; warriorMove.knockback = 2f;
+            warriorImpact.pursuitAcquireRange = 8f; warriorImpact.pursuitSpeed = 16f; warriorImpact.pursuitMaxDuration = 0.55f; warriorImpact.knockback = 3.5f;
+            warriorAdvance.pursuitAcquireRange = 7f; warriorAdvance.pursuitSpeed = 13f; warriorAdvance.pursuitMaxDuration = 0.60f; warriorAdvance.knockback = 1.5f;
             foreach (var guard in new[] { warriorParry, warriorFortress, assassinCounter })
             { guard.damage = 0f; guard.knockback = 0f; guard.clashable = false; }
             warriorGuard.damage = 0f; warriorGuard.knockback = 0f; warriorGuard.clashable = false;

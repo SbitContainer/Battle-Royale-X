@@ -93,6 +93,7 @@ namespace BattleRoyaleX
                 nextAttackRepeatAt = Time.unscaledTime + 0.12f;
             }
             UpdateAbilityButtons();
+            UpdateLabControls();
             UpdateItemButtons();
             UpdatePickupButton();
             if (menuOpen) RefreshSkillInfo();

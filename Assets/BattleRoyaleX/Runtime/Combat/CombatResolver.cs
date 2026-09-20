@@ -69,12 +69,19 @@ namespace BattleRoyaleX
                 hitbox.Packet.ability.skillLockOnHit > 0f)
                 target.State.ApplySkillLock(hitbox.Packet.ability.skillLockOnHit);
 
+            Vector3 pushDirection = hitbox.Packet.direction;
+            if (hitbox.Packet.isCounter)
+            {
+                Vector3 away = target.transform.position - attacker.transform.position;
+                away.y = 0f;
+                if (away.sqrMagnitude > 0.001f) pushDirection = away.normalized;
+            }
             if (hitbox.Packet.knockback > 0f && target.Motor != null)
-                target.Motor.ApplyImpulse(hitbox.Packet.direction,
+                target.Motor.ApplyImpulse(pushDirection,
                     hitbox.Packet.knockback * (outcome == CombatOutcome.Blocked ? 0.25f : 1f), hitbox.Packet.isCounter ? 0.28f : 0.12f);
             if (hitbox.Packet.isCounter && outcome == CombatOutcome.Hit)
                 CombatEvents.Raise(new CombatEventData(CombatEventKind.CounterHit, eventPos, attacker, target,
-                    finalDamage, hitbox.Packet.ability, AbilityPhase.Active, direction: hitbox.Packet.direction));
+                    finalDamage, hitbox.Packet.ability, AbilityPhase.Active, direction: pushDirection));
         }
 
         public static void ResolveHitboxInteraction(Hitbox a, Hitbox b)

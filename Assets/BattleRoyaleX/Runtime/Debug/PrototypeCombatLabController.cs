@@ -12,6 +12,9 @@ namespace BattleRoyaleX
 
         public CharacterClass PlayerClass => playerSlot != null && playerSlot.Definition != null
             ? playerSlot.Definition.characterClass : CharacterClass.Assassin;
+        public PrototypeTrainingBot OpponentBot => fixedOpponent != null ? fixedOpponent.GetComponent<PrototypeTrainingBot>() : null;
+        public PrototypeTrainingBot.TrainingMode BotMode => OpponentBot != null
+            ? OpponentBot.Mode : PrototypeTrainingBot.TrainingMode.Normal;
 
         public bool SwitchPlayerClass(CharacterClass characterClass)
         {
@@ -37,6 +40,37 @@ namespace BattleRoyaleX
             else if (slot == AbilitySlot.Ultimate)
                 selected = variationIndex == 0 ? definition.ultimateBase : variationIndex == 1 ? definition.ultimateVariantA : definition.ultimateVariantB;
             return selected != null && playerSlot.Abilities.EquipLabVariation(selected);
+        }
+
+        public int GetVariationIndex(AbilitySlot slot)
+        {
+            if (playerSlot == null || playerSlot.Definition == null || playerSlot.Abilities == null) return 0;
+            CharacterDefinition definition = playerSlot.Definition;
+            AbilityDefinition current = playerSlot.Abilities.GetEquipped(slot);
+            if (slot == AbilitySlot.Defense)
+                return current == definition.defenseVariantA ? 1 : current == definition.defenseVariantB ? 2 : 0;
+            if (slot == AbilitySlot.Movement)
+                return current == definition.movementVariantA ? 1 : current == definition.movementVariantB ? 2 : 0;
+            if (slot == AbilitySlot.Ultimate)
+                return current == definition.ultimateVariantA ? 1 : current == definition.ultimateVariantB ? 2 : 0;
+            return 0;
+        }
+
+        public bool SetBotMode(PrototypeTrainingBot.TrainingMode mode)
+        {
+            EnsureOpponentIsWarrior();
+            PrototypeTrainingBot bot = OpponentBot;
+            if (bot == null) return false;
+            bot.SetMode(mode);
+            bot.enabled = true;
+            return true;
+        }
+
+        public PrototypeTrainingBot.TrainingMode CycleBotMode()
+        {
+            PrototypeTrainingBot.TrainingMode next = (PrototypeTrainingBot.TrainingMode)(((int)BotMode + 1) % 3);
+            SetBotMode(next);
+            return next;
         }
 
         public void ResetLab()

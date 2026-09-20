@@ -116,6 +116,20 @@
 - [ ] Troca livre não consome nem adiciona item ao inventário.
 - [ ] Sistema normal de runas continua disponível.
 
+## Perseguição do Guerreiro e bot de treino
+- [ ] Investida de Escudo, Impacto e Avanço Defensivo adquirem um inimigo visível à frente dentro do alcance configurado.
+- [ ] As três variações corrigem a trajetória enquanto o alvo se move, mas encerram no tempo máximo e não viram perseguição infinita.
+- [ ] Paredes interrompem a perseguição e impedem dano remoto.
+- [ ] Cada perseguição causa dano apenas uma vez por ativação.
+- [ ] Impacto empurra o inimigo para longe na direção real do contato.
+- [ ] Contra-ataque manual do Guerreiro empurra para longe do Guerreiro mesmo quando o alvo está fora do centro da hitbox.
+- [ ] Modo `Bot: Parado` não anda nem ataca.
+- [ ] Modo `Bot: Parado + ataque` mantém posição, olha para o jogador e usa somente ataque básico em alcance.
+- [ ] Modo `Bot: Normal` restaura a IA completa.
+- [ ] Mobile mostra botões `1`, `2` e `3` no canto inferior esquerdo para Defesa, Movimento e Ultimate.
+- [ ] Cada botão alterna sua habilidade entre Base, A e B sem consumir runa.
+- [ ] Controle de bot alterna entre Normal, Parado e Parado + ataque.
+
 ## Regressão BRX-LAB-001
 - [ ] Guarda, Parry, Dodge/iframe e Clash continuam funcionando.
 - [ ] Inventário continua aceitando itens.

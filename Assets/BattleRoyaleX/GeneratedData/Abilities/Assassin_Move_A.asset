@@ -54,6 +54,11 @@ MonoBehaviour:
   invulnerabilityDuration: 0
   returnWindow: 0
   passThroughCharacters: 1
+  pursueTarget: 0
+  pursuitAcquireRange: 0
+  pursuitSpeed: 14
+  pursuitMaxDuration: 0.55
+  pursuitStopDistance: 0.75
   speedBonusDuration: 2
   speedBonusMultiplier: 1.35
   huntAcquireRange: 12

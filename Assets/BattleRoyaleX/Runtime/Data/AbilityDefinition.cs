@@ -60,6 +60,14 @@ namespace BattleRoyaleX
         [Min(0f)] public float returnWindow = 1.8f;
         public bool passThroughCharacters = false;
 
+        [Header("Bounded pursuit movement")]
+        [Tooltip("When enabled, this movement can acquire one visible enemy in front and steer toward it for a short, bounded travel.")]
+        public bool pursueTarget;
+        [Min(0f)] public float pursuitAcquireRange;
+        [Min(1f)] public float pursuitSpeed = 14f;
+        [Min(0.1f)] public float pursuitMaxDuration = 0.55f;
+        [Min(0.1f)] public float pursuitStopDistance = 0.75f;
+
         [Header("Post-dash movement bonus (independent of ultimate)")]
         [Min(0f)] public float speedBonusDuration;
         [Min(1f)] public float speedBonusMultiplier = 1f;

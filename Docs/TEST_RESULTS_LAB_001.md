@@ -1,4 +1,4 @@
-# Matriz ao vivo — 20/09/2026 18:20:46
+# Matriz ao vivo — 20/09/2026 19:06:41
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -89,6 +89,16 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Bot busca nova posição sem ler skill através da parede
 - PASSOU: Bot reconhece uso público de variação defensiva
 - PASSOU: Reset cancela viagem, iframe e efeitos defensivos transitórios
+- PASSOU: Bot Parado não anda nem ataca
+- PASSOU: Bot Parado + ataque golpeia em alcance sem deslizar
+- PASSOU: Warrior_Move_Base: persegue alvo em movimento e causa dano uma vez
+- PASSOU: Warrior_Move_Base: trajetória corrige direção durante a perseguição
+- PASSOU: Warrior_Move_A: persegue alvo em movimento e causa dano uma vez
+- PASSOU: Warrior_Move_A: trajetória corrige direção durante a perseguição
+- PASSOU: Warrior_Move_B: persegue alvo em movimento e causa dano uma vez
+- PASSOU: Warrior_Move_B: trajetória corrige direção durante a perseguição
+- PASSOU: Impacto do Guerreiro joga o inimigo para trás pela distância configurada
+- PASSOU: Perseguição do Guerreiro respeita parede e não causa dano remoto
 - PASSOU: Caçada 1 segue dash lateral, causa dano leve e libera segundo acionamento
 - PASSOU: Caçada 1 empurra e não repete dano durante perseguição
 - PASSOU: Caçada aguarda segundo toque sem buff antigo nem avanço automático
@@ -114,6 +124,11 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Personagem local recebe acabamento fosco enquanto oculto
 - PASSOU: Hitbox existente de atacante dentro da fumaça não causa dano
 - PASSOU: Fim da fumaça restaura visibilidade e possibilidade de ataque
+- PASSOU: Mobile mostra seletores 1/2/3 no canto inferior esquerdo
+- PASSOU: Botão 1 alterna Defesa Base/A/B sem consumir runa
+- PASSOU: Botão 2 alterna Movimento de A para B
+- PASSOU: Botão 3 alterna Ultimate de A para B
+- PASSOU: Botão do laboratório alterna bot Normal/Parado/Parado + ataque
 - PASSOU: Menu mobile pausa combate e identifica jogador Assassino
 - PASSOU: Seletor mobile troca a classe do slot jogador para Guerreiro e mantém oponente Guerreiro bot
 - PASSOU: Troca de volta restaura Assassino no slot jogador e Guerreiro no slot bot
@@ -157,4 +172,4 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Golpe final gera vitória do Guerreiro na HUD
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 154 passaram; 0 falharam.
+Resultado: 169 passaram; 0 falharam.

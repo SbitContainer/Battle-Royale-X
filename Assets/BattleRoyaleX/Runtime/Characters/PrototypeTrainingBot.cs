@@ -7,6 +7,7 @@ namespace BattleRoyaleX
     public sealed class PrototypeTrainingBot : MonoBehaviour
     {
         public enum Intent { Approach, Orbit, Evade, Defend, Counter, Attack, Recover, Search }
+        public enum TrainingMode { Normal, Stationary, StationaryAttack }
         public bool runInEditor;
         [Min(0.04f)] public float decisionInterval = 0.10f;
         [Min(0.20f)] public float reactionDelay = 0.22f;
@@ -19,6 +20,8 @@ namespace BattleRoyaleX
         public int DefensiveResponses { get; private set; }
         public float LastObservedAt { get; private set; } = -999f;
         public float LastReactionAt { get; private set; } = -999f;
+        [SerializeField] TrainingMode trainingMode;
+        public TrainingMode Mode => trainingMode;
 
         CharacterRuntime runtime, target;
         float nextDecisionAt, nextActionAt, strafeSign = 1f, nextOrbitSwitch;
@@ -44,6 +47,16 @@ namespace BattleRoyaleX
         {
             ClearObservation(); target = null; capturedTarget = resetPending = false;
             nextDecisionAt = nextActionAt = Time.time + 0.3f;
+        }
+        public void SetMode(TrainingMode mode)
+        {
+            trainingMode = mode;
+            if (runtime != null)
+            {
+                runtime.ResetTransientState();
+                runtime.Motor.StopMovementImmediately();
+            }
+            ResetAwareness();
         }
         void OnDisable()
         {
@@ -94,6 +107,12 @@ namespace BattleRoyaleX
             if (runtime.Health.IsDead || target.Health.IsDead) { HandleRoundReset(); return; }
             if (Time.time < nextDecisionAt) return;
             nextDecisionAt = Time.time + Mathf.Max(0.04f, decisionInterval);
+
+            if (trainingMode != TrainingMode.Normal)
+            {
+                UpdateStationaryMode();
+                return;
+            }
 
             if (!CanSee(target.transform.position))
             {
@@ -192,6 +211,22 @@ namespace BattleRoyaleX
         }
 
         bool IsAssassin() => runtime.Definition != null && runtime.Definition.characterClass == CharacterClass.Assassin;
+
+        void UpdateStationaryMode()
+        {
+            runtime.Motor.StopMovementImmediately();
+            CurrentIntent = trainingMode == TrainingMode.StationaryAttack ? Intent.Attack : Intent.Recover;
+            if (target == null || !CanSee(target.transform.position)) return;
+            Vector3 delta = target.transform.position - transform.position;
+            delta.y = 0f;
+            float distance = delta.magnitude;
+            Vector3 toward = distance > 0.01f ? delta / distance : runtime.Motor.Facing;
+            if (!runtime.Motor.IsDashing && !runtime.Abilities.IsActionBusy) runtime.Motor.FaceDirection(toward);
+            if (trainingMode != TrainingMode.StationaryAttack || Time.time < nextActionAt || runtime.Motor.IsDashing) return;
+            AbilityDefinition basic = runtime.Abilities.GetEquipped(AbilitySlot.BasicAttack);
+            if (basic == null || distance > basic.range - 0.05f) return;
+            if (runtime.Abilities.TryUse(AbilitySlot.BasicAttack, toward)) nextActionAt = Time.time + 0.08f;
+        }
 
         bool ThreatIntersectsSelf()
         {

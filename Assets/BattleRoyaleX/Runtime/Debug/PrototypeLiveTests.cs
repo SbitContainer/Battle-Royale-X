@@ -365,6 +365,7 @@ namespace BattleRoyaleX
             yield return new WaitForSeconds(1.2f);
 
             yield return TestDefenseAndAI();
+            yield return TestWarriorPursuitAndBotModes();
             yield return TestMobileV4();
             yield return TestCombatLab001();
             yield return TestVariationPresentation();
@@ -520,6 +521,74 @@ namespace BattleRoyaleX
             a.ResetTransientState();
             Check(!a.Motor.IsDashing && !a.State.IsInvulnerable && !a.Abilities.IsActionBusy,
                 "Reset cancela viagem, iframe e efeitos defensivos transitórios");
+        }
+
+        IEnumerator TestWarriorPursuitAndBotModes()
+        {
+            stage = "Laboratório: perseguição do Guerreiro e modos determinísticos do bot";
+            var bot = w.GetComponent<PrototypeTrainingBot>();
+            bot.runInEditor = true;
+
+            ResetPair(1.4f); events.Clear();
+            bot.SetMode(PrototypeTrainingBot.TrainingMode.Stationary);
+            bot.enabled = true;
+            Vector3 stationaryStart = w.transform.position;
+            float healthBefore = a.Health.CurrentHealth;
+            yield return new WaitForSeconds(1.2f);
+            Check(Vector3.Distance(stationaryStart,w.transform.position)<0.03f && Near(healthBefore,a.Health.CurrentHealth),
+                "Bot Parado não anda nem ataca");
+
+            bot.SetMode(PrototypeTrainingBot.TrainingMode.StationaryAttack);
+            stationaryStart = w.transform.position;
+            yield return new WaitForSeconds(2.2f);
+            Check(Vector3.Distance(stationaryStart,w.transform.position)<0.03f && a.Health.CurrentHealth<healthBefore,
+                "Bot Parado + ataque golpeia em alcance sem deslizar");
+            bot.enabled = false;
+            bot.SetMode(PrototypeTrainingBot.TrainingMode.Normal);
+
+            foreach (string id in new[] { "Warrior_Move_Base", "Warrior_Move_A", "Warrior_Move_B" })
+            {
+                ResetPair(6f); events.Clear();
+                AbilityDefinition pursuit = Ability(id);
+                w.Abilities.EquipLabVariation(pursuit);
+                a.Motor.Teleport(new Vector3(3f,1f,1.4f));
+                a.Motor.FaceDirection(Vector3.forward);
+                Physics.SyncTransforms();
+                Vector3 warriorStart = w.transform.position;
+                a.Motor.SetMoveInput(Vector2.up);
+                bool used = w.Abilities.TryUse(AbilitySlot.Movement,Vector3.right);
+                yield return new WaitForSeconds(0.72f);
+                a.Motor.StopMovementImmediately();
+                Check(used && Near(a.Health.MaxHealth-a.Health.CurrentHealth,pursuit.damage,0.08f) && Count(CombatEventKind.Hit,a)==1,
+                    id+": persegue alvo em movimento e causa dano uma vez");
+                Check(w.transform.position.z>warriorStart.z+0.25f,
+                    id+": trajetória corrige direção durante a perseguição");
+            }
+
+            ResetPair(4f); events.Clear();
+            AbilityDefinition impact = Ability("Warrior_Move_A");
+            w.Abilities.EquipLabVariation(impact);
+            Vector3 targetBefore = a.transform.position;
+            w.Abilities.TryUse(AbilitySlot.Movement,Vector3.right);
+            yield return new WaitForSeconds(0.9f);
+            Check(a.transform.position.x-targetBefore.x>impact.knockback-0.45f,
+                "Impacto do Guerreiro joga o inimigo para trás pela distância configurada");
+
+            ResetPair(6f); events.Clear();
+            w.Abilities.EquipLabVariation(impact);
+            var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            wall.name="Test_WarriorPursuitWall";
+            wall.transform.position=new Vector3(0f,1.5f,0f);
+            wall.transform.localScale=new Vector3(0.5f,3f,5f);
+            Physics.SyncTransforms();
+            w.Abilities.TryUse(AbilitySlot.Movement,Vector3.right);
+            yield return new WaitForSeconds(0.8f);
+            Check(w.transform.position.x<0f && Near(a.Health.CurrentHealth,a.Health.MaxHealth),
+                "Perseguição do Guerreiro respeita parede e não causa dano remoto");
+            Destroy(wall); yield return null;
+            bot.SetMode(PrototypeTrainingBot.TrainingMode.Normal);
+            bot.enabled = false;
+            ResetPair(5f);
         }
 
         IEnumerator TestVariationPresentation()

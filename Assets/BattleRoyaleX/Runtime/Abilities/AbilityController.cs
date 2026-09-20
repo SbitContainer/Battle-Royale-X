@@ -105,6 +105,7 @@ namespace BattleRoyaleX
 
             float currentReadyAt = readyAt.TryGetValue(slot, out float t) ? t : 0f;
             CharacterRuntime acquired = ability.behavior == AbilityBehavior.HuntSequence ? FindHuntTarget(ability, worldDirection) : null;
+            CharacterRuntime pursuitTarget = ability.pursueTarget ? FindPursuitTarget(ability, worldDirection, hasDirection) : null;
             if (ability.behavior == AbilityBehavior.HuntSequence && acquired == null) return false;
             if (Time.time < currentReadyAt || !runtime.Energy.TrySpend(ability.energyCost)) return false;
             if (comboInProgress) CancelBasicCombo();
@@ -134,7 +135,7 @@ namespace BattleRoyaleX
             CombatEvents.Raise(new CombatEventData(AbilityEventFor(ability), transform.position, runtime, runtime,
                 ability.behavior == AbilityBehavior.UltimateBuff ? ability.buffDuration : 0f,
                 ability, AbilityPhase.Startup, id, runtime.Motor.Facing));
-            StartCoroutine(Execute(ability, id));
+            StartCoroutine(Execute(ability, id, pursuitTarget));
             return true;
         }
 
@@ -301,7 +302,7 @@ namespace BattleRoyaleX
             }
         }
 
-        IEnumerator Execute(AbilityDefinition ability, int id)
+        IEnumerator Execute(AbilityDefinition ability, int id, CharacterRuntime pursuitTarget)
         {
             if (ability.startup > 0f) yield return new WaitForSeconds(ability.startup);
             if (!ActionStillValid(id)) { FinishAction(id); yield break; }
@@ -322,7 +323,7 @@ namespace BattleRoyaleX
                 case AbilityBehavior.Dodge:
                     defenseJourney = ability.slot == AbilitySlot.Defense ? ability : null;
                     defenseJourneyUntil = Time.time + ability.defenseDuration;
-                    ExecuteMovement(ability, ability.movementDistance);
+                    ExecuteMovement(ability, ability.movementDistance, pursuitTarget: pursuitTarget);
                     while (runtime.Motor.IsDashing && !runtime.Health.IsDead) yield return null;
                     break;
                 case AbilityBehavior.SmokeEscape:
@@ -330,7 +331,7 @@ namespace BattleRoyaleX
                     break;
                 case AbilityBehavior.Dash:
                 case AbilityBehavior.DashThrough:
-                    ExecuteMovement(ability, ability.movementDistance);
+                    ExecuteMovement(ability, ability.movementDistance, pursuitTarget: pursuitTarget);
                     while (runtime.Motor.IsDashing && !runtime.Health.IsDead) yield return null;
                     if (ActionStillValid(id) && ability.speedBonusDuration > 0f)
                         runtime.ApplyMovementSpeedBonus(ability.speedBonusMultiplier, ability.speedBonusDuration);
@@ -357,6 +358,40 @@ namespace BattleRoyaleX
         }
 
         bool ActionStillValid(int id) => id == actionSerial && runtime != null && runtime.Health != null && !runtime.Health.IsDead;
+
+        CharacterRuntime FindPursuitTarget(AbilityDefinition ability, Vector3 requestedDirection, bool hasDirection)
+        {
+            if (ability == null || !ability.pursueTarget || ability.pursuitAcquireRange <= 0f) return null;
+            Vector3 aim = hasDirection ? requestedDirection : runtime.Motor.Facing;
+            aim.y = 0f;
+            if (aim.sqrMagnitude < 0.001f) aim = runtime.Motor.Facing;
+            aim.Normalize();
+            CharacterRuntime best = null;
+            float bestDistance = ability.pursuitAcquireRange * ability.pursuitAcquireRange;
+            foreach (CharacterRuntime candidate in FindObjectsByType<CharacterRuntime>())
+            {
+                if (candidate == null || candidate == runtime || candidate.TeamId == runtime.TeamId ||
+                    candidate.TeamId == TeamId.Neutral || candidate.Health == null || candidate.Health.IsDead) continue;
+                Vector3 delta = candidate.transform.position - transform.position;
+                delta.y = 0f;
+                float sqr = delta.sqrMagnitude;
+                if (sqr < 0.01f || sqr > bestDistance || Vector3.Dot(aim, delta.normalized) < 0.15f) continue;
+                if (SmokeField.BlocksSight(transform.position, candidate.transform.position)) continue;
+                best = candidate;
+                bestDistance = sqr;
+            }
+            return best;
+        }
+
+        Vector3 PursuitDestination(CharacterRuntime target, float stopDistance)
+        {
+            if (target == null || target.Health == null || target.Health.IsDead ||
+                SmokeField.BlocksSight(transform.position, target.transform.position)) return transform.position;
+            Vector3 delta = target.transform.position - transform.position;
+            delta.y = 0f;
+            if (delta.sqrMagnitude <= stopDistance * stopDistance) return transform.position;
+            return target.transform.position - delta.normalized * stopDistance;
+        }
         void FinishAction(int id)
         {
             if (id != actionSerial) return;
@@ -420,31 +455,47 @@ namespace BattleRoyaleX
             FinishAction(id);
         }
 
-        void ExecuteMovement(AbilityDefinition ability, float distance, float durationOverride = 0f, bool reactive = false)
+        void ExecuteMovement(AbilityDefinition ability, float distance, float durationOverride = 0f, bool reactive = false,
+            CharacterRuntime pursuitTarget = null)
         {
             if (runtime.Motor.IsDashing) return;
             float duration = durationOverride > 0f ? durationOverride : ability.movementDuration;
+            float travelDistance = distance;
+            System.Func<Vector3> destination = null;
+            if (pursuitTarget != null && ability.pursueTarget)
+            {
+                duration = Mathf.Max(0.1f, ability.pursuitMaxDuration);
+                travelDistance = Mathf.Max(distance, ability.pursuitSpeed * duration);
+                destination = () => PursuitDestination(pursuitTarget, Mathf.Max(0.1f, ability.pursuitStopDistance));
+            }
             Hitbox sweep = null;
             if (ability.damage > 0f && (ability.slot != AbilitySlot.Defense || reactive))
             {
                 GameObject go = new GameObject("MovementHit_" + ability.abilityId);
                 go.transform.position = transform.position;
                 sweep = go.AddComponent<Hitbox>();
-                DamagePacket packet = new DamagePacket(runtime, ability, runtime.Motor.Facing) { knockback = 0f, clashable = false };
+                DamagePacket packet = new DamagePacket(runtime, ability, runtime.Motor.Facing) { clashable = false };
                 sweep.Configure(runtime, packet, Vector3.one, duration + ability.redirectDuration + 0.2f);
                 go.GetComponent<Collider>().enabled = false;
             }
-            runtime.Motor.Dash(distance, duration, ability.passThroughCharacters,
+            runtime.Motor.Dash(travelDistance, duration, ability.passThroughCharacters,
                 reactive ? duration : ability.invulnerabilityDuration, (from, to) =>
                 {
                     if (sweep == null || sweep.Cancelled) return;
+                    Vector3 travelled = to - from;
+                    if (travelled.sqrMagnitude > 0.0001f)
+                    {
+                        DamagePacket updated = sweep.Packet;
+                        updated.direction = travelled.normalized;
+                        sweep.UpdatePacket(updated);
+                    }
                     sweep.transform.position = to;
                     CharacterController ownController = GetComponent<CharacterController>();
                     float skin = ownController != null ? ownController.skinWidth : 0.08f;
                     foreach (Collider collider in Physics.OverlapCapsule(from + Vector3.up, to + Vector3.up,
                         Mathf.Max(0.35f, ability.width * 0.5f) + skin * 2f, ~0, QueryTriggerInteraction.Collide))
                         sweep.TryResolveHurtbox(collider.GetComponent<Hurtbox>());
-                });
+                }, destination);
         }
 
         void SpawnMeleeHitbox(AbilityDefinition ability, float damageMultiplier = 1f, float rangeMultiplier = 1f, float bonusDamage = 0f, float counterPush = 0f)

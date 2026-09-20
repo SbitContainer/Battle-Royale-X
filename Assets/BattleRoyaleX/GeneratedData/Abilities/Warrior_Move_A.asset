@@ -33,7 +33,7 @@ MonoBehaviour:
   range: 1
   width: 1
   height: 1.5
-  knockback: 0
+  knockback: 3.5
   clashable: 1
   blockable: 1
   parryable: 1
@@ -54,6 +54,11 @@ MonoBehaviour:
   invulnerabilityDuration: 0
   returnWindow: 0
   passThroughCharacters: 0
+  pursueTarget: 1
+  pursuitAcquireRange: 8
+  pursuitSpeed: 16
+  pursuitMaxDuration: 0.55
+  pursuitStopDistance: 0.72
   speedBonusDuration: 0
   speedBonusMultiplier: 1
   huntAcquireRange: 12

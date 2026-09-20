@@ -30,6 +30,7 @@ namespace BattleRoyaleX
                 case AbilityBehavior.DashReturn:
                 case AbilityBehavior.ChargedDashSequence:
                     detail = $"Dano {a.damage:0.#} por viagem · {a.movementDistance:0.#} m em {a.movementDuration:0.##} s.";
+                    if (a.pursueTarget) detail += $" Persegue alvo visível à frente até {a.pursuitAcquireRange:0.#} m por no máximo {a.pursuitMaxDuration:0.##} s; empurra {a.knockback:0.#} m.";
                     if (a.speedBonusDuration > 0f) detail += $" Após chegar: +{(a.speedBonusMultiplier-1)*100:0}% velocidade por {a.speedBonusDuration:0.#} s.";
                     if (a.behavior == AbilityBehavior.DashReturn) detail += $" Reative em {a.returnWindow:0.#} s para retornar.";
                     if (a.behavior == AbilityBehavior.ChargedDashSequence) detail += $" {a.chargeCount} avanços manuais em {a.chargeWindow:0.#} s.";

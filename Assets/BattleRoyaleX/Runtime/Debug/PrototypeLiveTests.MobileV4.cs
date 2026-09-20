@@ -144,6 +144,23 @@ namespace BattleRoyaleX
             var uiGo=new GameObject("Test_MobileV4_Controls");
             var controls=uiGo.AddComponent<PrototypeMobileTouchControls>(); controls.runInEditor=true;
             yield return null; yield return null;
+            var labSelectors=controls.GetComponentsInChildren<RectTransform>().Where(r=>r.name.StartsWith("LabSkill_")).OrderBy(r=>r.name).ToArray();
+            Check(labSelectors.Length==3 && labSelectors.All(r=>r.anchorMin==Vector2.zero && r.anchoredPosition.x<480f && r.anchoredPosition.y<240f),
+                "Mobile mostra seletores 1/2/3 no canto inferior esquerdo");
+            bool defenseA=controls.CycleLabVariation(AbilitySlot.Defense) && a.Abilities.GetEquipped(AbilitySlot.Defense)==a.Definition.defenseVariantA;
+            bool defenseB=controls.CycleLabVariation(AbilitySlot.Defense) && a.Abilities.GetEquipped(AbilitySlot.Defense)==a.Definition.defenseVariantB;
+            bool defenseBase=controls.CycleLabVariation(AbilitySlot.Defense) && a.Abilities.GetEquipped(AbilitySlot.Defense)==a.Definition.defenseBase;
+            Check(defenseA && defenseB && defenseBase,"Botão 1 alterna Defesa Base/A/B sem consumir runa");
+            Check(controls.CycleLabVariation(AbilitySlot.Movement) && controls.CycleLabVariation(AbilitySlot.Movement) &&
+                a.Abilities.GetEquipped(AbilitySlot.Movement)==a.Definition.movementVariantB,"Botão 2 alterna Movimento de A para B");
+            controls.CycleLabVariation(AbilitySlot.Movement);
+            Check(controls.CycleLabVariation(AbilitySlot.Ultimate) && controls.CycleLabVariation(AbilitySlot.Ultimate) &&
+                a.Abilities.GetEquipped(AbilitySlot.Ultimate)==a.Definition.ultimateVariantB,"Botão 3 alterna Ultimate de A para B");
+            controls.CycleLabVariation(AbilitySlot.Ultimate);
+            var stationary=controls.CycleBotMode(); var stationaryAttack=controls.CycleBotMode(); var normal=controls.CycleBotMode();
+            Check(stationary==PrototypeTrainingBot.TrainingMode.Stationary && stationaryAttack==PrototypeTrainingBot.TrainingMode.StationaryAttack &&
+                normal==PrototypeTrainingBot.TrainingMode.Normal && controls.CurrentBotMode==PrototypeTrainingBot.TrainingMode.Normal,
+                "Botão do laboratório alterna bot Normal/Parado/Parado + ataque");
             controls.OpenSettings();
             Check(controls.Player==a && Time.timeScale==0f,"Menu mobile pausa combate e identifica jogador Assassino");
             controls.SwitchPlayer();

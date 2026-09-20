@@ -10,7 +10,7 @@ namespace BattleRoyaleX
 
         void OnGUI()
         {
-            GUI.Box(new Rect(10, 10, 460, 315), "Battle Royale X — Laboratório de Combate");
+            GUI.Box(new Rect(10, 10, 460, 355), "Battle Royale X — Laboratório de Combate");
             DrawCharacter(new Rect(20, 35, 370, 45), "P1", playerOne);
             DrawCharacter(new Rect(20, 85, 370, 45), "P2", playerTwo);
             GUI.Label(new Rect(20, 130, 370, 20), "P1: WASD F/G/H/R 1-4 | P2: Arrows Numpad1/2/3/0 4-7");
@@ -22,6 +22,10 @@ namespace BattleRoyaleX
             DrawVariations(AbilitySlot.Defense, "Defesa", 218f);
             DrawVariations(AbilitySlot.Movement, "Movimento", 250f);
             DrawVariations(AbilitySlot.Ultimate, "Ultimate", 282f);
+            GUI.Label(new Rect(20, 319, 95, 24), "Modo do bot");
+            if (GUI.Button(new Rect(115, 314, 105, 28), "Normal")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.Normal);
+            if (GUI.Button(new Rect(225, 314, 105, 28), "Parado")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.Stationary);
+            if (GUI.Button(new Rect(335, 314, 115, 28), "Bate parado")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.StationaryAttack);
         }
 
         void DrawVariations(AbilitySlot slot, string label, float y)
