@@ -1838,3 +1838,217 @@ Jogador pode:
 - usar o combate como emboscada.
 
 Isso cria decisão emergente sem transformar PvE em requisito.
+
+
+---
+
+# 37. PACTO DE RUPTURA — X1 SEM INTERFERÊNCIA
+
+## IDEIA APROVADA PARA PROTÓTIPO FUTURO
+
+Sistema opcional que permite a dois jogadores transformar um confronto real em um X1 temporariamente isolado de terceiros.
+
+Nome provisório:
+- Pacto de Ruptura;
+- Duelo de Eco;
+- Arena de Ruptura.
+
+Objetivo:
+- permitir duelo limpo entre dois jogadores;
+- criar momentos de habilidade pura;
+- impedir que o sistema vire botão de fuga, proteção gratuita ou ferramenta obrigatória em solo.
+
+## 37.1 NÃO É UM BOTÃO DE INVULNERABILIDADE
+
+O Pacto não pode ser ativado livremente a qualquer momento.
+
+Pré-condição principal:
+- os dois jogadores precisam ter trocado dano diretamente entre si recentemente;
+- ambos precisam aceitar;
+- nenhum deles pode ter recebido dano de um terceiro jogador durante uma janela curta antes da ativação.
+
+Referência inicial:
+- A atingiu B;
+- B atingiu A;
+- troca aconteceu nos últimos 6–8 s;
+- nenhum dos dois recebeu dano de outro jogador nos últimos 5–8 s.
+
+Isso impede usar o Pacto para escapar de um 2x1, 3x1 ou emboscada já em andamento.
+
+## 37.2 CONSENTIMENTO DUPLO
+
+Depois que a condição de rivalidade é criada:
+- um jogador pode propor o Pacto;
+- o outro possui uma janela curta para aceitar;
+- sem aceite, nada acontece.
+
+Não existe duelo forçado.
+
+A decisão de aceitar faz parte do risco.
+
+## 37.3 CAMADA DE ECO
+
+Ao aceitar:
+- os dois são deslocados para uma camada paralela/instância curta;
+- o espaço usa uma cópia simplificada da área onde o duelo começou;
+- terceiros não podem causar dano nem entrar;
+- os dois continuam vendo claramente o limite da arena.
+
+A fantasia é que os jogadores continuam no mesmo lugar do mundo, mas em uma fase arcana separada.
+
+## 37.4 ESTADO NÃO RESETA
+
+Entrar no Pacto NÃO:
+- cura vida;
+- restaura energia;
+- reseta cooldown;
+- remove debuff;
+- recupera consumível.
+
+Cada jogador entra exatamente no estado em que estava.
+
+Ao sair:
+- vencedor mantém a vida restante;
+- cooldowns continuam;
+- recursos continuam;
+- loot do eliminado aparece no ponto de retorno/âncora.
+
+Isso evita usar o duelo como recuperação gratuita.
+
+## 37.5 CONSUMÍVEIS
+
+Direção preferida:
+- consumíveis de mundo ficam bloqueados durante o Pacto no primeiro protótipo;
+- habilidades próprias da classe continuam funcionando.
+
+Objetivo:
+- favorecer leitura, kit e execução;
+- impedir que o jogador use o X1 como janela segura para beber várias curas.
+
+Essa regra pode ser revista depois.
+
+## 37.6 ÂNCORA VISÍVEL NO MUNDO REAL
+
+Durante o duelo, uma Âncora de Ruptura permanece visível no mundo real.
+
+Ela mostra:
+- que existe um duelo em andamento;
+- tempo restante aproximado;
+- ponto onde os jogadores retornarão.
+
+Ela NÃO mostra:
+- vida atual;
+- classe exata se isso gerar abuso;
+- quem está vencendo.
+
+Terceiros não interferem no X1, mas podem decidir permanecer perto do ponto de retorno.
+
+Esse risco é proposital.
+
+Regra:
+> segurança durante o duelo não significa segurança depois dele.
+
+## 37.7 CÍRCULO / ZONA CONTINUA VALENDO
+
+O Pacto não congela a partida.
+
+Se a zona perigosa alcançar a posição/âncora:
+- dano da zona continua afetando os duelistas;
+- ou o duelo é encerrado antecipadamente conforme regra final futura.
+
+Direção preferida:
+- dano da zona atravessa a camada de Eco.
+
+Assim o Pacto nunca serve para esconder-se da tempestade/círculo.
+
+## 37.8 TEMPO MÁXIMO
+
+O duelo possui duração limitada.
+
+Referência inicial:
+- 20–30 s.
+
+Se ninguém morrer:
+- Pacto termina;
+- ambos retornam com o estado atual;
+- nenhum recebe recompensa.
+
+Isso impede stall deliberado.
+
+## 37.9 LIMITAÇÃO DE USO
+
+Para não transformar cada confronto de solo em X1 obrigatório:
+
+Referência preferida:
+- cada jogador pode participar de no máximo 1 Pacto de Ruptura por partida.
+
+Alternativas futuras se testes mostrarem necessidade:
+- 1 carga por jogador;
+- carga muito rara;
+- cooldown global muito longo;
+- quantidade limitada de Pactos simultâneos no mapa.
+
+A regra de 1 uso por partida é a base preferida para primeiro teste.
+
+## 37.10 BLOQUEIO NO ENDGAME
+
+Nos estágios finais da partida, o Pacto pode ser desativado.
+
+Referência inicial:
+- desabilitar quando restarem poucos jogadores;
+- ou a partir do círculo final/fase final.
+
+Motivo:
+- evitar manipulação do fim de partida;
+- evitar dois jogadores desaparecerem enquanto terceiros disputam a vitória;
+- impedir stall tático no último círculo.
+
+## 37.11 MODO SOLO
+
+No solo, o Pacto precisa continuar sendo escolha situacional, não estratégia padrão.
+
+Por isso ele combina:
+- troca de dano prévia;
+- aceite dos dois;
+- ausência de dano recente de terceiros;
+- uso limitado por partida;
+- estado não reseta;
+- consumíveis bloqueados;
+- zona continua causando dano;
+- âncora fica visível;
+- saída potencialmente perigosa.
+
+Resultado desejado:
+> quem quer um X1 limpo pode consegui-lo, mas paga risco estratégico por sair temporariamente do fluxo normal do Battle Royale.
+
+## 37.12 MODO EQUIPE
+
+No futuro, em squads:
+- Pacto continua sendo 1x1;
+- companheiros permanecem fora;
+- não podem entrar;
+- não podem interferir;
+- vencedor retorna para o mundo real ainda sujeito à equipe adversária.
+
+Isso torna aceitar um Pacto perto de inimigos uma decisão arriscada.
+
+Não implementar antes do multiplayer.
+
+## 37.13 RELAÇÃO COM LOOT
+
+O Pacto não gera loot raro adicional por existir.
+
+A recompensa é:
+- eliminação normal;
+- loot normal do adversário;
+- oportunidade de resolver confronto sem third party.
+
+Não transformar o sistema em fonte obrigatória de progressão.
+
+## 37.14 PRINCÍPIO
+
+> O Pacto de Ruptura oferece justiça momentânea na luta, mas não remove o risco estratégico do Battle Royale.
+
+Ele protege o duelo.
+
+Não protege o jogador da partida.
