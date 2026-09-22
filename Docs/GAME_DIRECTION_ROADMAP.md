@@ -1656,3 +1656,185 @@ evitar que RNG de nascimento entregue recompensa instantânea impossível de dis
 A escolha estratégica permanece com o jogador.
 
 A resolução técnica de densidade fica invisível.
+
+
+---
+
+# 36. GUARDIÕES ARCANOS / MONSTROS DE ALTO VALOR
+
+## DIREÇÃO APROVADA
+
+O mapa terá monstros especiais de alto risco que funcionam como objetivos PvE disputáveis.
+
+Objetivo:
+- criar pontos de interesse além da Zona de Confronto;
+- gerar risco/recompensa;
+- forçar decisão entre lutar contra o monstro, economizar recursos ou disputar outros jogadores;
+- permitir que PvE gere naturalmente PvP ao redor.
+
+Nome provisório:
+- Guardião Arcano;
+- Guardião de Ruína;
+- Criatura Ancestral;
+- outro nome final futuro.
+
+## 36.1 DROP RARO
+
+Ao derrotar um Guardião:
+- aproximadamente 30% de chance de gerar um drop raro/especial;
+- o drop fica fisicamente no chão;
+- não entra automaticamente no inventário;
+- outros jogadores podem disputar.
+
+O drop pode conter futuramente:
+- variação rara de habilidade;
+- item tático raro;
+- redução de cooldown especial;
+- cura de maior valor;
+- outro recurso de alto valor aprovado no sistema de loot.
+
+A raridade continua obedecendo à regra geral:
+- vantagem principalmente mecânica;
+- nunca mais que aproximadamente 20% de ganho mecânico total;
+- sem salto absurdo de dano bruto.
+
+## 36.2 ESCALA SOLO X EQUIPE
+
+O Guardião precisa se adaptar ao modo de jogo.
+
+### Modo equipe
+- vida maior;
+- padrões mais difíceis;
+- pressão suficiente para exigir cooperação;
+- deve ser muito difícil ou inviável derrotar rapidamente sozinho.
+
+### Modo solo
+- vida e/ou dano reduzidos;
+- padrões ajustados para um único jogador;
+- ainda deve custar recurso e vida;
+- derrotá-lo sozinho é possível, mas arriscado.
+
+Princípio do solo:
+> o jogador consegue matar, porém normalmente sai da luta vulnerável e com parte relevante da vida/recursos consumidos.
+
+Não criar um chefe que seja simplesmente uma esponja de HP.
+
+A dificuldade deve vir também de:
+- telegraphs;
+- posicionamento;
+- ataques evitáveis;
+- leitura de padrão;
+- uso das interações do mapa.
+
+## 36.3 RESPAWN
+
+Referência inicial:
+- respawn aproximadamente a cada 60 segundos após a morte.
+
+O respawn de 1 minuto é valor de teste e pode mudar depois de observar:
+- duração média da partida;
+- frequência de contestação;
+- quantidade de drops;
+- facilidade de farm;
+- densidade do mapa.
+
+## 36.4 ANTI-FARM
+
+Como o respawn é frequente, impedir que uma equipe controle permanentemente o mesmo Guardião e acumule vantagem sem risco.
+
+Possíveis proteções:
+- posição do Guardião exposta/telegráfica;
+- luta gera efeitos visuais/sonoros perceptíveis;
+- drop fica no chão e pode ser roubado;
+- Guardião não concede atributos permanentes;
+- loot continua limitado por slots;
+- chance de 30% não garante recompensa;
+- considerar diminishing reward ou rotação futura apenas se testes mostrarem farm excessivo.
+
+Não adicionar redução artificial por equipe antes de testar; primeiro observar comportamento real.
+
+## 36.5 CURA DURANTE A LUTA
+
+O Guardião deve causar pressão suficiente para que:
+- cura tenha valor;
+- gastar cura no PvE tenha custo estratégico;
+- jogador possa ser surpreendido por outro jogador enquanto está enfraquecido.
+
+No modo solo, a intenção é que o jogador frequentemente termine a luta com perda relevante de vida, mesmo vencendo corretamente.
+
+## 36.6 INTERAÇÃO COM O MAPA
+
+Guardião deve poder interagir com Terreno Arcano Reativo.
+
+Exemplos futuros:
+- magia do Guardião refletida por Parede Prismática;
+- ataques pesados temporariamente destroem Moita Reativa;
+- projétil do Guardião atravessa Barreira de Amplificação;
+- jogador usa Cristal de Fragmentação contra o Guardião;
+- Runa de Velocidade ajuda a evitar padrão de ataque.
+
+Isso reforça a identidade do Battle Royale X:
+> PvE e PvP usam o mesmo conjunto de regras do mundo.
+
+## 36.7 TELEGRAPH E JUSTIÇA
+
+Ataques fortes do Guardião devem ser evitáveis.
+
+Não usar:
+- dano inevitável excessivo;
+- stun longo;
+- chain CC;
+- golpe surpresa impossível de ler.
+
+Usar:
+- círculos/linhas no chão;
+- animações claras;
+- som;
+- preparação visual;
+- padrões aprendíveis.
+
+O jogador deve perder vida principalmente por erro de execução ou por decidir continuar lutando sob pressão.
+
+## 36.8 POSICIONAMENTO NO MAPA
+
+Não colocar todos os Guardiões em um único tipo de módulo.
+
+O sistema modular deve permitir sockets de Guardião em diferentes regiões.
+
+Nem toda posição precisa estar ativa ao mesmo tempo.
+
+Possibilidades futuras:
+- alguns Guardiões ativos por partida;
+- posição sorteada entre sockets válidos;
+- diferentes modelos/padrões usando a mesma categoria de recompensa.
+
+Isso impede rota fixa de farm.
+
+## 36.9 RELAÇÃO COM A ZONA DE CONFRONTO
+
+Guardião e Zona de Confronto são sistemas independentes.
+
+Pode acontecer:
+- Guardião fora da Zona;
+- Guardião dentro da Zona;
+- Zona mover e passar por um Guardião.
+
+Se ambos coincidirem, o local naturalmente vira ponto de altíssimo risco.
+
+Não aumentar automaticamente o drop só porque está dentro da Zona, salvo decisão futura de balanceamento.
+
+## 36.10 PRINCÍPIO
+
+> O Guardião oferece uma chance de acelerar sua build, mas cobra vida, tempo, cooldowns e exposição.
+
+Ele não deve ser obrigatório para vencer.
+
+Jogador pode:
+- ignorar;
+- tentar sozinho;
+- disputar em equipe;
+- esperar outro grupo enfraquecê-lo;
+- roubar o drop;
+- usar o combate como emboscada.
+
+Isso cria decisão emergente sem transformar PvE em requisito.
