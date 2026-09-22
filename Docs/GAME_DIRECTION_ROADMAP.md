@@ -2172,8 +2172,10 @@ A evolução:
 A evolução Titânica deve ser visualmente reconhecível.
 
 Se o jogador trocar de variação de Ultimate depois de obter a evolução:
-- a regra exata de transferência ou perda da evolução ainda será definida em teste futuro;
-- não assumir automaticamente que todas as variações recebem o benefício.
+- a Evolução Titânica acompanha o **slot Ultimate**;
+- a nova variação equipada passa a receber sua versão Titânica correspondente;
+- o jogador não perde a evolução por trocar de variação;
+- apenas uma Ultimate por vez recebe o efeito, sempre a que estiver atualmente equipada.
 
 O item cai fisicamente no chão:
 - não vai automaticamente para quem deu o último hit;
