@@ -2147,20 +2147,43 @@ Se já estiver abaixo do novo teto:
 
 ---
 
-## 37.14 DROP ÚNICO
+## 37.14 DROP ÚNICO — EVOLUÇÃO DA ULTIMATE
 
 Ao morrer:
 - Titã deixa um **item único da partida**.
 
-Esse item:
-- não deve ser simples +dano massivo;
-- precisa oferecer uma propriedade mecânica especial;
-- deve ser forte e memorável;
-- não deve tornar o vencedor automaticamente imortal/incontestável.
+Regra definida:
 
-O design exato do artefato será definido separadamente.
+> O item do Titã evolui **somente a Ultimate atualmente equipada** do jogador que conseguir coletá-lo.
 
-Só deve existir uma recompensa única ligada à morte do Titã por partida, salvo mudança futura.
+Nunca evolui:
+- Ataque Básico;
+- Defesa;
+- Movimento.
+
+A evolução:
+- dura somente até o fim daquela partida;
+- melhora a Ultimate principalmente em comportamento/mecânica;
+- não deve transformar a Ultimate em morte inevitável;
+- não deve criar aumento bruto exagerado de dano;
+- deve respeitar a filosofia de vantagem mecânica limitada;
+- pode melhorar alcance, área, duração, janela, mobilidade, controle de direção, recovery, interação com mapa ou outra propriedade coerente com aquela Ultimate.
+
+A evolução Titânica deve ser visualmente reconhecível.
+
+Se o jogador trocar de variação de Ultimate depois de obter a evolução:
+- a regra exata de transferência ou perda da evolução ainda será definida em teste futuro;
+- não assumir automaticamente que todas as variações recebem o benefício.
+
+O item cai fisicamente no chão:
+- não vai automaticamente para quem deu o último hit;
+- pode ser disputado ou roubado;
+- somente quem o coleta recebe a Evolução Titânica.
+
+Não conceder evolução simultânea a múltiplos slots.
+
+O design específico de cada **Ultimate Titânica** será definido junto com as Ultimates finais das classes.
+
 
 ---
 
