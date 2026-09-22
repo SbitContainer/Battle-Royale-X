@@ -1372,3 +1372,147 @@ Portanto:
 Regra:
 
 > o mapa muda a pergunta tática de cada partida, mas sempre oferece mais de uma resposta válida.
+
+
+---
+
+# 34. SISTEMA DE INÍCIO POR COORDENADA — SEM BIOMA E SEM CONTAGEM DE JOGADORES
+
+## DIREÇÃO APROVADA
+
+O jogador não escolhe "bioma" nem recebe informação de quantas pessoas escolheram determinada região.
+
+O mapa modular pode mudar completamente de composição entre partidas, mas sua referência espacial em X/Y continua existindo.
+
+Portanto a decisão de início deve ser:
+
+> escolher uma área/coordenada física aproximada do mapa.
+
+O jogador pode decidir:
+- canto noroeste;
+- centro-leste;
+- sul;
+- setor central;
+- ou outra região espacial equivalente;
+
+mas não sabe necessariamente qual módulo/bioma estará ocupando aquele espaço naquela partida até a configuração ser revelada.
+
+## 34.1 O QUE O JOGADOR ESCOLHE
+
+Escolha espacial, não temática.
+
+Exemplo:
+- quadrante superior esquerdo;
+- região central;
+- borda inferior direita.
+
+O sistema converte a escolha em um conjunto de pontos válidos daquela região.
+
+O jogador não seleciona:
+- "Jardim Arcano";
+- "Ruínas";
+- "Santuário Prismático";
+- ou qualquer outro nome de bioma/módulo.
+
+Isso impede que uma classe escolha repetidamente o mesmo tipo de cenário.
+
+## 34.2 O QUE O JOGADOR NÃO SABE
+
+Antes do início, não mostrar:
+- quantidade de jogadores por ponto;
+- composição de classes;
+- nível de disputa;
+- indicador verde/amarelo/vermelho de população.
+
+A densidade de jogadores precisa ser descoberta naturalmente ao iniciar a partida.
+
+Isso preserva:
+- risco;
+- surpresa;
+- leitura;
+- decisões sociais;
+- imprevisibilidade.
+
+## 34.3 RELAÇÃO COM O MAPA MODULAR
+
+A posição X/Y do mundo permanece estável como referência.
+
+Porém o módulo que ocupa aquela região pode mudar.
+
+Exemplo:
+
+Partida A:
+- noroeste = Jardim Arcano.
+
+Partida B:
+- noroeste = Ruínas de Ressonância.
+
+Partida C:
+- noroeste = Santuário Prismático.
+
+Um jogador pode gostar de iniciar no noroeste por estratégia de rota, mas não consegue garantir que encontrará sempre o mesmo bioma.
+
+## 34.4 DISTRIBUIÇÃO DENTRO DA REGIÃO ESCOLHIDA
+
+O jogador escolhe uma região aproximada.
+
+O sistema seleciona um spawn válido entre vários sockets daquela área.
+
+Objetivos:
+- impedir spawn pixel-perfect decorado;
+- evitar jogadores materializando exatamente no mesmo ponto;
+- manter controle estratégico sem dar precisão excessiva.
+
+Não transformar a escolha em RNG total.
+
+O jogador escolhe a região.
+O sistema escolhe o ponto seguro dentro dela.
+
+## 34.5 APRESENTAÇÃO TEMÁTICA
+
+A mecânica pode continuar usando a fantasia de Fraturas/Nexo.
+
+Porém as Fraturas representam posições espaciais do mapa, não biomas.
+
+Exemplo:
+- o Nexo mostra uma projeção do mapa;
+- jogador marca uma área;
+- uma Fratura se vincula àquela coordenada;
+- na abertura da partida ele é materializado em um socket válido próximo.
+
+Nome provisório do sistema:
+- Fratura de Entrada;
+- Fratura de Materialização;
+- Sistema de Fraturas.
+
+## 34.6 MAPA VISÍVEL OU PARCIALMENTE VISÍVEL
+
+Questão ainda EM TESTE:
+
+Decidir futuramente quanto da composição modular o jogador consegue ver antes de escolher a coordenada.
+
+Possibilidades:
+- mapa completo já revelado;
+- silhueta/geometria geral sem mostrar todas as interações;
+- mapa parcialmente oculto;
+- montagem acontecendo depois da escolha.
+
+A decisão deve equilibrar:
+- estratégia;
+- surpresa;
+- RNG;
+- justiça.
+
+## 34.7 ZONA DE CONFRONTO
+
+A Zona de Confronto é independente do ponto de entrada.
+
+Ela muda de posição ao longo da partida e não deve ser usada para escolher o spawn inicial.
+
+Direção:
+- ponto inicial é definido primeiro;
+- Zona de Confronto é sorteada/revelada separadamente;
+- depois pode se mover novamente durante a partida.
+
+Isso evita que o sistema de início se transforme em uma corrida garantida para a primeira Zona de Confronto.
+
