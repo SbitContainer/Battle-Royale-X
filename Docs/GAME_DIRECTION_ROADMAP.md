@@ -1206,3 +1206,169 @@ Isso faz a localização da Zona de Confronto mudar também o estilo de batalha.
 
 ---
 
+
+
+---
+
+# 33. MAPA MODULAR RECOMBINÁVEL
+
+## DIREÇÃO APROVADA
+
+Todos os mapas/partidas devem oferecer **todas as categorias principais de interação arcana**.
+
+Nenhuma classe deve possuir um "bioma obrigatório" onde sempre queira cair por ser a única região que contém a interação ideal para seu kit.
+
+Cada setor pode favorecer certos estilos por:
+- maior quantidade;
+- melhor posicionamento;
+- geometria;
+- combinação entre elementos;
+
+mas não por exclusividade absoluta.
+
+Exemplo:
+- uma região pode ter mais Barreiras de Amplificação;
+- outra mais Paredes Prismáticas;
+- outra mais Moitas Reativas;
+- porém todas ainda possuem pelo menos algumas opções das demais categorias.
+
+Objetivo:
+
+> toda classe encontra ferramentas úteis em qualquer parte do mapa, mas jogadores experientes aprendem quais setores favorecem determinadas estratégias.
+
+## 33.1 MÓDULOS / PEÇAS DE MAPA
+
+O mapa futuro pode ser construído como um grande quebra-cabeça de módulos compatíveis.
+
+Cada módulo deve possuir:
+- bordas/conexões padronizadas;
+- entradas e saídas compatíveis;
+- navegação garantida;
+- pontos reservados para loot;
+- pontos reservados para elementos arcanos;
+- cobertura;
+- espaço de combate;
+- regras de conexão com módulos vizinhos.
+
+Os módulos podem ser:
+- reposicionados entre partidas;
+- rotacionados quando a geometria permitir;
+- combinados em ordens diferentes;
+- receber variações internas de objetos/interações.
+
+A aleatoriedade deve modificar a leitura da partida sem gerar mapa inválido.
+
+## 33.2 GARANTIA DE INTERAÇÕES
+
+Cada macrozona deve possuir uma quantidade mínima de categorias.
+
+Categorias principais iniciais:
+- Parede de Fase;
+- Parede Prismática;
+- Cristal de Fragmentação;
+- Barreira de Amplificação;
+- Runa de Velocidade;
+- Moita Reativa.
+
+Não é necessário ter a mesma quantidade de cada uma.
+
+Exemplo conceitual:
+- setor A: 4 prismáticas, 1 amplificação, 2 runas, 2 cristais, 3 moitas, 1 parede de fase;
+- setor B: 1 prismática, 4 amplificações, 1 runa, 3 cristais, 2 moitas, 2 paredes de fase.
+
+Ambos oferecem todas as mecânicas, mas produzem combates diferentes.
+
+## 33.3 ALEATORIEDADE EM CAMADAS
+
+A variedade do mapa pode acontecer em três níveis:
+
+### Camada 1 — posição dos módulos
+Grandes setores mudam de posição/ordem.
+
+### Camada 2 — rotação/ligação
+Quando seguro para gameplay, módulos podem ser rotacionados ou conectados por lados diferentes.
+
+### Camada 3 — população interna
+Dentro do mesmo módulo, posições pré-validadas podem alternar:
+- interação arcana;
+- loot;
+- cobertura;
+- moita;
+- runa;
+- cristal;
+- barreira.
+
+Não usar geração totalmente livre.
+
+Preferir sockets/pontos previamente testados para evitar:
+- caminhos bloqueados;
+- spawn injusto;
+- interação impossível;
+- combo ambiental quebrado;
+- vantagem acidental de um lado.
+
+## 33.4 REGRAS DE ENCAIXE
+
+Todos os módulos precisam seguir um padrão comum de borda.
+
+Cada lado pode possuir conectores como:
+- passagem aberta;
+- corredor;
+- arco/portal;
+- conexão larga;
+- conexão estreita.
+
+Um gerador futuro só pode encaixar lados compatíveis.
+
+Depois da montagem, deve validar:
+- todos os setores alcançáveis;
+- múltiplas rotas entre áreas importantes;
+- nenhuma região isolada;
+- nenhum spawn preso;
+- distância mínima entre pontos críticos;
+- densidade mínima/máxima de interações.
+
+## 33.5 MEMÓRIA + IMPROVISO
+
+O objetivo não é tornar o mapa completamente desconhecido.
+
+O jogador deve conseguir aprender os módulos individualmente.
+
+Exemplo:
+> "Reconheço o Jardim Prismático e sei como usar aquela parede."
+
+Mas não necessariamente saber:
+> "O Jardim sempre fica no nordeste e sempre conecta com as Ruínas."
+
+Assim o jogo recompensa simultaneamente:
+- conhecimento;
+- adaptação;
+- leitura rápida da partida.
+
+## 33.6 ZONA DE CONFRONTO + MAPA MODULAR
+
+A Zona de Confronto pode ativar sobre módulos diferentes a cada partida.
+
+Como todos os módulos possuem o conjunto básico de interações, nenhuma ativação é inútil para determinada classe.
+
+Porém a configuração local muda o estilo do confronto.
+
+Exemplo:
+- zona sobre módulo com muitas prismáticas = luta de ângulo/reflexão;
+- zona sobre módulo com mais moitas/runas = luta de perseguição e emboscada;
+- zona sobre módulo com mais cristais/amplificadores = luta explosiva e de posicionamento.
+
+## 33.7 PRINCÍPIO DE EQUIDADE
+
+Aleatoriedade do mapa deve criar variedade, não decidir vencedor.
+
+Portanto:
+- não remover completamente uma categoria de interação de uma grande região;
+- não gerar corredor único obrigatório;
+- não posicionar amplificador de forma que um spawn tenha acesso garantido e outro não;
+- não gerar combinações ambientais capazes de morte inevitável;
+- usar pesos e limites de distribuição.
+
+Regra:
+
+> o mapa muda a pergunta tática de cada partida, mas sempre oferece mais de uma resposta válida.
