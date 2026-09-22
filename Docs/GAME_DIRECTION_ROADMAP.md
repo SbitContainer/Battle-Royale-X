@@ -939,3 +939,270 @@ e não:
 Sorte cria oportunidade.
 
 Habilidade transforma oportunidade em vitória.
+
+
+---
+
+# 32. TERRENO ARCANO REATIVO
+
+## DIREÇÃO APROVADA
+
+O mapa do Battle Royale X deve possuir elementos mágicos que **interagem diretamente com habilidades**.
+
+O cenário não deve servir apenas como cobertura.
+
+Objetivo:
+
+> o jogador aprende o mapa da mesma forma que aprende uma classe.
+
+Posicionamento perto de determinados elementos pode mudar completamente uma troca.
+
+As interações precisam ser:
+- previsíveis;
+- visualmente claras;
+- utilizáveis por qualquer jogador;
+- baseadas em habilidade;
+- sem kills inevitáveis;
+- sem loops infinitos.
+
+---
+
+## 32.1 PAREDE DE FASE
+
+Parede mágica atravessável por personagens, mas não por habilidades/projéteis compatíveis.
+
+Regras iniciais:
+- personagens atravessam normalmente;
+- projéteis mágicos param;
+- projéteis físicos compatíveis também podem ser bloqueados conforme material final;
+- ataques corpo a corpo não são afetados se o personagem já atravessou;
+- a parede precisa ser translúcida e indicar claramente que é diferente de parede sólida.
+
+Uso tático:
+- Assassino pode atravessar para quebrar linha de ataque;
+- Guerreiro pode atravessar para forçar combate próximo;
+- Mago/Arqueiro não conseguem simplesmente disparar através dela.
+
+---
+
+## 32.2 PAREDE PRISMÁTICA / ESPELHO ARCANO
+
+Parede que reflete projéteis mágicos.
+
+Regras iniciais:
+- reflexão usa ângulo de incidência;
+- apenas magia compatível é refletida;
+- dano não aumenta pela reflexão;
+- projétil refletido continua legível;
+- limitar quantidade de reflexões por projétil.
+
+Referência inicial:
+- máximo de 1 reflexão por projétil no protótipo.
+
+Objetivo:
+permitir bank shots e jogadas de previsão sem criar ricochetes infinitos.
+
+Arqueiro físico não recebe automaticamente o mesmo benefício; interações específicas podem existir futuramente.
+
+---
+
+## 32.3 NÚCLEO / CRISTAL DE FRAGMENTAÇÃO
+
+Objeto mágico que reage quando atingido.
+
+Ao receber uma habilidade compatível:
+- gera explosão curta;
+- cria fragmentos em várias direções;
+- fragmentos causam dano reduzido;
+- fragmentos podem atingir inimigos e, se necessário, o próprio jogador conforme regra futura.
+
+Referência inicial:
+- 6 a 8 fragmentos;
+- cada fragmento com aproximadamente 20–30% do valor ofensivo de referência;
+- impedir múltiplos fragmentos acertando o mesmo alvo de produzir burst absurdo;
+- fragmentos não podem reativar o mesmo cristal imediatamente;
+- sem reação em cadeia infinita.
+
+Objetivo:
+transformar posicionamento perto do cristal em risco e oportunidade.
+
+---
+
+## 32.4 BARREIRA DE AMPLIFICAÇÃO
+
+Barreira mágica atravessável por projéteis.
+
+Quando uma habilidade compatível atravessa:
+- recebe amplificação mecânica de dano;
+- efeito visual muda claramente;
+- jogador consegue identificar que o ataque foi amplificado.
+
+Referência:
+- aumento entre 10% e 15% de dano;
+- nunca ultrapassar o teto decidido sem novo balanceamento;
+- amplificações não acumulam entre múltiplas barreiras.
+
+Regra anti-abuso:
+> uma mesma habilidade só pode receber uma amplificação de mapa.
+
+Uso esperado:
+- Mago e Arqueiro valorizam posicionamento próximo;
+- adversários sabem que aquela região favorece ranged;
+- Assassino/Guerreiro podem tentar expulsá-los dali.
+
+A barreira não pertence a um time.
+Qualquer jogador pode aproveitá-la.
+
+---
+
+## 32.5 RUNA DE VELOCIDADE
+
+Runa fixa no chão.
+
+Ao atravessar/ativar:
+- aumenta temporariamente a velocidade de movimento;
+- não aumenta dano;
+- não concede invulnerabilidade.
+
+Referência inicial:
+- +10% a +15% de velocidade;
+- duração curta;
+- cooldown individual para reutilização;
+- não acumula com outra runa igual.
+
+Objetivo:
+criar rotas de perseguição, fuga e reposicionamento conhecidas por jogadores experientes.
+
+A runa deve beneficiar qualquer classe.
+
+---
+
+## 32.6 MOITA REATIVA
+
+Moita continua servindo como elemento de ocultação.
+
+Porém pode ser temporariamente destruída por ataques/efeitos compatíveis.
+
+Regras:
+- destruição NÃO é permanente;
+- após um período, a vegetação se regenera;
+- regeneração deve possuir sinal visual antes de voltar completamente;
+- jogadores podem memorizar que determinada cobertura está temporariamente indisponível.
+
+Referência inicial para teste:
+- moita destruída entre 15 e 30 segundos;
+- depois começa processo visual de regeneração.
+
+Possíveis gatilhos:
+- ataques pesados;
+- explosões;
+- magia de área;
+- interações específicas futuras.
+
+Evitar que todo ataque básico destrua vegetação automaticamente.
+
+---
+
+## 32.7 CADEIAS DE INTERAÇÃO DO MAPA
+
+A identidade desejada permite combinações como:
+
+- magia atravessa Barreira de Amplificação;
+- atinge Parede Prismática;
+- é refletida;
+- acerta Cristal de Fragmentação;
+- gera fragmentos em novas direções.
+
+Essas combinações podem se tornar uma assinatura do Battle Royale X.
+
+Porém devem possuir limites técnicos e de balanceamento.
+
+Regra inicial:
+- uma habilidade registra quais interações de mapa já utilizou;
+- não repetir a mesma categoria infinitamente;
+- limitar quantidade total de modificações ambientais por projétil;
+- efeitos secundários possuem dano reduzido;
+- efeitos secundários não reiniciam cadeias completas.
+
+Objetivo:
+permitir jogadas criativas sem criar loops imprevisíveis.
+
+---
+
+## 32.8 TAGS DE INTERAÇÃO
+
+No futuro, habilidades devem possuir categorias/tags que o mapa consiga consultar.
+
+Exemplos:
+- Physical;
+- Magical;
+- Projectile;
+- Melee;
+- Area;
+- Movement;
+- Heavy;
+- Reflectable;
+- Amplifiable;
+- FragmentTrigger.
+
+O objeto do mapa reage à propriedade da habilidade, e não à classe do personagem.
+
+Exemplo:
+- Parede Prismática procura `Reflectable + Magical`;
+- Barreira de Amplificação procura `Amplifiable`;
+- Moita reage a `Heavy` ou `Area`.
+
+Isso mantém o sistema escalável para novas classes.
+
+---
+
+## 32.9 PRINCÍPIO DE BALANCEAMENTO DO MAPA
+
+Elementos arcanos não devem decidir a luta sozinhos.
+
+Eles oferecem:
+- ângulo;
+- risco;
+- oportunidade;
+- rota;
+- posicionamento;
+- amplificação limitada.
+
+Eles não oferecem:
+- morte automática;
+- dano gigantesco;
+- hard CC;
+- imunidade;
+- vantagem permanente.
+
+Regra:
+
+> o mapa aumenta a expressão de habilidade do jogador; não joga por ele.
+
+---
+
+## 32.10 IDENTIDADE DAS REGIÕES
+
+No futuro, diferentes regiões do mapa podem possuir combinações diferentes de elementos arcanos.
+
+Exemplo:
+
+### Santuário Prismático
+- muitas paredes reflexivas;
+- poucas moitas;
+- favorece domínio de ângulos.
+
+### Jardim Arcano
+- moitas reativas;
+- runas de velocidade;
+- paredes de fase.
+
+### Ruínas de Ressonância
+- cristais de fragmentação;
+- barreiras de amplificação;
+- corredores estreitos.
+
+Isso faz a localização da Zona de Confronto mudar também o estilo de batalha.
+
+---
+
