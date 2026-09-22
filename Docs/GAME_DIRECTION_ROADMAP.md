@@ -2279,3 +2279,443 @@ Não confundir os dois sistemas.
 > Sobreviveu até o fim: agora talvez valha a pena caçá-lo.
 
 O Titã deve ser parte da história de cada partida, não apenas um saco de HP com loot.
+
+
+---
+
+# 38. HYBRID BOT SIMULATION
+
+## DIREÇÃO APROVADA
+
+O Battle Royale X deve ser jogável mesmo com poucos ou nenhum jogador humano suficiente para preencher a partida.
+
+A solução definida é um sistema híbrido:
+
+> bots próximos de jogadores reais existem como personagens completos; bots distantes existem como simulação leve.
+
+Objetivos:
+- permitir partidas completas desde o início da vida do jogo;
+- evitar custo desnecessário de IA/física para todos os bots ao mesmo tempo;
+- manter ritmo natural de Battle Royale;
+- impedir que um único humano termine uma partida de 40 participantes com dezenas de kills artificiais;
+- preservar coerência espacial e de estado dos bots mesmo fora da visão do jogador.
+
+## 38.1 TRÊS NÍVEIS DE DIFICULDADE
+
+Os bots possuem três níveis:
+
+### Iniciante
+- reação lenta;
+- erra mais habilidades;
+- usa dodge/parry tarde;
+- tende a perseguir demais;
+- usa cooldowns de forma menos eficiente;
+- entende poucas interações de mapa;
+- toma decisões simples.
+
+### Intermediário
+- usa o kit corretamente;
+- entende fuga e cura;
+- sabe usar cobertura;
+- utiliza algumas interações de mapa;
+- controla melhor cooldown;
+- consegue cancelar basic e priorizar skill corretamente.
+
+### Experiente
+- controla distância;
+- conhece matchups;
+- baita Parry;
+- usa mapa de forma inteligente;
+- usa Titã/Guardião como parte da decisão;
+- troca variações de forma coerente;
+- foge de lutas ruins;
+- tenta finalizar quando possui vantagem real.
+
+Regra fundamental:
+- dificuldade de bot NÃO aumenta HP;
+- dificuldade de bot NÃO aumenta dano;
+- dificuldade vem de decisão, timing, precisão e uso dos sistemas.
+
+## 38.2 BOT RECORD
+
+Todo bot possui um registro persistente leve, mesmo quando não existe como GameObject completo.
+
+Dados mínimos:
+- ID;
+- nome;
+- posição aproximada;
+- classe;
+- HP;
+- energia;
+- kit/variações;
+- inventário/loot;
+- dificuldade;
+- objetivo atual;
+- estado de combate;
+- cooldowns relevantes;
+- adversário atual;
+- última atividade;
+- vivo/morto.
+
+O bot não desaparece conceitualmente quando sai da área do jogador.
+
+## 38.3 ACTIVE BOT
+
+Quando está dentro da área de relevância de um jogador real:
+- existe como personagem completo;
+- usa GameObject;
+- movimento real;
+- hitbox/hurtbox;
+- habilidades;
+- colisões;
+- navegação;
+- VFX;
+- interação com mapa;
+- combate real.
+
+Esse é o bot que o jogador pode ver e enfrentar.
+
+## 38.4 VIRTUAL BOT
+
+Longe de jogadores reais:
+- não precisa existir como personagem completo;
+- usa simulação abstrata;
+- atualiza posição aproximada;
+- toma decisões em frequência reduzida;
+- pode procurar loot;
+- pode mover-se para zona;
+- pode encontrar outros bots;
+- pode entrar em combate virtual;
+- pode fugir;
+- pode morrer.
+
+Quando volta para a área de relevância:
+- materializa com estado consistente;
+- posição;
+- HP;
+- energia;
+- kit;
+- inventário;
+- cooldowns aproximados;
+- objetivo atual.
+
+## 38.5 TRANSIÇÃO VIRTUAL ↔ ATIVO
+
+Ao entrar no raio de relevância:
+- VirtualBot → ActiveBot.
+
+Ao sair por tempo/distância suficiente:
+- ActiveBot → VirtualBot.
+
+Antes de desmaterializar:
+- salvar estado relevante.
+
+Evitar transição constante na borda do raio:
+- usar histerese;
+- raio de ativação menor;
+- raio de desativação um pouco maior;
+- ou tempo mínimo fora da área.
+
+## 38.6 BOLHAS DE SIMULAÇÃO
+
+Valores exatos serão testados.
+
+Estrutura conceitual:
+
+### Próximo
+- simulação completa.
+
+### Médio
+- simulação simplificada;
+- atualizações menos frequentes;
+- pode manter posição e decisões aproximadas.
+
+### Distante
+- somente estado virtual;
+- sem física;
+- sem animação;
+- sem combate frame a frame.
+
+Referências de distância serão definidas conforme:
+- tamanho real do mapa;
+- câmera;
+- plataforma;
+- multiplayer;
+- performance.
+
+## 38.7 BOT CONTRA BOT FORA DA VISÃO
+
+Bots distantes não devem simplesmente morrer por sorte instantânea.
+
+Quando dois VirtualBots entram em conflito:
+- inicia um confronto virtual;
+- duração plausível;
+- HP vai sendo reduzido;
+- dificuldade influencia execução;
+- classe/kit influencia opções;
+- vida atual influencia risco;
+- loot pode influenciar;
+- aleatoriedade existe, mas não decide tudo instantaneamente.
+
+O confronto pode terminar em:
+- eliminação;
+- fuga;
+- separação;
+- interrupção por zona/outro evento.
+
+## 38.8 MATERIALIZAÇÃO DURANTE COMBATE VIRTUAL
+
+Se um jogador real entra na região de dois bots que estavam lutando virtualmente:
+- a simulação virtual para;
+- ambos materializam;
+- mantêm HP compatível com o combate que já ocorreu;
+- continuam a luta fisicamente quando coerente.
+
+Exemplo:
+- Bot A estava com 45%;
+- Bot B com 28%;
+- jogador chega;
+- eles aparecem com aproximadamente esses estados, não com HP cheio.
+
+Isso evita sensação de kill feed puramente inventado.
+
+## 38.9 KILL FEED VIRTUAL
+
+Eliminações virtuais aparecem normalmente no kill feed.
+
+Exemplo:
+- `Ragnar eliminou Nyx`.
+
+A eliminação:
+- reduz número de participantes vivos;
+- não concede kill a jogador humano sem participação;
+- mantém ritmo da partida.
+
+Não rotular obrigatoriamente como BOT durante gameplay.
+
+## 38.10 CRÉDITO DE KILL
+
+Um jogador humano só recebe kill se realmente participou de forma relevante.
+
+Nunca:
+- bot distante morre;
+- humano recebe kill sem interação.
+
+Regra exata de crédito entre dano/último hit/assistência será definida futuramente.
+
+## 38.11 POPULAÇÃO E RITMO DA PARTIDA
+
+O sistema deve ajustar comportamento conforme número de humanos reais.
+
+Exemplo conceitual numa partida de 40:
+
+### 1 humano
+- 39 bots;
+- muitos confrontos virtuais;
+- humano termina com quantidade plausível de kills, não 39.
+
+### 10 humanos
+- 30 bots;
+- mistura de confrontos reais e virtuais.
+
+### 30 humanos
+- 10 bots;
+- pouca intervenção de simulação abstrata.
+
+### 40 humanos
+- 0 bots;
+- sistema de bots não interfere no ritmo.
+
+## 38.12 CURVA DE SOBREVIVENTES
+
+A partida possui uma curva-alvo aproximada de participantes vivos.
+
+Não é uma regra rígida.
+
+Serve apenas como regulador do comportamento dos bots distantes.
+
+Exemplo inicial para 40 participantes:
+- início: 40;
+- fechamento 1: ~32;
+- fechamento 2: ~24;
+- fechamento 3: ~17;
+- fechamento 4: ~11;
+- fechamento 5: ~7;
+- final: ~3–5.
+
+Se eliminações estão rápidas demais:
+- VirtualBots ficam menos agressivos;
+- encontros simulados terminam mais em fuga/separação.
+
+Se eliminações estão lentas demais:
+- VirtualBots procuram mais contato;
+- rotação para objetivos/zonas aumenta a chance de encontro.
+
+Nunca matar bots arbitrariamente apenas para acertar um número exato.
+
+## 38.13 OBJETIVOS DOS BOTS
+
+Bots não devem ter como único comportamento "achar inimigo e atacar".
+
+Podem possuir objetivos como:
+- procurar loot;
+- procurar habilidade;
+- buscar cura;
+- ir para Zona de Confronto;
+- acompanhar fechamento;
+- evitar combate;
+- caçar Guardião;
+- avaliar Titã;
+- fugir do Titã;
+- trocar variação;
+- perseguir alvo;
+- abandonar luta;
+- buscar posição melhor.
+
+O objetivo muda conforme contexto.
+
+## 38.14 BOTS PODEM FUGIR
+
+Bots, especialmente Intermediário/Experiente, devem reconhecer lutas ruins.
+
+Exemplos:
+- HP baixo;
+- cooldowns principais indisponíveis;
+- matchup desfavorável;
+- outro jogador entrando;
+- Titã próximo;
+- zona fechando.
+
+Podem:
+- correr;
+- usar moita;
+- usar runa de velocidade;
+- atravessar parede de fase;
+- usar cura;
+- correr em direção ao Titã;
+- buscar cobertura.
+
+Isso é necessário para parecerem participantes reais do Battle Royale.
+
+## 38.15 NOMES E APRESENTAÇÃO
+
+Durante a partida:
+- bots podem usar nomes normais;
+- não é obrigatório exibir `[BOT]`.
+
+O jogo não precisa fingir explicitamente que são humanos, mas também não precisa quebrar a apresentação durante combate.
+
+Transparência sobre população humana/bot pode aparecer:
+- no lobby;
+- resultado final;
+- estatísticas;
+- conforme decisão futura.
+
+## 38.16 PRINCÍPIO
+
+> Bots distantes não são personagens completos, mas também não são mortes aleatórias.
+
+Eles vivem uma versão simplificada da mesma partida.
+
+Quando entram no mundo do jogador, essa simulação se transforma em gameplay real.
+
+---
+
+# 39. REGENERAÇÃO NATURAL FORA DE COMBATE
+
+## DIREÇÃO APROVADA
+
+A barra de vida recupera continuamente quando o jogador permanece fora de combate.
+
+Objetivos:
+- reduzir dependência absoluta de poções;
+- permitir recuperação após sobreviver a uma luta;
+- manter ritmo de Battle Royale;
+- evitar que pequeno dano antigo condene o jogador por muitos minutos;
+- preservar valor das curas durante combate.
+
+## 39.1 INÍCIO DA REGENERAÇÃO
+
+A regeneração natural não começa imediatamente após receber dano.
+
+Precisa existir uma janela sem combate.
+
+Referência inicial para teste:
+- aproximadamente 6–10 segundos sem receber nem causar dano.
+
+Valor final será calibrado com TTK e ritmo real.
+
+## 39.2 O QUE CONTA COMO COMBATE
+
+A janela é reiniciada quando o jogador:
+- recebe dano de outro jogador;
+- causa dano a outro jogador;
+- recebe/causa dano relevante a Guardião;
+- recebe/causa dano relevante ao Titã;
+- participa de outra interação ofensiva que futuramente seja classificada como combate.
+
+Dano ambiental leve poderá ser tratado separadamente conforme sistema futuro.
+
+## 39.3 VELOCIDADE DE REGENERAÇÃO
+
+A cura natural deve ser contínua, não instantânea.
+
+Referência inicial:
+- recuperar alguns % da vida máxima por segundo.
+
+Evitar valor alto demais.
+
+Objetivo:
+- após vencer e conseguir espaço, recuperar-se;
+- durante perseguição, não conseguir resetar HP facilmente.
+
+Valor exato fica EM TESTE.
+
+## 39.4 REGENERAÇÃO X POÇÃO
+
+São sistemas diferentes.
+
+### Regeneração natural
+- somente fora de combate;
+- gratuita;
+- gradual;
+- mais lenta.
+
+### Poção
+- pode funcionar durante combate;
+- consome recurso/slot;
+- regenera mais rapidamente;
+- continua importante em situação de pressão.
+
+Assim poção não perde utilidade.
+
+## 39.5 INTERRUPÇÃO
+
+Ao entrar novamente em combate:
+- regeneração natural para imediatamente;
+- novo atraso começa.
+
+Não remover HP já recuperado.
+
+## 39.6 BOTS
+
+Bots ativos e virtuais seguem a mesma regra conceitual de regeneração fora de combate.
+
+VirtualBots podem calcular regen de forma matemática entre atualizações.
+
+Isso mantém consistência ao materializar um bot novamente.
+
+## 39.7 TITÃ E GUARDIÕES
+
+Atacar Titã/Guardião conta como combate e impede regeneração natural.
+
+Sair da luta e permanecer sem trocar dano pelo tempo exigido permite recuperação.
+
+## 39.8 PRINCÍPIO
+
+> Sobreviver e conseguir criar distância deve permitir recuperação.
+
+Mas:
+
+> fugir por dois segundos no meio da troca não deve resetar a luta inteira.
+
