@@ -1838,3 +1838,419 @@ Jogador pode:
 - usar o combate como emboscada.
 
 Isso cria decisão emergente sem transformar PvE em requisito.
+
+
+---
+
+# 37. TITÃ ERRANTE — CHEFÃO AMBIENTAL DINÂMICO
+
+## DIREÇÃO APROVADA
+
+O Battle Royale X terá um super chefão móvel, provisoriamente chamado **Titã Errante**.
+
+Ele não é um boss tradicional parado esperando ser atacado.
+
+Função principal:
+- atravessar o mapa;
+- interferir em confrontos;
+- quebrar posições seguras;
+- atrapalhar jogadores escondidos;
+- gerar decisões emergentes;
+- poder ser usado indiretamente como ameaça contra outros jogadores;
+- tornar-se progressivamente mais viável como objetivo de caça ao longo da partida.
+
+Princípio central:
+
+> Ignore o Titã e ele atrapalha. Ataque o Titã e ele luta de verdade.
+
+---
+
+## 37.1 COMPORTAMENTO GERAL
+
+Quando existe uma Zona de Confronto ativa:
+- o Titã prioriza caminhar em direção a ela;
+- ao chegar, permanece circulando/atuando dentro ou próximo da região;
+- interfere em lutas e jogadores dentro de seu raio de percepção.
+
+Quando não existe Zona de Confronto ativa:
+- entra em modo errante;
+- procura atividade;
+- combate;
+- uso de habilidades;
+- barulho/atividade futura equivalente;
+- jogadores próximos;
+- jogadores que o atacaram.
+
+O roaming deve ser semi-inteligente, não aleatório puro.
+
+---
+
+## 37.2 PRIORIDADE DE ALVO
+
+No comportamento normal, o Titã prioriza jogadores com maior **porcentagem de vida atual** dentro da área relevante.
+
+Não usar vida absoluta.
+
+Exemplo:
+- Guerreiro com 80% HP;
+- Assassino com 35% HP.
+
+A tendência normal é o Titã escolher o Guerreiro.
+
+Isso permite uso estratégico:
+- jogador ferido pode fugir em direção ao Titã;
+- perseguidor saudável corre risco de se tornar alvo prioritário.
+
+A prioridade por HP% não é absoluta se existir provocação.
+
+---
+
+## 37.3 PROVOCAÇÃO
+
+Se um jogador decide atacar o Titã de maneira relevante, passa a ser considerado **Provocador**.
+
+Enquanto provocado:
+- prioridade de alvo aumenta fortemente;
+- Titã pode ignorar um jogador mais saudável para responder a quem o está enfrentando;
+- regras de limitação de dano são reiniciadas conforme descrito abaixo.
+
+Ordem conceitual de ameaça:
+
+1. jogadores que provocaram o Titã recentemente;
+2. entre provocadores, maior ameaça/dano recente;
+3. se não houver provocação, maior % de HP;
+4. proximidade/atividade como desempate.
+
+---
+
+## 37.4 DANO PERCENTUAL
+
+Ataques ofensivos do Titã causam dano baseado na **vida máxima do alvo**.
+
+Referência definida:
+- uma habilidade ofensiva típica causa aproximadamente **20% da vida máxima** do personagem.
+
+O objetivo é fazer o Titã ter impacto semelhante contra classes com HP diferentes.
+
+Não usar dano fixo como regra principal.
+
+---
+
+## 37.5 ORÇAMENTO NORMAL DE DANO
+
+Enquanto o jogador NÃO está lutando deliberadamente contra o Titã:
+
+- o Titã pode causar no máximo aproximadamente **30% da vida máxima daquele jogador a cada janela de 10 segundos**.
+
+Esse limite é individual por jogador.
+
+Exemplo:
+- alvo tem 100 HP;
+- Titã acerta habilidade de 20%;
+- ainda existe orçamento de 10% durante a mesma janela;
+- novo golpe que causaria 20% fica limitado ao orçamento restante.
+
+O dano continua letal:
+- se o jogador já está com pouca vida, o Titã pode finalizá-lo.
+
+Não existe proteção automática de 1 HP.
+
+---
+
+## 37.6 RESET AO ATACAR O TITÃ
+
+A regra muda quando o jogador escolhe lutar contra ele.
+
+Quando um jogador causa dano relevante ao Titã:
+- a janela/orçamento de 10 segundos desse jogador é resetada;
+- o Titã pode voltar a causar até o orçamento normal novamente;
+- a provocação é atualizada;
+- o jogador passa a correr risco real de ser focado.
+
+Isso significa:
+
+> atacar o Titã voluntariamente remove parte da proteção natural que existe para quem está apenas atravessando/fugindo.
+
+Se o jogador continua atacando:
+- novas provocações podem continuar reiniciando o risco conforme implementação final.
+
+A frequência exata do reset deve respeitar um limiar de provocação para evitar abuso/acidente.
+
+---
+
+## 37.7 DANO ACIDENTAL
+
+Pequeno dano incidental não deve necessariamente transformar o jogador em alvo principal.
+
+Antes de considerar Provocação completa, usar um limiar.
+
+Pode considerar:
+- dano acumulado mínimo;
+- múltiplos acertos;
+- hit direto;
+- intenção inferida por habilidade/targeting.
+
+Referência inicial:
+- aproximadamente 3–5% de uma vida normal equivalente em dano acumulado já pode contar como provocação real.
+
+Valor final será testado.
+
+---
+
+## 37.8 STUN E CONTROLE
+
+O Titã é uma exceção controlada à filosofia normal de hard CC.
+
+Ele pode possuir:
+- stun;
+- knockback;
+- empurrão;
+- lançamento lateral;
+- interrupção;
+- ondas de choque;
+- grandes deslocamentos.
+
+Porém não deve criar cadeia infinita de controle.
+
+Usar diminishing returns para controle repetido.
+
+Exemplo conceitual:
+- primeiro stun: forte;
+- segundo stun próximo: duração menor;
+- terceiro: muito curto;
+- depois resistência temporária.
+
+Valores finais serão definidos em teste.
+
+O objetivo é:
+> causar caos e reposicionamento, não deixar o jogador permanentemente sem jogar.
+
+---
+
+## 37.9 KIT CONCEITUAL DO TITÃ
+
+### Pisão Sísmico
+- grande área telegráfica;
+- aproximadamente 20% de dano máximo;
+- knockback;
+- stun/control compatível;
+- forte impacto visual.
+
+### Varredura
+- arco amplo;
+- aproximadamente 20%;
+- empurra jogadores lateralmente;
+- ameaça posicionamento próximo de objetos arcanos.
+
+### Impacto de Chão
+- área muito grande;
+- dano menor que habilidades principais se necessário;
+- controle/repulsão forte;
+- pode ativar elementos do cenário.
+
+### Investida
+- telegráfica;
+- dano percentual;
+- empurra/carrega o alvo;
+- muda a posição da luta.
+
+O kit final pode mudar, mas deve priorizar:
+- área;
+- controle;
+- perturbação;
+- telegraph;
+- pouca capacidade de burst instantâneo.
+
+---
+
+## 37.10 INTERAÇÃO COM TERRENO ARCANO
+
+O Titã utiliza as mesmas regras físicas/mágicas do mundo.
+
+Possibilidades aprovadas conceitualmente:
+- ataques dele podem ativar Cristais de Fragmentação;
+- pode destruir Moitas Reativas temporariamente;
+- projéteis/efeitos compatíveis podem interagir com Barreiras de Amplificação;
+- paredes e elementos podem alterar seus ataques quando fizer sentido;
+- jogadores podem usar elementos do mapa contra ele.
+
+PvE e PvP devem parecer pertencentes ao mesmo sistema.
+
+---
+
+## 37.11 VIDA INICIAL
+
+No começo da partida, o Titã possui vida extremamente alta.
+
+Referência definida:
+- aproximadamente **150 vezes a vida de um personagem normal**.
+
+A intenção é:
+- início: praticamente um elemento ambiental, não um alvo realista de solo;
+- meio: grupos podem começar a considerar atacá-lo;
+- final: torna-se um objetivo realmente matável.
+
+Não tratar 150x como número final até testes de TTK/PvE.
+
+---
+
+## 37.12 REDUÇÃO DE VIDA POR CICLO
+
+A cada ciclo de fechamento da área principal do Battle Royale:
+- a vida máxima do Titã é reduzida.
+
+Na última fase:
+- deve chegar a no máximo aproximadamente **5 vidas normais**.
+
+Progressão conceitual possível:
+- 150x;
+- 80x;
+- 40x;
+- 20x;
+- 10x;
+- 5x.
+
+A sequência exata depende do número de ciclos da partida.
+
+Regra fundamental:
+- reduzir o teto não cura o Titã;
+- dano causado anteriormente continua relevante.
+
+Formalmente:
+
+`HP atual novo = min(HP atual anterior, novo HP máximo)`
+
+Se já estiver abaixo do novo teto:
+- mantém a vida atual.
+
+---
+
+## 37.13 FUNÇÃO AO LONGO DA PARTIDA
+
+### Início
+- quase impossível de matar;
+- cria caos;
+- força deslocamento;
+- quebra esconderijos;
+- segue Zona de Confronto.
+
+### Meio
+- já acumulou dano e perdeu teto de HP;
+- equipes podem considerar atacá-lo;
+- continua perigoso por controle e intervenção.
+
+### Final
+- vida máxima reduzida significativamente;
+- pode estar próximo de 5x HP normal;
+- torna-se um objetivo real;
+- jogadores podem decidir finalizar pelo item único.
+
+---
+
+## 37.14 DROP ÚNICO
+
+Ao morrer:
+- Titã deixa um **item único da partida**.
+
+Esse item:
+- não deve ser simples +dano massivo;
+- precisa oferecer uma propriedade mecânica especial;
+- deve ser forte e memorável;
+- não deve tornar o vencedor automaticamente imortal/incontestável.
+
+O design exato do artefato será definido separadamente.
+
+Só deve existir uma recompensa única ligada à morte do Titã por partida, salvo mudança futura.
+
+---
+
+## 37.15 USO ESTRATÉGICO COMO "ALIADO"
+
+O Titã nunca pertence a um jogador/time.
+
+Mas sua IA pode ser manipulada indiretamente.
+
+Exemplo:
+- jogador com pouca vida foge em direção ao Titã;
+- perseguidor possui maior % HP;
+- Titã tende a focar o perseguidor saudável;
+- isso cria oportunidade de fuga.
+
+Outro exemplo:
+- perseguidor resolve atacar o Titã;
+- provoca o boss;
+- reset de orçamento;
+- Titã passa a tratá-lo como alvo prioritário.
+
+Nenhum comando direto existe.
+
+A "aliança" emerge do comportamento do sistema.
+
+---
+
+## 37.16 COMBATE A CAMPING
+
+O Titã contribui contra jogadores excessivamente escondidos por:
+- aproximar-se de zonas de combate;
+- usar ataques em área;
+- destruir temporariamente moitas;
+- alterar cobertura;
+- forçar movimentação.
+
+Não deve possuir wallhack arbitrário.
+
+Ele reage ao mundo e à atividade, não "sabe" magicamente onde todo jogador está.
+
+---
+
+## 37.17 RAIO DE PERCEPÇÃO E COMBATE
+
+Valores ainda EM TESTE.
+
+Direção:
+- um raio maior para detectar/considerar alvos;
+- um raio menor para iniciar habilidades.
+
+Referência de protótipo futuro:
+- percepção: aproximadamente 20–30 m;
+- combate: aproximadamente 12–18 m.
+
+Não tratar como valores finais.
+
+---
+
+## 37.18 RELAÇÃO COM GUARDIÕES MENORES
+
+Titã Errante e Guardiões Arcanos são sistemas diferentes.
+
+### Guardiões
+- objetivos PvE localizados;
+- respawn;
+- 30% de chance de drop raro;
+- pensados para ser caçados deliberadamente.
+
+### Titã
+- único/grande;
+- anda pelo mapa;
+- não existe principalmente para ser farmado;
+- atrapalha a partida inteira;
+- vida decai com ciclos;
+- dropa item único quando finalmente morre.
+
+Não confundir os dois sistemas.
+
+---
+
+## 37.19 PRINCÍPIO FINAL DO TITÃ
+
+> Fugiu dele: ele incomoda.
+>
+> Ignorou: ele muda a luta.
+>
+> Usou contra outro jogador: criou oportunidade.
+>
+> Resolveu atacar: ele pega pesado.
+>
+> Sobreviveu até o fim: agora talvez valha a pena caçá-lo.
+
+O Titã deve ser parte da história de cada partida, não apenas um saco de HP com loot.
