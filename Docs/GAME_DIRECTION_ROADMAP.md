@@ -1516,3 +1516,143 @@ Direção:
 
 Isso evita que o sistema de início se transforme em uma corrida garantida para a primeira Zona de Confronto.
 
+
+
+---
+
+# 35. SPAWN ELÁSTICO POR COORDENADA
+
+## DIREÇÃO APROVADA
+
+O jogador escolhe apenas uma posição aproximada X/Y no mapa.
+
+Antes da partida:
+- não enxerga o mapa;
+- não enxerga o bioma/módulo;
+- não vê quantidade de jogadores;
+- não vê classes escolhidas naquela região.
+
+O sistema nunca deve bloquear a escolha porque "acabaram os pontos de nascimento".
+
+Se muitos jogadores escolherem a mesma região, a área de materialização se expande automaticamente de forma invisível.
+
+## 35.1 REGIÃO ELÁSTICA
+
+Cada escolha de coordenada gera uma região de spawn ao redor do ponto selecionado.
+
+O sistema tenta primeiro usar sockets válidos mais próximos da coordenada.
+
+Conforme esses sockets são ocupados:
+1. usa o próximo anel de sockets;
+2. aumenta gradualmente o raio de procura;
+3. continua priorizando distância mínima em relação à escolha original.
+
+Assim:
+- pouca gente escolhendo o ponto = spawns muito próximos da coordenada desejada;
+- muita gente escolhendo = grupo espalhado em área maior;
+- todos continuam nascendo naquela parte geral do mapa.
+
+## 35.2 SEM CAPACIDADE VISÍVEL
+
+Não mostrar:
+- lotação;
+- quantidade de vagas;
+- aviso de saturação;
+- número de jogadores;
+- intensidade estimada de combate.
+
+Escolher uma região movimentada deve ser um risco oculto.
+
+## 35.3 SOCKETS DE SPAWN
+
+Cada módulo deve possuir muitos sockets de materialização previamente validados.
+
+Cada socket precisa garantir:
+- chão navegável;
+- distância mínima de parede/obstáculo;
+- espaço suficiente para o personagem;
+- nenhuma interseção com objeto;
+- nenhuma posição dentro de área impossível;
+- acesso a pelo menos duas direções quando possível.
+
+Os sockets não precisam aparecer visualmente.
+
+## 35.4 DISTÂNCIA MÍNIMA ENTRE JOGADORES
+
+No momento da atribuição, aplicar distância mínima entre spawns.
+
+Referência inicial:
+- aproximadamente 6–10 metros entre jogadores no mesmo cluster;
+- valor final depende do TTK e do tamanho real do mapa.
+
+Se não houver socket disponível dentro do raio inicial:
+- expandir o raio;
+- não empilhar personagens no mesmo ponto.
+
+## 35.5 FALLBACK EM ANÉIS
+
+O algoritmo deve procurar posições em anéis concêntricos.
+
+Exemplo conceitual:
+- Anel 1: raio curto;
+- Anel 2: raio médio;
+- Anel 3: raio maior;
+- fallback final: setor vizinho mais próximo.
+
+O fallback só ocorre quando não existe espaço seguro suficiente.
+
+Mesmo no fallback:
+- preservar o máximo possível a intenção espacial do jogador;
+- nunca enviar o jogador para o outro lado do mapa apenas por saturação.
+
+## 35.6 TODOS ESCOLHERAM O MESMO LUGAR
+
+Caso extremo:
+- todos os jogadores escolhem praticamente a mesma coordenada.
+
+Resultado desejado:
+- todos são aceitos;
+- spawns são distribuídos pelos sockets válidos mais próximos;
+- raio se expande progressivamente;
+- forma-se naturalmente um hot drop massivo;
+- ninguém recebe informação prévia de que isso acontecerá.
+
+Isso é comportamento válido, não erro.
+
+## 35.7 PROTEÇÃO DE MATERIALIZAÇÃO
+
+Para evitar morte antes do jogador assumir controle:
+
+Referência inicial:
+- 1,0–1,5 s de fase de materialização;
+- pode se movimentar;
+- não pode causar dano;
+- não recebe dano;
+- não pode coletar loot durante a fase, se isso gerar abuso.
+
+A proteção termina:
+- ao acabar o tempo;
+- ou imediatamente se o jogador tentar executar ação ofensiva, caso essa regra seja usada no futuro.
+
+A duração deve ser curta para não virar ferramenta de aproximação gratuita.
+
+## 35.8 LOOT E SPAWN
+
+Evitar loot de alto valor exatamente em cima de sockets de spawn.
+
+Aplicar distância mínima entre:
+- spawn;
+- habilidade rara;
+- item excepcional;
+- interação ambiental extremamente vantajosa.
+
+Objetivo:
+evitar que RNG de nascimento entregue recompensa instantânea impossível de disputar.
+
+## 35.9 PRINCÍPIO
+
+> O jogador escolhe onde quer começar; o sistema resolve onde exatamente ele pode materializar com segurança.
+
+A escolha estratégica permanece com o jogador.
+
+A resolução técnica de densidade fica invisível.
