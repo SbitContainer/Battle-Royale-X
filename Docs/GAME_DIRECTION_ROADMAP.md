@@ -193,28 +193,80 @@ Fraquezas:
 
 ---
 
-# 6. SISTEMA DE KITS E VARIAÇÕES
+# 6. ARQUITETURA DE HABILIDADES — PRIMEIRA VERSÃO
+
+## Estrutura do personagem
 
 Cada classe possui:
 
-- Ataque Básico fixo;
+- **Ataque Básico** fixo;
+- **Skill 1**;
+- **Skill 2**;
+- **Ultimate**.
+
+Na primeira versão existem somente **2 slots normais de skill + 1 slot exclusivo de Ultimate**.
+
+Não implementar um terceiro slot normal agora.
+
+## Início da partida
+
+O personagem começa somente com:
+- Ataque Básico.
+
+No início:
+- Skill 1 vazia;
+- Skill 2 vazia;
+- Ultimate vazia.
+
+As habilidades são encontradas durante a partida.
+
+Isso transforma a construção do kit em parte central do Battle Royale.
+
+## Slots normais não são categorias rígidas
+
+Skill 1 e Skill 2 não significam obrigatoriamente:
 - Defesa;
 - Movimento;
-- Ultimate.
+- Ataque.
 
-Ataque Básico nunca recebe variações.
+Uma classe pode montar combinações como:
+- duas mobilidades;
+- mobilidade + defesa;
+- ataque + mobilidade;
+- controle + ataque;
+- duas defesas;
+- outras combinações válidas da própria classe.
 
-Defesa, Movimento e Ultimate recebem variações.
+A Ultimate permanece separada e somente Ultimates podem ocupar o slot Ultimate.
 
-O jogador pode combinar variações de famílias diferentes.
+## Drops adaptativos de Skill 1 e Skill 2
+
+Os itens normais de habilidade são **adaptativos à classe atual**.
 
 Exemplo:
+- item `Skill 1 — Variação B`;
+- se Mago coleta, recebe a Skill 1-B do Mago;
+- se Guerreiro coleta, recebe a Skill 1-B do Guerreiro;
+- se Assassino coleta, recebe a Skill 1-B do Assassino;
+- se Arqueiro coleta, recebe a Skill 1-B do Arqueiro.
 
-- Defesa de um kit;
-- Movimento de outro;
-- Ultimate de outro.
+O mesmo princípio vale para Skill 2 e suas variações.
 
-Portanto os "kits" são famílias de identidade, não loadouts obrigatórios.
+Portanto o item físico pode ser o mesmo sistema de loot para todas as classes, mas resolve para a habilidade correspondente da classe que o coleta.
+
+## Ultimate é específica
+
+Ultimate é exceção.
+
+Para preencher/trocar o slot Ultimate:
+- o jogador precisa encontrar uma Ultimate válida da própria classe;
+- Ultimate não é convertida automaticamente entre classes como Skill 1/Skill 2.
+
+Isso mantém Ultimates como loot mais específico e valioso.
+
+## Princípio
+
+> Ataque Básico define a identidade mínima da classe; o loot encontrado define a build daquela partida.
 
 ---
 
@@ -316,24 +368,21 @@ Foco:
 
 # 8. LABORATÓRIO DE COMBATE
 
-Antes de transformar as variações em loot definitivo, o jogo deve possuir um modo de teste.
+Antes de transformar as habilidades em loot definitivo, o laboratório pode liberar troca direta para testes.
 
-Nesse laboratório:
-
-- bot/adversário permanece Guerreiro;
-- jogador pode testar Guerreiro ou Assassino;
-- variações podem ser trocadas livremente;
-- não precisam ser encontradas;
-- não consomem runa;
-- Defesa Base/A/B pode ser alternada;
-- Movimento Base/A/B pode ser alternado;
-- Ultimate Base/A/B pode ser alternada.
+No laboratório:
+- bot/adversário permanece Guerreiro enquanto essa fase estiver ativa;
+- jogador pode testar as classes já implementadas;
+- Skill 1 pode ser trocada entre versões disponíveis;
+- Skill 2 pode ser trocada entre versões disponíveis;
+- Ultimate pode ser trocada entre Ultimates da própria classe;
+- nenhum item precisa ser consumido durante o teste.
 
 Objetivo:
 
-> descobrir se a habilidade é divertida e balanceável antes de colocá-la dentro da economia de loot.
+> validar interação, matchup, dano, mobilidade e cooldown antes de prender a habilidade à economia de loot.
 
-Depois da validação, o sistema final volta a usar descoberta/loot.
+O laboratório é ferramenta de teste e não representa o início real de uma partida BR, onde o personagem começa apenas com Ataque Básico.
 
 ---
 
@@ -341,8 +390,11 @@ Depois da validação, o sistema final volta a usar descoberta/loot.
 
 A maior parte do loot de chão deve ser composta por:
 
-## Variações de habilidade
-Principal forma de progressão dentro da partida.
+## Skill 1 / Skill 2 adaptativas
+Itens universais que resolvem para a habilidade/variação correspondente da classe do jogador que coleta.
+
+## Ultimates específicas de classe
+Precisam corresponder à classe atual do personagem.
 
 ## Cura
 Regeneração durante combate.
@@ -354,7 +406,6 @@ Recuperação de recurso.
 Consumível tático.
 
 ## Itens de espaço/utilidade
-
 Exemplos:
 - parede;
 - fumaça;
@@ -366,22 +417,24 @@ Evitar inventário baseado em dezenas de peças de equipamento com atributos.
 
 ---
 
-# 10. VARIAÇÕES COMO "ARMAS" DO BATTLE ROYALE
+# 10. SKILLS COMO "ARMAS" DO BATTLE ROYALE
 
-As variações de habilidade devem cumprir o papel que armas diferentes cumprem em Battle Royales tradicionais.
+Skill 1, Skill 2 e Ultimates cumprem o papel que armas diferentes cumprem em Battle Royales tradicionais.
 
-O jogador encontra no mapa opções diferentes e decide:
+O jogador:
+- começa somente com Ataque Básico;
+- encontra habilidades;
+- escolhe o que equipar;
+- troca uma habilidade por outra;
+- adapta sua build ao matchup e ao loot encontrado.
 
-- equipar;
-- guardar;
-- trocar;
-- abandonar;
-- adaptar o kit ao matchup atual.
+Os drops normais de Skill 1/Skill 2 são adaptativos à classe.
 
-Uma partida pode começar com uma intenção de build e terminar com outra conforme o loot encontrado.
+Ultimates continuam específicas.
+
+Uma partida pode começar com uma intenção de build e terminar com outra.
 
 Isso gera:
-
 - adaptação;
 - improviso;
 - risco;
@@ -468,77 +521,61 @@ O pior caso aceitável é:
 Direção aprovada para substituir o conceito tradicional de airdrop.
 
 Nome provisório:
-
 > **Zona de Confronto**
-
-## Funcionamento
 
 Uma pequena região do mapa fica destacada como área de combate de alto valor.
 
 Dentro dela:
-
-- eliminações têm aproximadamente 50% de chance de gerar um Drop de Combate;
-- o loot não vai diretamente para quem matou;
-- ele cai fisicamente no chão;
-- outros jogadores podem disputar;
-- o drop pode conter habilidade de qualquer classe.
+- eliminações possuem aproximadamente 50% de chance inicial de gerar Drop de Combate;
+- o loot cai fisicamente no chão;
+- pode ser disputado ou roubado;
+- o drop de habilidade é adaptativo à classe de quem o coleta/equipa.
 
 Objetivo:
 
-> quem quer acelerar a construção do próprio kit precisa se expor a combate.
+> quem quer acelerar a construção do kit precisa se expor a combate.
+
+A Zona de Confronto muda de posição durante a partida.
 
 ---
 
 # 14. DROP DE COMBATE
 
-A chance de 50% refere-se inicialmente à chance de gerar um Drop de Combate.
+A chance aproximada de 50% refere-se inicialmente à chance de uma eliminação dentro da Zona de Confronto gerar um Drop de Combate.
 
-O Drop de Combate pode conter:
-
-- habilidade/variação;
+O Drop pode conter:
+- Skill 1/Skill 2 adaptativa;
 - cura especial;
 - redução de cooldown;
 - tático;
-- outro recurso raro futuro.
+- outro recurso aprovado no sistema de loot.
 
-A distribuição exata será calibrada em testes.
+Quando for uma Skill normal:
+- o item resolve para a classe de quem o coleta;
+- não gera uma habilidade inútil de outra classe.
 
-Uma referência possível:
+Ultimates seguem regra separada e continuam específicas de classe.
 
-- maioria dos drops especiais = habilidade;
-- minoria = consumível/tático de alto valor.
-
-Não tratar esses percentuais como balanceamento final.
+A distribuição final será calibrada em testes.
 
 ---
 
-# 15. HABILIDADE DE CLASSE ALEATÓRIA
+# 15. DROP ADAPTATIVO DE CLASSE
 
-O Drop de Combate pode gerar habilidade de qualquer classe.
+A regra antiga de habilidade aleatória de outra classe foi substituída.
+
+Para Skill 1 e Skill 2:
+- o item é universal;
+- ao ser coletado, entrega a versão correspondente da classe atual do jogador.
 
 Exemplo:
+- um drop `Skill 2 — Variação B` é disputado no chão;
+- Mago coleta → recebe Skill 2-B do Mago;
+- Guerreiro rouba antes → recebe Skill 2-B do Guerreiro.
 
-- Assassino faz uma eliminação;
-- cai habilidade de Guerreiro.
+Isso mantém disputa pelo loot sem gerar drops mortos para a classe vencedora.
 
-Isso gera novos pontos de disputa.
-
-O jogador pode:
-
-- pegar;
-- deixar;
-- guardar se as regras futuras permitirem;
-- chamar companheiro;
-- usar o drop como isca.
-
-Visualmente, o drop deve comunicar imediatamente a classe da habilidade.
-
-Paletas provisórias:
-
-- Guerreiro: tons quentes / aço / dourado;
-- Assassino: violeta / grafite;
-- Mago: azul/ciano/arcano;
-- Arqueiro: verde/dourado ou outra paleta final futura.
+Ultimate continua sendo específica e precisa ser encontrada corretamente.
 
 ---
 
@@ -639,19 +676,70 @@ Essa ferramenta:
 
 ---
 
-# 21. ATAQUE BÁSICO E SKILLS
+# 21. ATAQUE BÁSICO, SKILLS E INTERAÇÕES
 
-Regra de controle:
+## Controle
 
-- ataque básico não executa simultaneamente com skill;
-- skills possuem prioridade;
-- se uma skill for ativada durante ataque básico, o ataque básico é cancelado;
-- a skill deve responder no mesmo input;
-- ataques pesados podem aplicar micro SkillLock;
-- movimento não deve ser bloqueado pelo micro SkillLock.
+- Ataque Básico não executa simultaneamente com skill.
+- Skills possuem prioridade sobre Ataque Básico.
+- Se uma skill for ativada durante o Ataque Básico, o Ataque Básico é cancelado.
+- A skill responde no mesmo input.
 
-Objetivo:
-combate responsivo sem animações/estados brigando entre si.
+## Lei de risco x acerto
+
+A facilidade de acertar determina a recompensa mecânica.
+
+Direção:
+- habilidade perseguidora / homing → mais fácil de acertar → dano menor;
+- projétil rápido → dificuldade média → dano médio;
+- projétil lento / muito telegráfico → difícil de acertar → dano alto;
+- combinação que exige dois timings corretos → pode gerar recompensa muito alta;
+- controle/área fácil de aplicar → dano direto baixo.
+
+Não balancear apenas por classe. Balancear pela dificuldade real de execução e pela quantidade de contrajogo.
+
+## Mobilidade
+
+Todas as classes devem possuir acesso a jogadas de mobilidade.
+
+A mobilidade pode variar em:
+- quantidade;
+- distância;
+- cooldown;
+- previsibilidade;
+- flexibilidade.
+
+Assassino continua sendo a referência de maior mobilidade natural.
+
+## Interação do Guerreiro com projéteis
+
+Guerreiro deve possuir forte expressão mecânica contra ataques de Mago/Arqueiro.
+
+Alguns projéteis serão marcados como interceptáveis.
+
+Se o Guerreiro acertar no timing correto um projétil interceptável com Ataque Básico ou habilidade compatível:
+- o efeito pode ser parcialmente anulado;
+- referência inicial: Guerreiro recebe aproximadamente **60% menos dano** daquele projétil;
+- algumas habilidades específicas podem ser destruídas por completo;
+- outras não serão interceptáveis.
+
+Não permitir que o Guerreiro anule toda magia automaticamente.
+
+A defesa vem de timing e leitura.
+
+## Assassino
+
+Assassino não precisa depender de interceptação de projéteis como identidade principal.
+
+Sua resposta predominante é:
+- mobilidade;
+- dodge;
+- mudança de direção;
+- sair da trajetória.
+
+Isso preserva identidades diferentes:
+- Guerreiro enfrenta/intercepta;
+- Assassino evita.
 
 ---
 
@@ -2719,3 +2807,72 @@ Mas:
 
 > fugir por dois segundos no meio da troca não deve resetar a luta inteira.
 
+
+
+---
+
+# 40. MAGO — ULTIMATE COMBINADA DE ALTO RISCO
+
+## DIREÇÃO APROVADA
+
+A habilidade combinada de alto dano do Mago ocupa **somente o slot Ultimate**.
+
+Ela não consome dois slots normais.
+
+Nome final ainda não definido.
+
+## Funcionamento
+
+A Ultimate possui duas ativações/fases:
+
+### Primeira ativação
+- dispara um projétil lento;
+- individualmente causa pouco dano;
+- é difícil acertar diretamente em personagens muito móveis.
+
+### Segunda ativação
+- dispara um projétil rápido;
+- individualmente causa pouco dano.
+
+### Combinação
+Se o projétil rápido acertar corretamente o projétil lento:
+- ocorre uma explosão de grande área;
+- causa dano muito alto;
+- recompensa precisão, posicionamento e timing.
+
+A explosão continua precisando possuir contrajogo:
+- sair da área;
+- interceptar quando compatível;
+- usar mobilidade;
+- usar terreno;
+- outras respostas futuras.
+
+## Cooldown adaptativo por execução
+
+Se a combinação for realizada com sucesso:
+- o cooldown da Ultimate fica **maior**.
+
+Se a tentativa falhar:
+- o cooldown fica **reduzido** em relação ao sucesso.
+
+Princípio:
+
+> acertou a combinação poderosa → recebe recompensa alta e paga cooldown maior.
+>
+> errou a execução → causou pouco dano e recupera a oportunidade mais cedo.
+
+Valores exatos de cooldown/dano permanecem EM TESTE.
+
+## Matchups
+
+Contra alvo menos móvel/previsível:
+- maior possibilidade de preparar a combinação;
+- alto potencial de dano.
+
+Contra Assassino:
+- projétil lento é difícil de conectar;
+- projéteis perseguidores/controle de outras skills normais devem ser ferramentas mais adequadas;
+- a Ultimate continua utilizável por previsão, combinação com mapa e erro do adversário, mas não é resposta automática anti-Assassino.
+
+Essa Ultimate representa a filosofia:
+> skill difícil de acertar pode causar muito dano.
