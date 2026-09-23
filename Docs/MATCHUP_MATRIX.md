@@ -1,54 +1,66 @@
-# Battle Royale X — Matriz Inicial de Matchups e Ferramentas
+# Battle Royale X — Matriz de Matchups por Mecânica
 
-Esta matriz é conceitual. Não representa porcentagem de vitória.
+> Este documento substitui a matriz antiga baseada em habilidades específicas ainda não finalizadas de Mago/Arqueiro.
 
-Legenda:
-- Forte = ferramenta naturalmente útil contra aquele comportamento.
-- Média = útil, mas não especializada.
-- Fraca = pouca utilidade específica.
+Não representa porcentagem de vitória.
+
+A matriz descreve **comportamentos** que criam vantagem mecânica, nunca bônus por classe.
+
+## Lei geral
+
+- habilidade fácil de acertar → recompensa menor;
+- habilidade difícil de acertar → recompensa maior;
+- homing/perseguição → pressão, não burst;
+- projétil lento → alto potencial se conectar;
+- controle → modifica posição/velocidade, não remove controle;
+- mobilidade → resposta importante contra telegraphs;
+- interceptação → exige timing e não funciona contra tudo.
 
 ## Guerreiro
 
-| Ferramenta | Assassino | Mago | Arqueiro | Guerreiro |
-|---|---|---|---|---|
-| Guarda de Retaliação | Forte | Fraca | Fraca | Média |
-| Guarda Arcana | Fraca | Forte | Forte | Fraca |
-| Caçada | Forte | Média | Média | Fraca |
-| Avanço Protegido | Fraca | Forte | Forte | Média |
-| Ultimate de domínio próximo | Forte | Fraca | Fraca | Média |
-| Bastião Arcano | Fraca | Forte | Média/Forte | Fraca |
+| Mecânica | Contra mobilidade | Contra projétil | Contra área | Risco |
+|---|---:|---:|---:|---|
+| Ataque pesado | Baixa | Média/Alta se interceptável | Baixa | lento/previsível |
+| Interceptação por timing | Baixa | Alta | Baixa | erro abre janela |
+| Defesa frontal | Média | Alta | Média/Baixa | ângulo lateral |
+| Perseguição curta futura | Alta | Média | Média | cooldown alto |
+
+## Assassino
+
+| Mecânica | Contra projétil | Contra área | Contra melee | Risco |
+|---|---:|---:|---:|---|
+| Dodge/mobilidade | Alta | Alta | Alta | cooldown gasto |
+| Mudança de direção | Alta | Média | Alta | leitura adversária |
+| Dive | Média | Média | — | trap/controle |
+| Troca frontal | Baixa | — | Baixa | pouca resistência |
 
 ## Mago
 
-| Ferramenta | Assassino | Guerreiro | Arqueiro | Mago |
-|---|---|---|---|---|
-| Pulso de Repulsão | Forte | Forte próximo | Fraca | Fraca |
-| Espelho Prismático | Fraca | Média | Forte | Forte |
-| Blink Longo | Forte | Forte | Média | Média |
-| Âncora Arcana | Média/Forte | Média | Média | Média |
-| Núcleo Meteórico | Média | Forte se previsível | Média | Média |
-| Anéis Arcanos | Forte no dive | Média | Fraca | Fraca |
+| Mecânica | Contra Assassino/mobilidade | Contra Guerreiro | Contra Arqueiro |
+|---|---:|---:|---:|
+| Projétil lento alto dano | Fraca | Forte se previsível | Média |
+| Projétil perseguidor baixo dano | Forte pressão | Média | Média |
+| Slow | Forte | Média/Forte | Média |
+| Clone/engano | Forte | Média | Média |
+| Combo lento+rápido da Ultimate | Difícil | Forte se executar | Média |
 
 ## Arqueiro
 
-| Ferramenta | Assassino | Guerreiro | Mago | Arqueiro |
-|---|---|---|---|---|
-| Recuo Ofensivo | Forte se entrada previsível | Média | Fraca | Fraca |
-| Tiro de Interceptação | Fraca | Fraca | Forte | Forte |
-| Gancho de Reposição | Forte para fugir | Forte para kite | Média | Média |
-| Passos Laterais | Média | Fraca | Forte | Forte |
-| Disparo Perfurante | Média | Forte se previsível | Forte em linha | Forte em linha |
-| Sobrecarga Cinética | Forte para kite | Forte para kite | Média | Média |
+| Mecânica | Contra Assassino | Contra Guerreiro | Contra Mago |
+|---|---:|---:|---:|
+| Armadilha de atração | Forte | Forte se entrar | Fraca |
+| Kite/mobilidade | Forte | Forte | Média |
+| Tiro fácil/perseguidor | Pressão | Pressão | Pressão |
+| Tiro difícil alto dano | Difícil | Forte se previsível | Média |
+| Preparação de terreno | Forte | Média/Forte | Fraca/Média |
 
-## Regras
+## Regras de matchup
 
-1. Nenhuma ferramenta verifica a classe do alvo para aplicar bônus.
-2. Toda vantagem vem da mecânica da habilidade.
-3. Especialização anti-mobilidade deve perder eficiência contra ranged/zonamento.
-4. Especialização anti-projétil deve perder eficiência contra melee.
-5. Ferramentas generalistas são mais flexíveis, mas menos dominantes.
-6. Cooldown é parte central do custo de especialização.
-7. Não criar cadeia de hard CC.
-8. Fugir continua sendo opção legítima quando a classe possui mobilidade para isso.
-9. Entrar no alcance perigoso do oponente deve gerar risco.
-10. Matchups serão recalibrados somente após testes repetidos em jogo.
+1. Nenhuma habilidade verifica classe para aplicar bônus.
+2. Guerreiro pode interceptar apenas habilidades marcadas como compatíveis.
+3. Assassino responde principalmente por mobilidade, não interceptação.
+4. Mago pode trocar burst por ferramentas de acerto mais fácil.
+5. Arqueiro pode trocar dano bruto por controle/preparação.
+6. Kit especializado cria vantagem de ferramentas, não vitória automática.
+7. Cada matchup precisa manter pelo menos duas respostas mecânicas relevantes.
+8. Valores finais dependem de teste real, especialmente cooldown, velocidade, tracking, raio e dano.
