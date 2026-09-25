@@ -4,7 +4,7 @@
 
 # STATUS
 - Task ID: `BRX-PROD-002`
-- Estado: `READY`
+- Estado: `PARTIAL`
 - Modelo recomendado: `GPT-5.6 Sol`
 - Raciocínio recomendado: `Medium`
 - Objetivo: construir a base completa do laboratório V1 antes da integração visual final no Astra.
@@ -436,14 +436,13 @@ Ao finalizar:
 
 # RELATÓRIO DO CODEX
 
-Preencher ao final:
-- Estado:
-- Commit final:
-- Arquivos criados:
-- Arquivos alterados:
-- Compilação disponível?:
-- Testes executados:
-- Testes aprovados:
-- Falhas:
-- Itens que exigem Astra/Unity:
-- Próximo passo:
+- Estado: `PARTIAL` — base de código/editor tooling implementada; validação real no Unity ficou bloqueada pelo licenciamento/Hub desta máquina.
+- Commit final: `51dd7e8` (`feat: build production V1 combat lab foundation`).
+- Arquivos criados: `PrototypeVFXFactory.cs`; `AbilityController.V1.cs`; `SeekingProjectileMover.cs`; `SlowField.cs`; `PullField.cs`; `CloneTeleportController.cs`; `MageConvergenceController.cs`; `OwnedAbilityEffect.cs`; `PrototypeLabController.cs`; `PrototypeLiveTests.Prod002.cs`; `ArcaneDemoObject.cs`; respectivos `.meta` e metadados da camada `Runtime/Visual`.
+- Arquivos alterados: `PrototypeDataFactory.cs`; `PrototypeSceneBuilder.cs`; `PrototypeVisualValidation.cs`; `AbilityController.cs`; `CharacterMotor25D.cs`; `CharacterRuntime.cs`; `HealthRegenerationController.cs`; `CombatResolver.cs`; `DamagePacket.cs`; `BRXTypes.cs`; `AbilityDefinition.cs`; `CharacterDefinition.cs`; `PrototypeCombatLabController.cs`; `PrototypeDebugHUD.cs`; `PrototypeLiveTests.Lab001.cs`; `PrototypeLiveTests.cs`; `PrototypeLocalInput.cs`; `CombatVFXRouter.cs`; `Docs/TEST_MATRIX.md`; este relatório.
+- Compilação disponível?: Sim, por meio do .NET SDK incluído no Unity 6000.6.1f1. `Assembly-CSharp.csproj` e `Assembly-CSharp-Editor.csproj` compilaram com 0 erros. Permanecem somente 5 avisos de APIs Unity obsoletas já identificados (`FindObjectsSortMode`/`FindFirstObjectByType`).
+- Testes executados: compilação dos assemblies runtime/editor; `git diff --check`; auditoria de 203 arquivos `.meta`; inspeção do catálogo e da nova matriz automatizada.
+- Testes aprovados: runtime 0 erros; editor 0 erros; diff sem whitespace errors; 0 grupos de GUID duplicado; testes PROD-002 escritos para 4 classes, 4 ataques básicos + 36 habilidades, troca de classe, tracking, slow, pull, clones, multi-dash, combo do Mago, interceptação 60%, cura/regen, VFX, limpeza de efeitos e 6 objetos arcanos.
+- Falhas: o Unity em batch mode encerrou com código 198 (`No valid Unity Editor license found`, entitlement `com.unity.editor.headless` ausente). A abertura interativa pediu instalação do Unity Hub e não disponibilizou uma janela utilizável. Assim, os novos testes de Play Mode e os geradores de assets/cena não foram executados nesta entrega.
+- Itens que exigem Astra/Unity: restaurar Unity Hub/licença; executar `Create Default Data`, `Visual > Create Prototype VFX` e `Build Test Scene`; rodar a matriz/validação visual em Play Mode; importar/retargetar os assets gratuitos e fazer o acabamento visual conforme `ASTRA_TASK.md` sem rebalancear Guerreiro/Assassino.
+- Próximo passo: abrir a branch `main` em um Unity 6 + URP licenciado, ler `ASTRA_TASK.md`, executar os três geradores e validar integralmente `Docs/TEST_MATRIX.md` antes de gerar novo APK.
