@@ -122,6 +122,8 @@ namespace BattleRoyaleX.EditorTools
 
                 Check(UnityEngine.Object.FindObjectsByType<ParticleSystem>()
                     .Any(particles => particles.name == "VFX_CombatBurst"), "Runtime/evento de combate gera VFX");
+                Check(UnityEngine.Object.FindObjectsByType<ParticleSystem>()
+                    .Any(particles => particles.name == "VFX_BloodImpact"), "Runtime/contato de dano gera sangue sem sprite quadrado");
 
                 PrototypeCombatHUD hud = UnityEngine.Object.FindAnyObjectByType<PrototypeCombatHUD>();
                 Check(hud != null && hud.GetComponentInChildren<Canvas>(true) != null,

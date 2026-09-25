@@ -34,7 +34,7 @@ namespace BattleRoyaleX
         Hit, Block, Parry, Dodge, Clash, Nullify, Reflect, Heal, Energy, VariationSwap, TacticalUsed,
         AbilityAttack, AbilityGuard, AbilityMove, AbilityUltimate,
         // Append-only: event values may be serialized by future replay/debug tooling.
-        ItemPickup, CounterReady, CounterHit, DefenseRedirect
+        ItemPickup, CounterReady, CounterHit, DefenseRedirect, Death
     }
     public enum AbilityPhase { None, Startup, Active, Recovery, Completed, Cancelled }
 

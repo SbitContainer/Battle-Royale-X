@@ -181,7 +181,9 @@ namespace BattleRoyaleX
             if (runtime.Abilities.IsHuntRecastReady && !runtime.Abilities.IsComboInProgress &&
                 runtime.Abilities.TryUse(AbilitySlot.Ultimate, toward))
             { nextActionAt = Time.time + 0.42f; return; }
-            float reach = runtime.Abilities.GetEquipped(AbilitySlot.BasicAttack).range;
+            AbilityDefinition basic = runtime.Abilities.GetEquipped(AbilitySlot.BasicAttack);
+            if (basic == null) return;
+            float reach = basic.range;
             if (distance <= reach - 0.1f)
             {
                 if (runtime.Abilities.TryUse(AbilitySlot.BasicAttack, toward))

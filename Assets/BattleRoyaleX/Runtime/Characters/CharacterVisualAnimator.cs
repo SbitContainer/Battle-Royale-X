@@ -20,8 +20,6 @@ namespace BattleRoyaleX
 
         Animator animator;
         CharacterRuntime runtime;
-        bool suppressTrainingDeath;
-
         void Awake()
         {
             runtime = GetComponentInParent<CharacterRuntime>();
@@ -30,7 +28,6 @@ namespace BattleRoyaleX
             if (animator != null) animator.applyRootMotion = false;
         }
 
-        void Start() => suppressTrainingDeath = Application.isMobilePlatform && FindAnyObjectByType<PrototypeTrainingBot>() != null;
         void OnEnable() => CombatEvents.Raised += OnCombatEvent;
         void OnDisable() => CombatEvents.Raised -= OnCombatEvent;
 
@@ -39,7 +36,7 @@ namespace BattleRoyaleX
             if (animator == null || runtime == null) return;
             float moveAmount = runtime.Motor != null ? runtime.Motor.MovementAmount : 0f;
             animator.SetFloat(MoveAmountHash, moveAmount, 0.08f, Time.deltaTime);
-            animator.SetBool(DeadHash, !suppressTrainingDeath && runtime.Health != null && runtime.Health.IsDead);
+            animator.SetBool(DeadHash, runtime.Health != null && runtime.Health.IsDead);
         }
 
         public void PlayBasicStep(int step)

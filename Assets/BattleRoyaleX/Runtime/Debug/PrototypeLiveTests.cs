@@ -73,6 +73,8 @@ namespace BattleRoyaleX
             yield return new WaitForSeconds(0.7f);
             Check(accepted && Near(a.Health.MaxHealth-a.Health.CurrentHealth,w.Definition.basicAttack.damage) && Count(CombatEventKind.Hit,a)==1,
                 "Ataque do Guerreiro causa dano uma vez por ativação via física");
+            Check(FindObjectsByType<ParticleSystem>().Any(p=>p.name=="VFX_BloodImpact"),
+                "Contato com dano gera partículas de sangue direcionais");
             Check(spamRejected, "Cooldown impede spam");
             ResetPair(1.4f); events.Clear(); a.Abilities.TryUse(AbilitySlot.BasicAttack);
             yield return new WaitForSeconds(0.7f);
@@ -374,6 +376,15 @@ namespace BattleRoyaleX
             ResetPair(1.4f); a.Health.ApplyDamage(a.Health.MaxHealth-1f); w.Abilities.TryUse(AbilitySlot.BasicAttack);
             yield return new WaitForSeconds(0.7f);
             Check(a.Health.IsDead && FindObjectsByType<UnityEngine.UI.Text>().Any(t=>t.isActiveAndEnabled && t.text.Contains("GUERREIRO VENCEU")), "Golpe final gera vitória do Guerreiro na HUD");
+            Check(Count(CombatEventKind.Death,a)==1 &&
+                FindObjectsByType<ParticleSystem>().Any(p=>p.name=="VFX_DeathBurst") &&
+                FindObjectsByType<LineRenderer>().Any(l=>l.name=="VFX_BloodPool"),
+                "Golpe fatal emite morte uma vez, explosão de sangue e marca no chão");
+            Animator defeated = a.GetComponentInChildren<Animator>(true);
+            AnimatorStateInfo defeatedCurrent = defeated.GetCurrentAnimatorStateInfo(0);
+            AnimatorStateInfo defeatedNext = defeated.GetNextAnimatorStateInfo(0);
+            Check(defeated.GetBool("Dead") && (defeatedCurrent.IsName("Death") || defeatedNext.IsName("Death")),
+                "Morte visual permanece ativa no mobile até o reinício da rodada");
             Check(runtimeErrors==0,"Nenhum erro ou exceção durante a execução");
             stage="CONCLUÍDO — "+passed+" passaram / "+failed+" falharam"; finished=true;
             File.AppendAllText(reportPath,"\nResultado: "+passed+" passaram; "+failed+" falharam.\n");

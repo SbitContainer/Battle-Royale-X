@@ -46,22 +46,28 @@ namespace BattleRoyaleX
 
                 case CombatOutcome.Reflected:
                     CombatEvents.Raise(new CombatEventData(CombatEventKind.Reflect, eventPos, target, attacker));
-                    attacker.Health.ApplyDamage(hitbox.Packet.damage);
+                    bool reflectedDeath = ApplyDamage(attacker, hitbox.Packet.damage);
+                    if (reflectedDeath)
+                        RaiseDeath(target, attacker, eventPos, hitbox.Packet.ability, -hitbox.Packet.direction);
                     hitbox.Cancel();
                     return;
 
                 case CombatOutcome.Blocked:
-                    target.Health.ApplyDamage(finalDamage);
+                    bool blockedDeath = ApplyDamage(target, finalDamage);
                     if (target.Defense.ActiveAbility != null && target.Defense.ActiveAbility.counterOnBlock)
                         target.Abilities.GrantCounterOpportunity(target.Defense.ActiveAbility);
                     CombatEvents.Raise(new CombatEventData(CombatEventKind.Block, eventPos, attacker, target, finalDamage,
                         target.Defense.ActiveAbility, direction: hitbox.Packet.direction));
+                    if (blockedDeath)
+                        RaiseDeath(attacker, target, eventPos, hitbox.Packet.ability, hitbox.Packet.direction);
                     break;
 
                 default:
-                    target.Health.ApplyDamage(finalDamage);
+                    bool hitDeath = ApplyDamage(target, finalDamage);
                     CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, eventPos, attacker, target, finalDamage,
                         hitbox.Packet.ability, direction: hitbox.Packet.direction));
+                    if (hitDeath)
+                        RaiseDeath(attacker, target, eventPos, hitbox.Packet.ability, hitbox.Packet.direction);
                     break;
             }
 
@@ -117,8 +123,8 @@ namespace BattleRoyaleX
         {
             float damageToA = b.Packet.damage * Mathf.Clamp01(b.Packet.clashDamageFactor);
             float damageToB = a.Packet.damage * Mathf.Clamp01(a.Packet.clashDamageFactor);
-            a.Owner.Health.ApplyDamage(damageToA);
-            b.Owner.Health.ApplyDamage(damageToB);
+            bool aDied = ApplyDamage(a.Owner, damageToA);
+            bool bDied = ApplyDamage(b.Owner, damageToB);
             a.Owner.Abilities.InterruptOffensiveAction();
             b.Owner.Abilities.InterruptOffensiveAction();
             a.Owner.State.ApplyStagger(0.14f);
@@ -126,6 +132,8 @@ namespace BattleRoyaleX
 
             Vector3 pos = (a.transform.position + b.transform.position) * 0.5f;
             CombatEvents.Raise(new CombatEventData(CombatEventKind.Clash, pos, a.Owner, b.Owner, damageToB));
+            if (aDied) RaiseDeath(b.Owner, a.Owner, pos, b.Packet.ability, b.Packet.direction);
+            if (bDied) RaiseDeath(a.Owner, b.Owner, pos, a.Packet.ability, a.Packet.direction);
             a.Cancel();
             b.Cancel();
         }
@@ -162,9 +170,26 @@ namespace BattleRoyaleX
                 CharacterRuntime target = hit.GetComponentInParent<CharacterRuntime>();
                 if (target == null || damaged.Contains(target)) continue;
                 damaged.Add(target);
-                target.Health.ApplyDamage(damage);
+                bool died = ApplyDamage(target, damage);
                 CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, center, sourceA, target, damage));
+                if (died) RaiseDeath(sourceA ?? sourceB, target, center, null,
+                    target.transform.position - center);
             }
+        }
+
+        static bool ApplyDamage(CharacterRuntime target, float damage)
+        {
+            if (target == null || target.Health == null) return false;
+            bool wasAlive = !target.Health.IsDead;
+            target.Health.ApplyDamage(damage);
+            return wasAlive && target.Health.IsDead;
+        }
+
+        static void RaiseDeath(CharacterRuntime source, CharacterRuntime target, Vector3 position,
+            AbilityDefinition ability, Vector3 direction)
+        {
+            CombatEvents.Raise(new CombatEventData(CombatEventKind.Death, position, source, target,
+                ability: ability, phase: AbilityPhase.Completed, direction: direction));
         }
     }
 }

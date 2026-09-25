@@ -1,4 +1,4 @@
-# Matriz ao vivo — 20/09/2026 19:06:41
+# Matriz ao vivo — 20/09/2026 19:39:11
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -10,6 +10,7 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Motor do Assassino responde ao movimento
 - PASSOU: Personagens permanecem no plano XZ
 - PASSOU: Ataque do Guerreiro causa dano uma vez por ativação via física
+- PASSOU: Contato com dano gera partículas de sangue direcionais
 - PASSOU: Cooldown impede spam
 - PASSOU: Ataque do Assassino causa dano uma vez por ativação via física
 - PASSOU: Sem friendly fire na mesma equipe
@@ -170,6 +171,8 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Assassin_Ult_B: variação está disponível e equipa no slot correto
 - PASSOU: Efeitos das variações respeitam o limite compartilhado de 70 objetos
 - PASSOU: Golpe final gera vitória do Guerreiro na HUD
+- PASSOU: Golpe fatal emite morte uma vez, explosão de sangue e marca no chão
+- PASSOU: Morte visual permanece ativa no mobile até o reinício da rodada
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 169 passaram; 0 falharam.
+Resultado: 172 passaram; 0 falharam.

@@ -47,15 +47,19 @@ namespace BattleRoyaleX
                     tint.SetFloat("_Smoothness", 0f);
                     meshes[i].SetPropertyBlock(tint);
                 }
-                else meshes[i].SetPropertyBlock(originalBlocks[i]);
+                else if (originalBlocks != null && i < originalBlocks.Length && originalBlocks[i] != null)
+                    meshes[i].SetPropertyBlock(originalBlocks[i]);
             }
         }
 
         void OnDisable()
         {
-            if (meshes == null) return;
+            if (meshes == null || originalEnabled == null || originalBlocks == null) return;
             for (int i = 0; i < meshes.Length; i++) if (meshes[i] != null)
-            { meshes[i].enabled = originalEnabled[i]; meshes[i].SetPropertyBlock(originalBlocks[i]); }
+            {
+                if (i < originalEnabled.Length) meshes[i].enabled = originalEnabled[i];
+                if (i < originalBlocks.Length && originalBlocks[i] != null) meshes[i].SetPropertyBlock(originalBlocks[i]);
+            }
             mode = -1;
         }
         void OnDestroy() { if (LocalPlayer == actor) LocalPlayer = null; }

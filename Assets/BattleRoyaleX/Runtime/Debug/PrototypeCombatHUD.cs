@@ -350,6 +350,7 @@ namespace BattleRoyaleX
                 case CombatEventKind.CounterReady: return "CONTRA-ATAQUE PRONTO · ATAQUE!";
                 case CombatEventKind.CounterHit: return "CONTRA-ATAQUE · REPULSÃO";
                 case CombatEventKind.DefenseRedirect: return "ESQUIVA · CONTRA-TRAVESSIA";
+                case CombatEventKind.Death: return "DERROTADO";
                 case CombatEventKind.AbilityAttack:
                 case CombatEventKind.AbilityGuard:
                 case CombatEventKind.AbilityMove:
@@ -370,6 +371,7 @@ namespace BattleRoyaleX
                 case CombatEventKind.Nullify: return new Color(0.28f, 1f, 0.86f);
                 case CombatEventKind.Heal: return new Color(0.3f, 1f, 0.42f);
                 case CombatEventKind.ItemPickup: return new Color(0.35f, 1f, 0.72f);
+                case CombatEventKind.Death: return new Color(0.68f, 0.03f, 0.04f);
                 default: return new Color(1f, 0.48f, 0.22f);
             }
         }

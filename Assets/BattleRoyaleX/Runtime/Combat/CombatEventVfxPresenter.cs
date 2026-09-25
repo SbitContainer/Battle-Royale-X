@@ -6,11 +6,13 @@ namespace BattleRoyaleX
     // Presentation only: damage and displacement never originate in this component.
     public sealed class CombatEventVfxPresenter : MonoBehaviour
     {
-        Material glow, ribbon;
+        Material glow, ribbon, blood, bloodRibbon;
         const int EffectBudget = 70;
         static readonly Color Violet = new Color(0.65f, 0.19f, 1f);
         static readonly Color Ice = new Color(0.15f, 0.85f, 1f);
         static readonly Color Gold = new Color(1f, 0.58f, 0.12f);
+        static readonly Color Crimson = new Color(1f, 0.012f, 0.022f);
+        static readonly Color DarkBlood = new Color(0.46f, 0.002f, 0.008f);
 
         void Awake()
         {
@@ -19,10 +21,21 @@ namespace BattleRoyaleX
             glow = new Material(shader) { name = "BRX_SoftMagic" };
             ribbon = new Material(shader) { name = "BRX_MagicRibbon" };
             ribbon.SetFloat("_Shape", 1f);
+            var bloodShader = Resources.Load<Shader>("BloodSoft");
+            if (bloodShader == null) bloodShader = shader;
+            blood = new Material(bloodShader) { name = "BRX_BloodDroplet" };
+            bloodRibbon = new Material(bloodShader) { name = "BRX_BloodRibbon" };
+            bloodRibbon.SetFloat("_Shape", 1f);
         }
         void OnEnable() => CombatEvents.Raised += Present;
         void OnDisable() => CombatEvents.Raised -= Present;
-        void OnDestroy() { if (glow != null) Destroy(glow); if (ribbon != null) Destroy(ribbon); }
+        void OnDestroy()
+        {
+            if (glow != null) Destroy(glow);
+            if (ribbon != null) Destroy(ribbon);
+            if (blood != null) Destroy(blood);
+            if (bloodRibbon != null) Destroy(bloodRibbon);
+        }
 
         static bool Assassin(CharacterRuntime c) => c != null && c.Definition != null && c.Definition.characterClass == CharacterClass.Assassin;
         static Color Tint(CharacterRuntime c) => Assassin(c) ? Violet : Gold;
@@ -100,9 +113,13 @@ namespace BattleRoyaleX
                     break;
                 case CombatEventKind.Block:
                     Burst(e.position, Ice, 15, 3f, 0.26f);
+                    if (e.value > 0.01f) BloodImpact(e.position, e.direction, true);
                     StartCoroutine(Shield(e.target, 0.22f)); break;
                 case CombatEventKind.Hit:
-                    Burst(e.position, color, 14, 2.5f, 0.24f); break;
+                    Burst(e.position, color, 8, 1.8f, 0.16f);
+                    BloodImpact(e.position, e.direction, false); break;
+                case CombatEventKind.Death:
+                    StartCoroutine(DeathSequence(e.target, e.position, e.direction)); break;
                 case CombatEventKind.Dodge:
                     Burst(e.position, Violet, 8, 1.6f, 0.3f); break;
                 case CombatEventKind.Heal:
@@ -135,6 +152,66 @@ namespace BattleRoyaleX
             shrink.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.EaseInOut(0,1,1,0));
             ps.GetComponent<ParticleSystemRenderer>().sharedMaterial = glow;
             ps.Play(); Destroy(go,0.7f);
+        }
+
+        void BloodImpact(Vector3 position, Vector3 direction, bool blocked)
+        {
+            BloodSpray("VFX_BloodImpact", position, direction, blocked ? 5 : 24,
+                blocked ? 1.5f : 4.6f, blocked ? 0.055f : 0.14f, blocked ? 0.35f : 0.78f);
+        }
+
+        void BloodSpray(string name, Vector3 position, Vector3 direction, int count, float speed, float size, float gravity)
+        {
+            var go = Effect(name, position + Vector3.up * 0.18f); if (go == null) return;
+            direction.y = Mathf.Max(0.12f, direction.y + 0.18f);
+            go.transform.rotation = Quaternion.LookRotation(direction.sqrMagnitude > 0.001f ? direction.normalized : Vector3.forward);
+            var ps = go.AddComponent<ParticleSystem>(); ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = ps.main; main.playOnAwake = false; main.loop = false; main.duration = 0.08f;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.32f, 0.72f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(speed * 0.40f, speed);
+            main.startSize = new ParticleSystem.MinMaxCurve(size * 0.45f, size * 1.35f);
+            main.startColor = new ParticleSystem.MinMaxGradient(Crimson, DarkBlood);
+            main.gravityModifier = gravity; main.maxParticles = 48; main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var emission = ps.emission; emission.rateOverTime = 0f;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)count) });
+            var shape = ps.shape; shape.shapeType = ParticleSystemShapeType.Cone;
+            shape.angle = 34f; shape.radius = 0.045f; shape.length = 0.10f;
+            var fade = ps.colorOverLifetime; fade.enabled = true; fade.color = Fade(Color.white);
+            var shrink = ps.sizeOverLifetime; shrink.enabled = true;
+            shrink.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.EaseInOut(0f, 1f, 1f, 0.18f));
+            var renderer = ps.GetComponent<ParticleSystemRenderer>(); renderer.sharedMaterial = blood;
+            renderer.renderMode = ParticleSystemRenderMode.Stretch; renderer.lengthScale = 0.55f; renderer.velocityScale = 0.10f;
+            ps.Play(); Destroy(go, 1.05f);
+        }
+
+        IEnumerator DeathSequence(CharacterRuntime target, Vector3 position, Vector3 direction)
+        {
+            if (target != null) position = target.transform.position;
+            BloodSpray("VFX_DeathBurst", position + Vector3.up * 0.35f, direction, 46, 6.0f, 0.18f, 0.95f);
+            BloodSpray("VFX_DeathMist", position + Vector3.up * 0.75f, -direction + Vector3.up * 0.2f, 28, 2.5f, 0.25f, 0.28f);
+
+            Vector3 ground = position; ground.y = 0.055f;
+            var go = Effect("VFX_BloodPool", ground); if (go == null) yield break;
+            var line = go.AddComponent<LineRenderer>(); line.sharedMaterial = bloodRibbon; line.useWorldSpace = true;
+            line.positionCount = 65; line.widthMultiplier = 0.32f; line.numCornerVertices = 4; line.numCapVertices = 4;
+            line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; line.receiveShadows = false;
+            Color pool = new Color(0.62f, 0.003f, 0.008f, 0.92f);
+            for (float t = 0f; t < 1.8f && go != null; t += Time.deltaTime)
+            {
+                float f = Mathf.Clamp01(t / 1.8f);
+                float radius = Mathf.Lerp(0.12f, 1.15f, 1f - Mathf.Pow(1f - f, 3f));
+                for (int i = 0; i < 65; i++)
+                {
+                    float angle = i * Mathf.PI * 2f / 64f;
+                    float irregular = 1f + Mathf.Sin(angle * 5f + position.x) * 0.08f + Mathf.Sin(angle * 9f + position.z) * 0.04f;
+                    line.SetPosition(i, ground + new Vector3(Mathf.Cos(angle) * radius * irregular, 0f,
+                        Mathf.Sin(angle) * radius * irregular));
+                }
+                pool.a = Mathf.Lerp(0.92f, 0f, Mathf.Clamp01((f - 0.55f) / 0.45f));
+                line.startColor = line.endColor = pool;
+                yield return null;
+            }
+            if (go != null) Destroy(go);
         }
         static Gradient Fade(Color c)
         {

@@ -130,6 +130,14 @@
 - [ ] Cada botão alterna sua habilidade entre Base, A e B sem consumir runa.
 - [ ] Controle de bot alterna entre Normal, Parado e Parado + ataque.
 
+## Sangue e morte
+- [ ] Todo `Hit` confirmado gera spray de sangue direcional no ponto de contato.
+- [ ] Bloqueio que ainda recebe dano gera apenas sangue discreto; parry, esquiva e dano negado não geram sangue.
+- [ ] Um golpe fatal emite exatamente um evento `Death` para o personagem derrotado.
+- [ ] A morte gera explosão de sangue, névoa curta e marca orgânica temporária no chão.
+- [ ] O estado `Dead` do Animator permanece ativo no Android até o reinício automático da rodada.
+- [ ] A restauração de vida devolve o personagem à animação normal sem alterar vida, dano ou cooldowns.
+
 ## Regressão BRX-LAB-001
 - [ ] Guarda, Parry, Dodge/iframe e Clash continuam funcionando.
 - [ ] Inventário continua aceitando itens.
