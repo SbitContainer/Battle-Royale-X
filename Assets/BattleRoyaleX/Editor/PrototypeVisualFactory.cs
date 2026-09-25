@@ -51,6 +51,7 @@ namespace BattleRoyaleX.EditorTools
             EnsureFolder(MaterialsRoot);
             CreateOrUpdateMaterials();
             CreateAnimatorController();
+            CreateMageController();
             AssetDatabase.SaveAssets();
             Debug.Log("Battle Royale X: Quaternius visual asset import settings configured.");
         }
@@ -58,9 +59,13 @@ namespace BattleRoyaleX.EditorTools
         public static GameObject CreateCharacterVisual(Transform parent, CharacterClass characterClass)
         {
             string modelPath = characterClass == CharacterClass.Assassin ? FemaleModelPath : MaleModelPath;
-            string materialPath = characterClass == CharacterClass.Assassin ? AssassinMaterialPath : WarriorMaterialPath;
+            string materialPath = characterClass == CharacterClass.Mage ? MaterialsRoot + "/Mage_Body.mat" :
+                characterClass == CharacterClass.Archer ? MaterialsRoot + "/Archer_Body.mat" :
+                characterClass == CharacterClass.Assassin ? AssassinMaterialPath : WarriorMaterialPath;
             GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
             RuntimeAnimatorController controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ControllerPath);
+            if (characterClass == CharacterClass.Mage)
+                controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(GeneratedRoot + "/Mage.overrideController") ?? controller;
             Material bodyMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
             Material eyeMaterial = AssetDatabase.LoadAssetAtPath<Material>(EyeMaterialPath);
             Material eyebrowMaterial = AssetDatabase.LoadAssetAtPath<Material>(EyebrowMaterialPath);
@@ -156,6 +161,36 @@ namespace BattleRoyaleX.EditorTools
             Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
             Material metal = AssetDatabase.LoadAssetAtPath<Material>(WeaponMetalPath);
             Material bronze = AssetDatabase.LoadAssetAtPath<Material>(ShieldBronzePath);
+            if (characterClass == CharacterClass.Mage && rightHand != null)
+            {
+                GameObject staff = Primitive("Mage_Staff", PrimitiveType.Cylinder, rightHand, bronze);
+                staff.transform.localPosition = new Vector3(0f, 0.35f, 0f);
+                staff.transform.localScale = new Vector3(0.045f, 0.7f, 0.045f);
+                GameObject orb = Primitive("Mage_ArcaneOrb", PrimitiveType.Sphere, rightHand,
+                    AssetDatabase.LoadAssetAtPath<Material>(MaterialsRoot + "/Mage_Body.mat"));
+                orb.transform.localPosition = new Vector3(0f, 1.1f, 0f);
+                orb.transform.localScale = Vector3.one * 0.22f;
+                return;
+            }
+            if (characterClass == CharacterClass.Archer && leftHand != null)
+            {
+                GameObject bow = new GameObject("Archer_Bow");
+                bow.transform.SetParent(leftHand, false);
+                LineRenderer arc = bow.AddComponent<LineRenderer>();
+                arc.useWorldSpace = false; arc.sharedMaterial = bronze;
+                arc.startWidth = arc.endWidth = 0.045f; arc.positionCount = 17;
+                for (int i = 0; i < 17; i++)
+                {
+                    float angle = Mathf.Lerp(-Mathf.PI * 0.5f, Mathf.PI * 0.5f, i / 16f);
+                    arc.SetPosition(i, new Vector3(0f, Mathf.Sin(angle) * 0.55f, Mathf.Cos(angle) * 0.23f));
+                }
+                GameObject cord = new GameObject("BowString"); cord.transform.SetParent(bow.transform, false);
+                LineRenderer line = cord.AddComponent<LineRenderer>();
+                line.useWorldSpace = false; line.sharedMaterial = metal;
+                line.startWidth = line.endWidth = 0.009f; line.positionCount = 2;
+                line.SetPositions(new[] { Vector3.down * 0.55f, Vector3.up * 0.55f });
+                return;
+            }
             if (rightHand != null)
             {
                 float bladeLength = characterClass == CharacterClass.Assassin ? 0.48f : 0.78f;
@@ -174,6 +209,12 @@ namespace BattleRoyaleX.EditorTools
                 shield.transform.localPosition = new Vector3(0f, 0.18f, 0.05f);
                 shield.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
                 shield.transform.localScale = new Vector3(0.42f, 0.055f, 0.52f);
+            }
+            if (characterClass == CharacterClass.Assassin && leftHand != null)
+            {
+                GameObject dagger = Primitive("Assassin_OffhandDagger", PrimitiveType.Cube, leftHand, metal);
+                dagger.transform.localPosition = new Vector3(0f, 0.36f, 0f);
+                dagger.transform.localScale = new Vector3(0.055f, 0.48f, 0.025f);
             }
         }
 
@@ -286,6 +327,10 @@ namespace BattleRoyaleX.EditorTools
 
         static void CreateOrUpdateMaterials()
         {
+            CreateOrUpdateLitMaterial(MaterialsRoot + "/Mage_Body.mat", OutfitRoot + "T_Ranger_3_BaseColor.png",
+                OutfitRoot + "T_Ranger_Normal.png", new Color(0.3f, 0.8f, 1f), 0.3f);
+            CreateOrUpdateLitMaterial(MaterialsRoot + "/Archer_Body.mat", OutfitRoot + "T_Ranger_BaseColor.png",
+                OutfitRoot + "T_Ranger_Normal.png", new Color(0.45f, 0.7f, 0.42f), 0.2f);
             CreateOrUpdateLitMaterial(
                 WarriorMaterialPath,
                 OutfitRoot + "T_Ranger_BaseColor.png",
@@ -338,14 +383,36 @@ namespace BattleRoyaleX.EditorTools
             EditorUtility.SetDirty(material);
         }
 
+        static void CreateMageController()
+        {
+            const string path = GeneratedRoot + "/Mage.overrideController";
+            AnimatorOverrideController controller = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(path);
+            if (controller == null)
+            {
+                controller = new AnimatorOverrideController();
+                AssetDatabase.CreateAsset(controller, path);
+            }
+            controller.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ControllerPath);
+            AnimationClip cast = FindClip(LocomotionPath, "Armature|Spell_Simple_Shoot");
+            foreach (string clip in new[] { "Sword_Regular_A", "Sword_Regular_B", "Sword_Regular_C", "Shield_OneShot" })
+                controller["Armature|" + clip] = cast;
+            EditorUtility.SetDirty(controller);
+        }
+
         static void CreateAnimatorController()
         {
             AnimatorController existing = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
             if (existing != null)
             {
                 foreach (AnimatorControllerLayer layer in existing.layers)
+                {
                     foreach (ChildAnimatorState child in layer.stateMachine.states)
                         child.state.iKOnFeet = true;
+                    AnimatorState existingDeath = layer.stateMachine.states.FirstOrDefault(s => s.state.name == "Death").state;
+                    AnimatorState locomotion = layer.stateMachine.states.FirstOrDefault(s => s.state.name == "Locomotion").state;
+                    if (existingDeath != null && locomotion != null && !existingDeath.transitions.Any(t => t.destinationState == locomotion))
+                        AddRespawnTransition(existingDeath, locomotion);
+                }
                 EditorUtility.SetDirty(existing);
                 return;
             }
@@ -413,8 +480,16 @@ namespace BattleRoyaleX.EditorTools
             deathTransition.duration = 0.05f;
             deathTransition.canTransitionToSelf = false;
             deathTransition.AddCondition(AnimatorConditionMode.If, 0f, "Dead");
+            AddRespawnTransition(deathState, locomotionState);
 
             EditorUtility.SetDirty(controller);
+        }
+
+        static void AddRespawnTransition(AnimatorState death, AnimatorState locomotion)
+        {
+            AnimatorStateTransition transition = death.AddTransition(locomotion);
+            transition.hasExitTime = false; transition.duration = 0.08f;
+            transition.AddCondition(AnimatorConditionMode.IfNot, 0f, "Dead");
         }
 
         static void AddPresentationState(AnimatorStateMachine stateMachine, AnimatorState locomotionState,

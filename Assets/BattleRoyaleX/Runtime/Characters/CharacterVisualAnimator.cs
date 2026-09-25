@@ -59,6 +59,12 @@ namespace BattleRoyaleX
                 case AbilityBehavior.MeleeAttack:
                 case AbilityBehavior.ProjectileAttack:
                 case AbilityBehavior.AreaAttack:
+                case AbilityBehavior.SeekingProjectile:
+                case AbilityBehavior.MultiShot:
+                case AbilityBehavior.ComboProjectileUltimate:
+                case AbilityBehavior.SlowField:
+                case AbilityBehavior.PullTrap:
+                case AbilityBehavior.Repulsion:
                     PlayBasicStep(1);
                     break;
                 case AbilityBehavior.Guard:
@@ -70,12 +76,16 @@ namespace BattleRoyaleX
                 case AbilityBehavior.Dash:
                 case AbilityBehavior.DashThrough:
                 case AbilityBehavior.DashReturn:
+                case AbilityBehavior.Blink:
+                case AbilityBehavior.CloneTeleport:
+                case AbilityBehavior.MultiDash:
                     animator.SetTrigger(assassin ? MoveAssassinHash : MoveWarriorHash);
                     break;
                 case AbilityBehavior.ChargedDashSequence:
                     animator.SetTrigger(UltimateDashHash);
                     break;
                 case AbilityBehavior.UltimateBuff:
+                case AbilityBehavior.TimedBuff:
                     animator.SetTrigger(assassin ? UltimateAssassinHash : UltimateWarriorHash);
                     break;
             }

@@ -15,9 +15,12 @@ MonoBehaviour:
   abilityId: Warrior_Move_A
   displayName: Impacto
   slot: 2
+  variantIndex: 1
   classRestricted: 1
   requiredClass: 0
   behavior: 6
+  tags: 0
+  visualProfile: {fileID: 11400000, guid: 4b6020a4ddab24440913e80cb1df8ff3, type: 2}
   cooldown: 8
   energyCost: 12
   startup: 0.08
@@ -40,10 +43,28 @@ MonoBehaviour:
   reflectable: 0
   nullifiable: 0
   canDestroyMagicalProjectiles: 0
+  interceptable: 0
+  interceptDamageReduction: 0.6
+  destroyWhenIntercepted: 0
+  seeking: 0
+  amplifiable: 0
+  fragmentTrigger: 0
+  heavy: 0
   attackInteractionCooldown: 30
   projectileSpeed: 14
   explosionRadius: 2.5
   clashDamageFactor: 0.25
+  turnRate: 240
+  slowPercent: 0.25
+  pullStrength: 5
+  fieldRadius: 3
+  fieldDuration: 3
+  secondActivationDelay: 0.2
+  secondActivationWindow: 2
+  projectileCount: 1
+  spreadAngle: 8
+  comboSuccessCooldown: 28
+  comboFailureCooldown: 12
   defenseKind: 0
   defenseDuration: 0.45
   perfectWindow: 0.12
@@ -54,6 +75,10 @@ MonoBehaviour:
   invulnerabilityDuration: 0
   returnWindow: 0
   passThroughCharacters: 0
+  reverseMovement: 0
+  fireProjectileOnMove: 0
+  movementDealsDamage: 1
+  requiresSurfacePoint: 0
   pursueTarget: 1
   pursuitAcquireRange: 8
   pursuitSpeed: 16

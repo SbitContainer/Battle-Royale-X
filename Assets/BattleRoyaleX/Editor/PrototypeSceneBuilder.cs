@@ -56,6 +56,7 @@ namespace BattleRoyaleX.EditorTools
             lab.mageDefinition=mage; lab.archerDefinition=archer;
             lab.visualProfiles=AssetDatabase.LoadAssetAtPath<VisualProfileRegistry>("Assets/BattleRoyaleX/Visual/Profiles/VisualProfileRegistry.asset");
             PrototypeDebugHUD debugHud = systems.AddComponent<PrototypeDebugHUD>(); debugHud.playerOne=p1; debugHud.playerTwo=p2; debugHud.lab=lab;
+            debugHud.buttonTexture=AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/ThirdParty/Kenney/UI/button_rectangle_flat.png");
             systems.AddComponent<PrototypeMobileTouchControls>();
             systems.AddComponent<CombatEventVfxPresenter>();
             CombatVFXRouter vfxRouter=systems.AddComponent<CombatVFXRouter>();
@@ -67,6 +68,7 @@ namespace BattleRoyaleX.EditorTools
 
             CreateGroundPickups();
             CreateArcaneDemoObjects();
+            PrototypeArenaVisualFactory.Decorate();
 
             string sceneFolder="Assets/BattleRoyaleX/GeneratedScenes";
             if(!AssetDatabase.IsValidFolder(sceneFolder)) AssetDatabase.CreateFolder("Assets/BattleRoyaleX", "GeneratedScenes");

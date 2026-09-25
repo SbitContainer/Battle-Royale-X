@@ -39,8 +39,11 @@ namespace BattleRoyaleX.EditorTools
                 profile.abilityId = ability.abilityId;
                 profile.characterClass = ability.requiredClass;
                 profile.castPrefab = prefab;
-                profile.projectilePrefab = IsProjectile(ability) ? prefab : null;
-                profile.areaPrefab = IsArea(ability) ? prefab : null;
+                profile.projectilePrefab = IsProjectile(ability) ? CreateWorldPrefab(
+                    $"{Root}/{classFolder}/VFX_{ability.abilityId}_Projectile.prefab", color, false,
+                    ability.requiredClass == CharacterClass.Archer) : null;
+                profile.areaPrefab = IsArea(ability) ? CreateWorldPrefab(
+                    $"{Root}/{classFolder}/VFX_{ability.abilityId}_Field.prefab", color, true, false) : null;
                 profile.impactPrefab = prefab;
                 profile.primaryTint = color;
                 profile.visualScale = ability.slot == AbilitySlot.Ultimate ? 1.5f : 1f;
@@ -91,6 +94,7 @@ namespace BattleRoyaleX.EditorTools
         {
             GameObject root = new GameObject(Path.GetFileNameWithoutExtension(path));
             ParticleSystem particles = root.AddComponent<ParticleSystem>();
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             var main = particles.main;
             main.duration = 0.45f; main.loop = false; main.startLifetime = 0.35f;
             main.startSpeed = 3.2f * scale; main.startSize = 0.18f * scale; main.startColor = color;
@@ -113,6 +117,47 @@ namespace BattleRoyaleX.EditorTools
         static bool IsProjectile(AbilityDefinition ability) => ability.attackKind == AttackKind.Projectile ||
             ability.behavior == AbilityBehavior.ProjectileAttack || ability.behavior == AbilityBehavior.SeekingProjectile ||
             ability.behavior == AbilityBehavior.MultiShot || ability.behavior == AbilityBehavior.ComboProjectileUltimate;
+
+        static GameObject CreateWorldPrefab(string path, Color color, bool field, bool arrow)
+        {
+            GameObject root = new GameObject(Path.GetFileNameWithoutExtension(path));
+            Material material = MaterialFor(root.name, color);
+            if (field)
+            {
+                for (int ringIndex = 0; ringIndex < 2; ringIndex++)
+                {
+                    GameObject ring = new GameObject("Radius_" + ringIndex);
+                    ring.transform.SetParent(root.transform, false);
+                    LineRenderer line = ring.AddComponent<LineRenderer>();
+                    line.useWorldSpace = false; line.loop = true; line.positionCount = 64;
+                    line.sharedMaterial = material; line.startWidth = line.endWidth = 0.035f;
+                    line.startColor = line.endColor = color;
+                    float radius = ringIndex == 0 ? 1f : 0.78f;
+                    for (int i = 0; i < 64; i++)
+                    {
+                        float angle = i * Mathf.PI * 2f / 64f;
+                        line.SetPosition(i, new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius);
+                    }
+                }
+            }
+            else
+            {
+                GameObject core = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                core.name = arrow ? "ArrowCore" : "ArcaneCore";
+                Object.DestroyImmediate(core.GetComponent<Collider>());
+                core.transform.SetParent(root.transform, false);
+                core.transform.localScale = arrow ? new Vector3(0.08f, 0.08f, 0.65f) : Vector3.one * 0.26f;
+                core.GetComponent<Renderer>().sharedMaterial = material;
+                TrailRenderer trail = root.AddComponent<TrailRenderer>();
+                trail.sharedMaterial = material; trail.time = arrow ? 0.12f : 0.24f;
+                trail.startWidth = arrow ? 0.09f : 0.22f; trail.endWidth = 0f;
+                trail.minVertexDistance = 0.06f; trail.startColor = color;
+                trail.endColor = new Color(color.r, color.g, color.b, 0f);
+            }
+            GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+            Object.DestroyImmediate(root);
+            return prefab;
+        }
         static bool IsArea(AbilityDefinition ability) => ability.attackKind == AttackKind.Area ||
             ability.behavior == AbilityBehavior.AreaAttack || ability.behavior == AbilityBehavior.SlowField ||
             ability.behavior == AbilityBehavior.PullTrap || ability.behavior == AbilityBehavior.Repulsion;
@@ -135,8 +180,42 @@ namespace BattleRoyaleX.EditorTools
                 AssetDatabase.CreateAsset(material, path);
             }
             material.color = color;
+            // Particle quads need a soft alpha mask and transparent blending in URP.
+            // An opaque untextured material exposes the square billboard geometry.
+            material.SetTexture("_BaseMap", SoftParticleTexture());
+            material.SetFloat("_Surface", 1f);
+            material.SetFloat("_Blend", 0f);
+            material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetFloat("_ZWrite", 0f);
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
             EditorUtility.SetDirty(material);
             return material;
+        }
+
+        static Texture2D SoftParticleTexture()
+        {
+            const string path = Root + "/Shared/Materials/SoftParticle.asset";
+            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (texture != null) return texture;
+            const int size = 64;
+            texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+                { name = "SoftParticle", wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            Color[] pixels = new Color[size * size];
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float radius = new Vector2((x + 0.5f) / size * 2f - 1f,
+                        (y + 0.5f) / size * 2f - 1f).magnitude;
+                    float alpha = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(1f - radius));
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, alpha * alpha);
+                }
+            texture.SetPixels(pixels);
+            texture.Apply();
+            AssetDatabase.CreateAsset(texture, path);
+            return texture;
         }
 
         static void EnsureFolder(string path)

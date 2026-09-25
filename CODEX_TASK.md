@@ -436,6 +436,8 @@ Ao finalizar:
 
 # RELATÓRIO DO CODEX
 
+> Atualização Astra em 25/09/2026: o bloqueio de licença abaixo foi resolvido. A Unity 6000.6.1f1 executou os geradores e duas rodadas reais com 189 testes aprovados/0 falhas e 44 verificações de cena aprovadas/0 falhas. O relato abaixo fica preservado como histórico da entrega Sol. Resultado atualizado e pendências: `Docs/ASTRA_VISUAL_INTEGRATION_V1_RESULTS.md` e `Docs/TEST_RESULTS_LAB_001.md`. O estado geral permanece PARTIAL por acabamento/validação visual e Android ainda incompletos, não por falta de licença.
+
 - Estado: `PARTIAL` — base de código/editor tooling implementada; validação real no Unity ficou bloqueada pelo licenciamento/Hub desta máquina.
 - Commit final: `51dd7e8` (`feat: build production V1 combat lab foundation`).
 - Arquivos criados: `PrototypeVFXFactory.cs`; `AbilityController.V1.cs`; `SeekingProjectileMover.cs`; `SlowField.cs`; `PullField.cs`; `CloneTeleportController.cs`; `MageConvergenceController.cs`; `OwnedAbilityEffect.cs`; `PrototypeLabController.cs`; `PrototypeLiveTests.Prod002.cs`; `ArcaneDemoObject.cs`; respectivos `.meta` e metadados da camada `Runtime/Visual`.

@@ -15,9 +15,12 @@ MonoBehaviour:
   abilityId: Assassin_Move_Base
   displayName: Passo Fantasma
   slot: 2
+  variantIndex: 0
   classRestricted: 1
   requiredClass: 1
   behavior: 7
+  tags: 0
+  visualProfile: {fileID: 11400000, guid: bc1cf0258ee6650439cf2e82c5948f5a, type: 2}
   cooldown: 5
   energyCost: 10
   startup: 0.06
@@ -40,10 +43,28 @@ MonoBehaviour:
   reflectable: 0
   nullifiable: 0
   canDestroyMagicalProjectiles: 0
+  interceptable: 0
+  interceptDamageReduction: 0.6
+  destroyWhenIntercepted: 0
+  seeking: 0
+  amplifiable: 0
+  fragmentTrigger: 0
+  heavy: 0
   attackInteractionCooldown: 30
   projectileSpeed: 14
   explosionRadius: 2.5
   clashDamageFactor: 0.25
+  turnRate: 240
+  slowPercent: 0.25
+  pullStrength: 5
+  fieldRadius: 3
+  fieldDuration: 3
+  secondActivationDelay: 0.2
+  secondActivationWindow: 2
+  projectileCount: 1
+  spreadAngle: 8
+  comboSuccessCooldown: 28
+  comboFailureCooldown: 12
   defenseKind: 0
   defenseDuration: 0.45
   perfectWindow: 0.12
@@ -54,6 +75,10 @@ MonoBehaviour:
   invulnerabilityDuration: 0
   returnWindow: 0
   passThroughCharacters: 1
+  reverseMovement: 0
+  fireProjectileOnMove: 0
+  movementDealsDamage: 1
+  requiresSurfacePoint: 0
   pursueTarget: 0
   pursuitAcquireRange: 0
   pursuitSpeed: 14

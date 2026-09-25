@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 452c1c18d490c654eb6f3e28a97e1ab8, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.CharacterDefinition
+  characterId: Mage
+  displayName: Mago
+  characterClass: 2
+  maxHealth: 95
+  maxEnergy: 120
+  energyRegenPerSecond: 10
+  moveSpeed: 5.4
+  rotationSpeed: 900
+  basicAttack: {fileID: 11400000, guid: 7e4ef0523f5b5bd48b2fdd74b956f42f, type: 2}
+  skill1Variants:
+  - {fileID: 11400000, guid: 6fe6b45c2ff980f4795bfbb0e0c3de70, type: 2}
+  - {fileID: 11400000, guid: a2e014a81a4e73141827791f33c48ce7, type: 2}
+  - {fileID: 11400000, guid: 75698b17bc6b7c6458d7a9dfc5102fcb, type: 2}
+  skill2Variants:
+  - {fileID: 11400000, guid: 468f42b64b1a87248b156f598c1156be, type: 2}
+  - {fileID: 11400000, guid: 27ffc64fc3484bd4288a1b3581f36b46, type: 2}
+  - {fileID: 11400000, guid: 44589c95bb2b1ae4e8dee7965a25d081, type: 2}
+  ultimateVariants:
+  - {fileID: 11400000, guid: 7b740448711bc3848aaabf07932c5f86, type: 2}
+  - {fileID: 11400000, guid: d3293728cecd61d47ab8adcc7dec92d2, type: 2}
+  - {fileID: 11400000, guid: 7d3ac47cab545764f8359f415a0fa7ea, type: 2}
+  visualProfile: {fileID: 11400000, guid: 95823119deeb79c4da26beb7a40a49b7, type: 2}
+  defenseBase: {fileID: 11400000, guid: 6fe6b45c2ff980f4795bfbb0e0c3de70, type: 2}
+  movementBase: {fileID: 11400000, guid: 468f42b64b1a87248b156f598c1156be, type: 2}
+  ultimateBase: {fileID: 11400000, guid: 7b740448711bc3848aaabf07932c5f86, type: 2}
+  defenseVariantA: {fileID: 11400000, guid: a2e014a81a4e73141827791f33c48ce7, type: 2}
+  defenseVariantB: {fileID: 11400000, guid: 75698b17bc6b7c6458d7a9dfc5102fcb, type: 2}
+  movementVariantA: {fileID: 11400000, guid: 27ffc64fc3484bd4288a1b3581f36b46, type: 2}
+  movementVariantB: {fileID: 11400000, guid: 44589c95bb2b1ae4e8dee7965a25d081, type: 2}
+  ultimateVariantA: {fileID: 11400000, guid: d3293728cecd61d47ab8adcc7dec92d2, type: 2}
+  ultimateVariantB: {fileID: 11400000, guid: 7d3ac47cab545764f8359f415a0fa7ea, type: 2}

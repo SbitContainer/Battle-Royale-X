@@ -7,8 +7,29 @@ namespace BattleRoyaleX
         public CharacterRuntime playerOne;
         public CharacterRuntime playerTwo;
         public PrototypeLabController lab;
+        public Texture2D buttonTexture;
+        GUIStyle labButton;
 
         void OnGUI()
+        {
+            if (labButton == null)
+            {
+                labButton = new GUIStyle(GUI.skin.button);
+                if (buttonTexture != null) labButton.normal.background = buttonTexture;
+            }
+            GUIStyle previousButton = GUI.skin.button;
+            Matrix4x4 previousMatrix = GUI.matrix;
+            // Match the combat Canvas scaling, keeping the lab below its health panel.
+            float hudScale = Mathf.Sqrt((Screen.width / 1920f) * (Screen.height / 1080f));
+            float top = 285f * hudScale;
+            float scale = Mathf.Clamp(Mathf.Min(Screen.width / 550f, (Screen.height - top - 90f) / 450f), 0.2f, 1f);
+            GUI.matrix = Matrix4x4.TRS(new Vector3(0f, top, 0f), Quaternion.identity, Vector3.one * scale);
+            GUI.skin.button = labButton;
+            try { DrawLab(); }
+            finally { GUI.skin.button = previousButton; GUI.matrix = previousMatrix; }
+        }
+
+        void DrawLab()
         {
             GUI.Box(new Rect(10, 10, 520, 430), "Battle Royale X — Laboratório V1");
             DrawCharacter(new Rect(20, 35, 370, 45), "P1", playerOne);
@@ -40,9 +61,9 @@ namespace BattleRoyaleX
         void DrawVariations(AbilitySlot slot, string label, float y)
         {
             GUI.Label(new Rect(20, y + 5f, 80, 24), label);
-            if (GUI.Button(new Rect(100, y, 70, 28), "Base")) lab.EquipVariation(slot, 0);
-            if (GUI.Button(new Rect(175, y, 70, 28), "A")) lab.EquipVariation(slot, 1);
-            if (GUI.Button(new Rect(250, y, 70, 28), "B")) lab.EquipVariation(slot, 2);
+            if (GUI.Button(new Rect(100, y, 70, 28), "A")) lab.EquipVariation(slot, 0);
+            if (GUI.Button(new Rect(175, y, 70, 28), "B")) lab.EquipVariation(slot, 1);
+            if (GUI.Button(new Rect(250, y, 70, 28), "C")) lab.EquipVariation(slot, 2);
             AbilityDefinition current = lab.playerSlot != null ? lab.playerSlot.Abilities.GetEquipped(slot) : null;
             GUI.Label(new Rect(328, y + 5f, 132, 24), current != null ? current.displayName : "—");
         }

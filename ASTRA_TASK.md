@@ -5,6 +5,8 @@
 
 # Objetivo
 
+> Execução de 25/09/2026: **PARTIAL**. Ver `Docs/ASTRA_VISUAL_INTEGRATION_V1_RESULTS.md` para entregas, evidências e pendências. Licença/compilação real desbloqueadas; não tratar o visual como final nem assumir validação Android.
+
 Usar Unity real para:
 - compilar/corrigir integração;
 - importar assets gratuitos;

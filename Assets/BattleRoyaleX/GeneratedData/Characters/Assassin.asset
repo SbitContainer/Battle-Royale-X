@@ -21,6 +21,19 @@ MonoBehaviour:
   moveSpeed: 6.6
   rotationSpeed: 900
   basicAttack: {fileID: 11400000, guid: 64e1f774ddc89724aa4ba742c60645fe, type: 2}
+  skill1Variants:
+  - {fileID: 11400000, guid: 27c7b604b407b354eadf22fe2570fe31, type: 2}
+  - {fileID: 11400000, guid: 417ba2ffc45cd824590f8b339fa81467, type: 2}
+  - {fileID: 11400000, guid: 6e57666d856a1c54fba8310b5e1baf57, type: 2}
+  skill2Variants:
+  - {fileID: 11400000, guid: 8a759f313a18bf2488ed3354eb2a4fd4, type: 2}
+  - {fileID: 11400000, guid: 1ab6e12d909ab5b4d858a94f9bb8b222, type: 2}
+  - {fileID: 11400000, guid: cb6a7273ccb0b134ca9290854b71da53, type: 2}
+  ultimateVariants:
+  - {fileID: 11400000, guid: e1d66d636fbea5241a5ce0112ad59516, type: 2}
+  - {fileID: 11400000, guid: 22d4127892b206b409abb47e7ba3a646, type: 2}
+  - {fileID: 11400000, guid: cbea056029ecef04c9cfb5959956a91d, type: 2}
+  visualProfile: {fileID: 11400000, guid: 6d14e25264517e24fae9a89a024e95b7, type: 2}
   defenseBase: {fileID: 11400000, guid: 27c7b604b407b354eadf22fe2570fe31, type: 2}
   movementBase: {fileID: 11400000, guid: 8a759f313a18bf2488ed3354eb2a4fd4, type: 2}
   ultimateBase: {fileID: 11400000, guid: e1d66d636fbea5241a5ce0112ad59516, type: 2}

@@ -38,6 +38,7 @@ namespace BattleRoyaleX.EditorTools
                 else if(action=="stop") EditorApplication.isPlaying=false;
                 else if(action=="capture") Capture();
                 else if(action=="preview") Preview();
+                else if(action=="labpreview") PreviewClass(request.Split(':')[1]);
                 else if(action=="inspect") InspectModels();
                 else if(action=="build") Build();
                 else throw new InvalidOperationException("Unknown polish action");
@@ -91,6 +92,39 @@ namespace BattleRoyaleX.EditorTools
                     report.AppendLine(r.name+" | "+r.sharedMesh.vertexCount+" | "+string.Join(",",r.sharedMaterials.Select(m=>m.name)));
             }
             File.WriteAllText("Logs/polish-source-meshes.txt",report.ToString());
+        }
+        static void PreviewClass(string className)
+        {
+            if (!EditorApplication.isPlaying) throw new InvalidOperationException("Enter Play Mode first.");
+            if (!Enum.TryParse(className, true, out CharacterClass selected)) throw new ArgumentException("Unknown class");
+            PrototypeLabController lab = UnityEngine.Object.FindAnyObjectByType<PrototypeLabController>();
+            if (lab == null || !lab.SwitchPlayerClass(selected)) throw new InvalidOperationException("Class unavailable");
+            foreach (var bot in UnityEngine.Object.FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
+            foreach (var input in UnityEngine.Object.FindObjectsByType<PrototypeLocalInput>()) input.enabled = false;
+            foreach (var hud in UnityEngine.Object.FindObjectsByType<PrototypeDebugHUD>()) hud.enabled = false;
+            lab.fixedOpponent.Initialize(lab.warriorDefinition);
+            lab.fixedOpponent.Motor.Teleport(new Vector3(-3f, 1f, 0f));
+            lab.playerSlot.Motor.Teleport(new Vector3(3f, 1f, 0f));
+            lab.fixedOpponent.Motor.FaceDirection(Vector3.right);
+            lab.playerSlot.Motor.FaceDirection(Vector3.left);
+            double start = EditorApplication.timeSinceStartup;
+            bool cast = false;
+            void Frame()
+            {
+                if (!EditorApplication.isPlaying) { EditorApplication.update -= Frame; return; }
+                double elapsed = EditorApplication.timeSinceStartup - start;
+                if (!cast && elapsed > 1f)
+                {
+                    cast = true;
+                    lab.playerSlot.Abilities.TryUse(AbilitySlot.Skill1, Vector3.left);
+                }
+                if (elapsed > 1.45f)
+                {
+                    ScreenCapture.CaptureScreenshot(Path.GetFullPath("Logs/astra-" + className.ToLowerInvariant() + ".png"));
+                    EditorApplication.update -= Frame;
+                }
+            }
+            EditorApplication.update += Frame;
         }
         static void Preview()
         {

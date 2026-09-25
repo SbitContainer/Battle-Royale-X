@@ -1,4 +1,4 @@
-# Matriz ao vivo — 20/09/2026 19:39:11
+# Matriz ao vivo — 25/09/2026 19:27:50
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -148,9 +148,29 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Corrida de 5 s aplica Guerreiro 4,9 e Assassino 6,6 com vantagem clara do Assassino
 - PASSOU: HoT permite movimento/ataque/skill, resiste a dano, renova sem stacking e notifica a vida por ticks
 - PASSOU: Barras mundiais respondem ao dano e a MaxHealth diferente nas duas classes
-- PASSOU: Laboratório alterna Guerreiro/Assassino, rejeita classes futuras e mantém oponente Guerreiro
+- PASSOU: Laboratório alterna as quatro classes e mantém oponente Guerreiro
 - PASSOU: Defesa/Movimento/Ultimate Base-A-B trocam grátis; basic e inventário permanecem intactos
 - PASSOU: Sistema normal de runas continua disponível fora da troca livre do laboratório
+- PASSOU: Laboratório possui definições das quatro classes
+- PASSOU: Catálogo oferece 4 Basics e 36 habilidades A/B/C selecionáveis
+- PASSOU: Slots V1 preservam serialização dos assets aprovados por aliases de compatibilidade
+- PASSOU: Troca runtime seleciona as quatro classes sem alterar o Guerreiro adversário
+- PASSOU: Troca de classe restaura HP e energia
+- PASSOU: Faíscas Caçadoras cria três projéteis seeking de baixo dano
+- PASSOU: Projéteis seeking possuem apresentação visível durante o deslocamento
+- PASSOU: Campo de Lentidão reduz velocidade sem stun ou MovementLock
+- PASSOU: Campo mágico mostra limites no chão na posição real da habilidade
+- PASSOU: Clones usam silhuetas renderizadas sem duplicar hitboxes ou hurtboxes
+- PASSOU: Ecos Arcanos cria três clones e permite teleportar ou deixar a janela expirar
+- PASSOU: Convergência combina projétil lento e rápido e aplica cooldown de sucesso
+- PASSOU: Armadilha Gravitacional puxa sem retirar movimento ou skills
+- PASSOU: Passos Laterais aceita dois deslocamentos com direções independentes
+- PASSOU: Guerreiro intercepta apenas projétil marcado e reduz 60% do dano restante
+- PASSOU: Regeneração natural inicia fora de combate e reinicia atraso ao receber dano
+- PASSOU: Troca de classe cancela efeitos, projéteis e coroutines pertencentes à classe anterior
+- PASSOU: Todas as 40 habilidades possuem hook de VFX procedural substituível
+- PASSOU: Arena contém as seis interações arcanas de demonstração
+- PASSOU: Evolução Titânica acompanha o slot ao trocar a Ultimate
 - PASSOU: Warrior_Defense_Base: variação está disponível e equipa no slot correto
 - PASSOU: Warrior_Defense_A: variação está disponível e equipa no slot correto
 - PASSOU: Warrior_Defense_B: variação está disponível e equipa no slot correto
@@ -175,4 +195,4 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Morte visual permanece ativa no mobile até o reinício da rodada
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 172 passaram; 0 falharam.
+Resultado: 192 passaram; 0 falharam.

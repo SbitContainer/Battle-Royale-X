@@ -85,6 +85,7 @@ namespace BattleRoyaleX.EditorTools
                     if (localInput != null) localInput.enabled = false;
                     PrototypeTrainingBot trainingBot = character.GetComponent<PrototypeTrainingBot>();
                     if (trainingBot != null) trainingBot.enabled = false;
+                    character.ResetTransientState();
                 }
 
                 Animator[] animators = characters.Select(character => character.GetComponentInChildren<Animator>(true)).ToArray();
@@ -96,7 +97,23 @@ namespace BattleRoyaleX.EditorTools
                 {
                     warriorAnimator = warrior.GetComponentInChildren<Animator>(true);
                     warrior.Motor.SetMoveInput(Vector2.right);
+                }
+
+                phase = 10;
+                phaseStartedAt = Time.time;
+                return;
+            }
+
+            // Locomotion must be sampled before the attack locks movement, not during it.
+            if (phase == 10 && elapsed >= 0.35d)
+            {
+                Check(warriorAnimator != null && warriorAnimator.GetFloat("MoveAmount") > 0.05f,
+                    "Runtime/movimento alimenta o Animator");
+                if (warrior != null)
+                {
+                    warrior.Motor.StopMovementImmediately();
                     Check(warrior.Abilities.TryUse(AbilitySlot.BasicAttack), "Runtime/ataque continua aceito pela logica");
+                    CharacterRuntime assassin = UnityEngine.Object.FindObjectsByType<CharacterRuntime>().FirstOrDefault(c => c != warrior);
                     CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, warrior.transform.position, warrior, assassin, 1f));
                 }
 
@@ -109,7 +126,6 @@ namespace BattleRoyaleX.EditorTools
             {
                 if (warriorAnimator != null)
                 {
-                    Check(warriorAnimator.GetFloat("MoveAmount") > 0.05f, "Runtime/movimento alimenta o Animator");
                     AnimatorStateInfo current = warriorAnimator.GetCurrentAnimatorStateInfo(0);
                     AnimatorStateInfo next = warriorAnimator.GetNextAnimatorStateInfo(0);
                     Check(current.IsName("Attack1") || next.IsName("Attack1"), "Runtime/ataque dispara estado visual");
@@ -160,6 +176,26 @@ namespace BattleRoyaleX.EditorTools
                 CharacterRuntime[] characters = UnityEngine.Object.FindObjectsByType<CharacterRuntime>();
                 Check(characters.All(character => character.transform.Find("VisualModel") != null), "Runtime/modelos visuais permanecem anexados");
                 Check(characters.All(character => character.transform.Find("FallbackCapsuleVisual") == null), "Runtime/nenhuma capsula de fallback ativa");
+                if (warrior != null) warrior.Health.ApplyDamage(warrior.Health.MaxHealth * 2f);
+                phase = 4;
+                phaseStartedAt = Time.time;
+                return;
+            }
+
+            if (phase == 4 && elapsed >= 0.4d)
+            {
+                Check(warriorAnimator != null && warriorAnimator.GetBool("Dead"), "Runtime/morte ativa parametro do Animator");
+                if (warrior != null) warrior.Initialize(warrior.Definition);
+                phase = 5;
+                phaseStartedAt = Time.time;
+                return;
+            }
+
+            if (phase == 5 && elapsed >= 0.5d)
+            {
+                Check(warriorAnimator != null && !warriorAnimator.GetBool("Dead") &&
+                    !warriorAnimator.GetCurrentAnimatorStateInfo(0).IsName("Death"),
+                    "Runtime/reinicio sai do estado de morte sem recriar personagem");
                 CompletePlayMode();
             }
         }

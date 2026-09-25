@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 452c1c18d490c654eb6f3e28a97e1ab8, type: 3}
+  m_Name: Archer
+  m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.CharacterDefinition
+  characterId: Archer
+  displayName: Arqueiro
+  characterClass: 3
+  maxHealth: 95
+  maxEnergy: 110
+  energyRegenPerSecond: 9
+  moveSpeed: 5.8
+  rotationSpeed: 900
+  basicAttack: {fileID: 11400000, guid: 007ce19b2e9cbd04684fda8774bbda24, type: 2}
+  skill1Variants:
+  - {fileID: 11400000, guid: 7bf7944ce13a8de48b86829de5fc08c4, type: 2}
+  - {fileID: 11400000, guid: aa43835132b66ef41a565c7c687e15e7, type: 2}
+  - {fileID: 11400000, guid: dc4610c76504d6f43a820612ded6962b, type: 2}
+  skill2Variants:
+  - {fileID: 11400000, guid: f9cfab1237d13b44a9406577e05f9f0a, type: 2}
+  - {fileID: 11400000, guid: 11a57b6be0206fd448994550bf9cbe5a, type: 2}
+  - {fileID: 11400000, guid: 5c1ab910bcd71c246bfabe840049f365, type: 2}
+  ultimateVariants:
+  - {fileID: 11400000, guid: 52452a052f4f9784c81ed3a0e14bec31, type: 2}
+  - {fileID: 11400000, guid: 51b7844c96d822a44a1be878febc2bd5, type: 2}
+  - {fileID: 11400000, guid: e7b4650ff90fe08499bd3c520552f3ab, type: 2}
+  visualProfile: {fileID: 11400000, guid: e9d4492d816ce37488c35328d719efa3, type: 2}
+  defenseBase: {fileID: 11400000, guid: 7bf7944ce13a8de48b86829de5fc08c4, type: 2}
+  movementBase: {fileID: 11400000, guid: f9cfab1237d13b44a9406577e05f9f0a, type: 2}
+  ultimateBase: {fileID: 11400000, guid: 52452a052f4f9784c81ed3a0e14bec31, type: 2}
+  defenseVariantA: {fileID: 11400000, guid: aa43835132b66ef41a565c7c687e15e7, type: 2}
+  defenseVariantB: {fileID: 11400000, guid: dc4610c76504d6f43a820612ded6962b, type: 2}
+  movementVariantA: {fileID: 11400000, guid: 11a57b6be0206fd448994550bf9cbe5a, type: 2}
+  movementVariantB: {fileID: 11400000, guid: 5c1ab910bcd71c246bfabe840049f365, type: 2}
+  ultimateVariantA: {fileID: 11400000, guid: 51b7844c96d822a44a1be878febc2bd5, type: 2}
+  ultimateVariantB: {fileID: 11400000, guid: e7b4650ff90fe08499bd3c520552f3ab, type: 2}

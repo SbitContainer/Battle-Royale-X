@@ -48,6 +48,9 @@ namespace BattleRoyaleX
             int seekingCount = FindObjectsByType<SeekingProjectileMover>().Count(m =>
                 m != null && m.GetComponent<Hitbox>() != null && m.GetComponent<Hitbox>().Owner == a);
             Check(sparksUsed && seekingCount == 3, "Faíscas Caçadoras cria três projéteis seeking de baixo dano");
+            Check(FindObjectsByType<SeekingProjectileMover>().Where(m => m.GetComponent<Hitbox>().Owner == a)
+                .All(m => m.GetComponentInChildren<Renderer>() != null),
+                "Projéteis seeking possuem apresentação visível durante o deslocamento");
 
             ResetPair(12f); lab.EquipVariation(AbilitySlot.Skill1, 2);
             a.Motor.Teleport(new Vector3(-4f, 1f, 0f)); a.Motor.FaceDirection(Vector3.right);
@@ -56,12 +59,20 @@ namespace BattleRoyaleX
             yield return new WaitForSeconds(0.5f);
             Check(slowUsed && w.MovementSlowMultiplier < 0.99f && !w.State.MovementLocked,
                 "Campo de Lentidão reduz velocidade sem stun ou MovementLock");
+            SlowField visibleField = FindAnyObjectByType<SlowField>();
+            Check(visibleField != null && visibleField.GetComponentsInChildren<LineRenderer>().Length >= 2 &&
+                Near(visibleField.GetComponentInChildren<LineRenderer>().transform.position.y, 0.06f),
+                "Campo mágico mostra limites no chão na posição real da habilidade");
 
             ResetPair(10f); lab.EquipVariation(AbilitySlot.Skill2, 1);
             Vector3 cloneOrigin = a.transform.position;
             bool clonesUsed = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.left);
             yield return new WaitForSeconds(0.25f);
             int cloneCount = FindObjectsByType<OwnedAbilityEffect>().Count(e => e.Owner == a && e.name.StartsWith("ArcaneClone_"));
+            Check(FindObjectsByType<ArcaneProjectionResources>().Count() == 3 &&
+                FindObjectsByType<ArcaneProjectionResources>().All(c => c.GetComponentInChildren<Hitbox>() == null &&
+                    c.GetComponentInChildren<Hurtbox>() == null && c.GetComponentInChildren<Renderer>() != null),
+                "Clones usam silhuetas renderizadas sem duplicar hitboxes ou hurtboxes");
             bool cloneTeleport = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.forward);
             yield return null;
             Check(clonesUsed && cloneCount == 3 && cloneTeleport && Vector3.Distance(a.transform.position, cloneOrigin) > 2f,

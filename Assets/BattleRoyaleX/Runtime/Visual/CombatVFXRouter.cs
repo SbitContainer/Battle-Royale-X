@@ -23,8 +23,13 @@ namespace BattleRoyaleX
                 data.kind == CombatEventKind.AbilityGuard || data.kind == CombatEventKind.AbilityMove ||
                 data.kind == CombatEventKind.AbilityUltimate))
             {
+                if (data.phase != AbilityPhase.Startup && data.phase != AbilityPhase.Active) return;
+                bool worldField = data.ability.behavior == AbilityBehavior.SlowField ||
+                    data.ability.behavior == AbilityBehavior.PullTrap;
+                if (data.phase == AbilityPhase.Active && worldField) return;
                 GameObject cast = data.phase == AbilityPhase.Active && abilityProfile.areaPrefab != null
                     ? abilityProfile.areaPrefab : abilityProfile.castPrefab;
+                if (data.phase == AbilityPhase.Active && abilityProfile.areaPrefab == null) return;
                 float titanScale = data.source != null && data.source.Abilities != null && data.source.Abilities.IsTitanEvolved &&
                     data.ability.slot == AbilitySlot.Ultimate ? 1.35f : 1f;
                 Spawn(cast, data.position + abilityProfile.castOffset,

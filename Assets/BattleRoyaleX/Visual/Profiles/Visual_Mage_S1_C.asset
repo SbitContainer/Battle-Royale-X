@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 031cd735a32c4d339cd6725ee657f497, type: 3}
+  m_Name: Visual_Mage_S1_C
+  m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.AbilityVisualProfile
+  abilityId: Mage_S1_C
+  characterClass: 2
+  castPrefab: {fileID: 4357240862247326278, guid: 8f21648c855e87e4180553a0a0c8fcb3, type: 3}
+  projectilePrefab: {fileID: 0}
+  impactPrefab: {fileID: 4357240862247326278, guid: 8f21648c855e87e4180553a0a0c8fcb3, type: 3}
+  areaPrefab: {fileID: 3732418131697873319, guid: b0d52f34d66d5de4d9d1be581b04153d, type: 3}
+  trailPrefab: {fileID: 0}
+  castClip: {fileID: 0}
+  impactClip: {fileID: 0}
+  castOffset: {x: 0, y: 0, z: 0}
+  projectileOffset: {x: 0, y: 0.8, z: 0.8}
+  areaOffset: {x: 0, y: 0, z: 0}
+  visualScale: 1
+  fallbackLifetime: 2
+  primaryTint: {r: 0.1, g: 0.85, b: 1, a: 1}
+  secondaryTint: {r: 1, g: 1, b: 1, a: 1}
+  visualNotes:
