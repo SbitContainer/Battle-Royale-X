@@ -1,428 +1,321 @@
-# Battle Royale X — Roster, Variações e Escopo de Teste
+# Battle Royale X — Classes, Slots e Direção de Habilidades
 
-## Estado do protótipo
+## Estado
 
-Implementação ativa agora:
+Implementação ativa:
 - Guerreiro
 - Assassino
 
-Registrados apenas para orientar balanceamento futuro:
+Somente design/balanceamento por enquanto:
 - Mago
 - Arqueiro
 
-Durante a fase de laboratório:
-- o bot permanece sempre Guerreiro;
-- o jogador pode trocar a classe no app/seletor de teste;
-- apenas Guerreiro e Assassino precisam estar jogáveis nesta etapa;
-- Mago e Arqueiro podem aparecer como "design registrado / ainda não implementado";
-- Defesa, Movimento e Ultimate podem ser trocados livremente no modo de teste, sem depender de runa, consumo ou drop;
-- a regra final de runas volta somente depois que os matchups forem validados.
+A arquitetura antiga de slots rígidos `Defesa / Movimento / Ultimate` foi substituída para a versão final planejada.
 
-## Filosofia
+---
 
-Nenhuma variação deve dizer "causa mais dano contra classe X".
+# ARQUITETURA DA PRIMEIRA VERSÃO
 
-As variações respondem a comportamentos:
-- perseguição contra mobilidade;
-- defesa de projétil contra ranged;
-- área próxima contra dive;
-- avanço protegido contra pressão frontal;
-- parry contra ações previsíveis;
-- mobilidade contra golpes lentos;
-- negação de projétil contra magia/tiros.
+Cada personagem possui:
 
-Isso permite kits especializados e híbridos sem criar hard counters.
+- Ataque Básico fixo;
+- Skill 1;
+- Skill 2;
+- Ultimate.
+
+Na partida Battle Royale real:
+- começa apenas com Ataque Básico;
+- Skill 1 começa vazia;
+- Skill 2 começa vazia;
+- Ultimate começa vazia;
+- habilidades são encontradas no chão/eventos.
+
+Não implementar terceiro slot normal agora.
+
+## Skill 1 e Skill 2
+
+Não são categorias rígidas.
+
+Uma habilidade normal pode ser:
+- mobilidade;
+- defesa;
+- ataque;
+- controle;
+- utilidade;
+- híbrida.
+
+O jogador pode montar duas habilidades do mesmo estilo se a classe possuir opções compatíveis.
+
+## Drops universais adaptativos
+
+Skill 1/Skill 2 usam itens adaptativos por classe.
+
+Exemplo:
+- `Skill 1 — Variação B`;
+- Mago coleta → Skill 1-B do Mago;
+- Guerreiro coleta → Skill 1-B do Guerreiro;
+- Assassino coleta → Skill 1-B do Assassino;
+- Arqueiro coleta → Skill 1-B do Arqueiro.
+
+Ultimate NÃO usa conversão universal.
+
+O jogador precisa encontrar uma Ultimate válida da própria classe.
+
+---
+
+# FILOSOFIA DE BALANCEAMENTO
+
+Nenhuma habilidade deve dizer:
+- +X% contra Mago;
+- +X% contra Assassino;
+- bônus oculto por classe.
+
+O equilíbrio vem de comportamento.
+
+Lei principal:
+
+> Quanto mais fácil acertar, menor a recompensa ofensiva.
+>
+> Quanto mais difícil acertar, maior pode ser a recompensa.
+
+Referência:
+- homing/perseguidora = dano baixo;
+- projétil rápido = dano médio;
+- projétil lento/telegráfico = dano alto;
+- combo de execução difícil = dano muito alto;
+- controle fácil de aplicar = dano baixo.
+
+Toda classe deve possuir:
+- mobilidade;
+- pelo menos uma rota de vitória contra todas as outras;
+- respostas baseadas em execução;
+- fraquezas exploráveis.
+
+Nenhuma classe possui hard counter automático.
 
 ---
 
 # GUERREIRO
 
-Identidade:
+## Identidade
+
 - melhor troca frontal;
-- defesa mais consistente;
-- ataques pesados;
-- cooldowns maiores;
-- mobilidade menor;
-- consegue punir quem entra mal;
-- não deve perseguir indefinidamente quem decidiu fugir.
+- ataque pesado;
+- cooldown maior;
+- defesa por timing;
+- forte interação física com projéteis;
+- mobilidade menor que Assassino;
+- consegue punir entrada ruim.
 
-Fraquezas:
-- alcance;
-- mobilidade;
-- cooldown alto;
-- ataques previsíveis;
-- pode sofrer contra zonamento e projéteis se escolher kit anti-melee.
+## Diferencial
 
-Especializações futuras:
-- anti-mobilidade: Retaliação + Caçada + Ultimate de domínio próximo;
-- anti-ranged: Guarda Arcana + Avanço Protegido + Bastião Arcano;
-- híbrido: combinação livre entre as famílias.
+Guerreiro deve conseguir **enfrentar certas habilidades diretamente**.
+
+Alguns projéteis serão interceptáveis.
+
+Acertar Ataque Básico/habilidade compatível no projétil no timing correto pode:
+- reduzir aproximadamente 60% do dano recebido;
+- destruir completamente algumas habilidades específicas;
+- desviar outras conforme design futuro.
+
+Não funciona contra tudo.
+
+Skill expression:
+- leitura;
+- timing;
+- decisão de enfrentar ou esquivar.
+
+Guerreiro anti-ranged continua vencível por Mago/Arqueiro habilidosos porque:
+- nem toda skill é interceptável;
+- cooldowns são maiores;
+- ataques lentos são puníveis;
+- mobilidade/ângulos podem superar a defesa.
 
 ---
 
 # ASSASSINO
 
-Identidade:
-- maior velocidade base;
-- maior mobilidade;
+## Identidade
+
+- maior mobilidade natural;
+- maior velocidade;
 - entrada e saída;
-- esquiva como principal defesa;
-- alto risco se permanecer em troca frontal;
-- jogador experiente deve conseguir escolher quando a luta acontece.
-
-Fraquezas:
-- pouca resistência;
-- perde valor se ficar preso em combate prolongado;
-- erro de esquiva precisa ser punível;
-- não pode entrar repetidamente sem correr risco real contra Guerreiro preparado.
-
-Especializações futuras:
-- counter ofensivo;
-- dupla esquiva direcional;
-- travessia;
-- retorno;
+- dodge;
+- mudança de direção;
 - execução;
-- caçada/mobilidade.
+- mind game.
+
+## Diferencial
+
+Assassino não precisa de forte sistema de interceptação.
+
+Contra projéteis, sua resposta principal é:
+- não estar na trajetória;
+- dash;
+- dodge;
+- reposicionamento;
+- bait.
+
+Isso diferencia Assassino do Guerreiro.
+
+Fraqueza:
+- troca frontal prolongada;
+- erro de mobilidade;
+- gastar cooldown de fuga no momento errado.
 
 ---
 
-# MAGO — DESIGN REGISTRADO, NÃO IMPLEMENTAR AINDA
+# MAGO
 
 ## Identidade
 
-Mago controla espaço por:
-- projéteis;
-- áreas telegráficas;
-- colisões mágicas;
+Mago deve ser a classe de:
+- combinação entre habilidades;
 - previsão;
-- negação de rota.
+- projéteis;
+- controle espacial;
+- telegraph;
+- mind game.
 
-Não possui hard CC.
+Também possui mobilidade própria.
 
-O Mago não prende o inimigo; ele força decisões de posicionamento.
+Contra alvos muito móveis:
+- usa habilidades perseguidoras de dano menor;
+- controle de velocidade;
+- engano/reposicionamento.
 
-Forças:
-- melhor controle de área;
-- alto valor quando prevê movimento;
-- ameaça forte em média distância;
-- pode colidir magia contra magia;
-- pune Guerreiro que avança de forma previsível.
+Contra alvos previsíveis/lentos:
+- pode arriscar habilidades lentas de dano alto.
 
-Fraquezas:
-- pressão corpo a corpo;
-- cooldowns importantes;
-- projéteis podem ser bloqueados, anulados, refletidos ou colidir;
-- mobilidade apenas moderada;
-- precisa antecipar o Assassino, não reagir tarde.
+## Controle
 
-## Ataque básico — Orbe Arcano
+Pode usar slow/atração/deslocamento.
 
-- projétil mágico de velocidade média;
-- dano moderado;
-- colide com outros projéteis mágicos;
-- pode ser bloqueado/anulado/refletido conforme a defesa;
-- sem variações;
-- leitura visual muito clara.
+Não usar stun como base normal da classe.
 
-Objetivo:
-servir como ferramenta constante de pressão e de criação de colisões mágicas, não como burst gratuito.
+## Clone / engano — direção aprovada conceitualmente
 
-## Defesa base — Barreira Arcana
+Uma habilidade futura pode:
+- criar 3 clones/projeções;
+- permitir ao Mago teleportar para um deles;
+- permitir também não teleportar;
+- usar clones como mind game e fuga.
 
-- proteção curta;
-- reduz dano frontal/compatível;
-- não é invulnerabilidade;
-- duração curta;
-- cooldown médio.
+Detalhes ainda precisam ser fechados antes da implementação.
 
-Uso:
-generalista.
+## Ultimate combinada de alto dano — definida
 
-## Defesa A — Espelho Prismático
+A Ultimate ocupa somente o slot Ultimate.
 
-Perfil:
-anti-projétil / anti-Mago / anti-Arqueiro.
+Fase 1:
+- projétil lento;
+- pouco dano isolado.
 
-- janela curta;
-- primeiro projétil compatível recebido é refletido;
-- reflexão entra em cooldown especial;
-- proteção física corpo a corpo é pior que a Barreira Base.
+Fase 2:
+- projétil rápido;
+- pouco dano isolado.
 
-Fraqueza:
-Assassino que chega por perto continua perigoso.
+Se fase 2 acerta corretamente fase 1:
+- grande explosão;
+- dano alto;
+- área relevante.
 
-## Defesa B — Pulso de Repulsão
+Cooldown:
+- combinação acertou → cooldown maior;
+- tentativa falhou → cooldown reduzido.
 
-Perfil:
-anti-dive / anti-Assassino / anti-Guerreiro próximo.
-
-- janela curta de defesa;
-- se receber ataque compatível em alcance curto, gera pulso de repulsão;
-- empurra sem stun;
-- dano baixo ou inexistente;
-- não é boa resposta contra inimigo mantendo distância.
-
-Fraqueza:
-ranged pode simplesmente continuar atacando de fora.
-
-## Movimento base — Blink
-
-- deslocamento curto instantâneo/rapidíssimo para a direção escolhida;
-- sem dano;
-- cooldown médio;
-- não atravessa mapa inteiro.
-
-Uso:
-reposicionamento generalista.
-
-## Movimento A — Blink Longo
-
-Perfil:
-anti-melee / fuga.
-
-- distância maior;
-- cooldown bem maior;
-- pequeno compromisso visual antes/depois;
-- ótimo para criar espaço de Guerreiro/Assassino.
-
-Fraqueza:
-se usado cedo, o Mago fica sem sua principal saída.
-
-## Movimento B — Âncora Arcana
-
-Perfil:
-mind game / híbrido.
-
-- primeiro uso cria âncora e faz Blink curto;
-- segundo uso dentro da janela retorna à âncora;
-- retorno claramente sinalizado no chão;
-- pode ser previsto e punido.
-
-Uso:
-bom contra perseguição, mas não é fuga garantida.
-
-## Ultimate base — Tempestade Arcana
-
-- área telegráfica;
-- múltiplos pulsos de dano;
-- nenhum stun;
-- inimigo pode sair da área;
-- excelente para negar espaço.
-
-## Ultimate A — Núcleo Meteórico
-
-Perfil:
-dano concentrado / anti-alvo previsível.
-
-- grande telegraph no chão;
-- atraso maior;
-- explosão única forte;
-- área menor que Tempestade;
-- Guerreiro parado em Guarda ou avançando previsivelmente corre risco;
-- Assassino atento deve conseguir esquivar.
-
-## Ultimate B — Anéis Arcanos
-
-Perfil:
-anti-dive / controle por dano.
-
-- cria 2–3 anéis/ondas sucessivas ao redor do Mago;
-- cada onda causa dano moderado;
-- nenhuma impede movimento;
-- entrar no timing errado é perigoso;
-- inimigo pode esperar do lado de fora.
-
-Observação:
-as duas variações de Ultimate continuam orientadas a dano, como definido originalmente.
-
-## Kits emergentes do Mago
-
-Anti-melee:
-- Pulso de Repulsão
-- Blink Longo
-- Anéis Arcanos
-
-Anti-ranged:
-- Espelho Prismático
-- Âncora Arcana
-- Núcleo Meteórico
-
-Generalista:
-- Barreira Arcana
-- Blink
-- Tempestade Arcana
-
-Híbridos são permitidos.
+Valores ainda serão calibrados.
 
 ---
 
-# ARQUEIRO — DESIGN REGISTRADO, NÃO IMPLEMENTAR AINDA
+# ARQUEIRO
 
 ## Identidade
 
-Arqueiro é o especialista em alcance e precisão.
+Arqueiro precisa ser astuto e preparar o confronto.
 
-Forças:
-- maior alcance consistente;
-- projétil rápido;
-- pressão contínua;
-- excelente quando mantém distância;
-- consegue castigar movimentação previsível.
+Foco:
+- alcance;
+- precisão;
+- armadilhas;
+- kite;
+- controle de rota;
+- posicionamento;
+- mobilidade inteligente.
 
-Fraquezas:
-- frágil;
-- defesa limitada;
-- pior quando Assassino/Guerreiro chegam perto;
-- não deve ganhar troca corpo a corpo;
-- depende fortemente de posicionamento.
+Também possui habilidades fáceis/difíceis seguindo a mesma lei:
+- perseguidora = dano menor;
+- tiro difícil = dano maior.
 
-## Ataque básico — Disparo Preciso
+## Controle
 
-- projétil físico rápido;
-- alcance longo;
-- dano moderado;
-- cadência controlada;
-- sem variações;
-- pode ser bloqueado ou interceptado;
-- não possui tracking.
+Pode possuir controle sem hard stun.
 
-## Defesa base — Rolamento Reativo
+Direção conceitual forte:
 
-- esquiva curta;
-- pequena janela de invulnerabilidade;
-- distância menor que a esquiva do Assassino;
-- cooldown médio.
+### Armadilha de atração
+- colocada no chão;
+- inimigo dentro do raio é puxado em direção ao centro;
+- não fica paralisado;
+- pode continuar andando, usando mobilidade e skills;
+- permite ao Arqueiro preparar terreno antes de ser atacado;
+- naturalmente forte contra dive/melee;
+- pouco útil contra Mago que mantém distância.
 
-Uso:
-generalista.
-
-## Defesa A — Tiro de Interceptação
-
-Perfil:
-anti-projétil / anti-Mago / anti-Arqueiro.
-
-- pequena janela de precisão;
-- dispara um tiro defensivo;
-- se acertar projétil compatível, destrói/intercepta;
-- não fornece boa defesa contra ataque corpo a corpo;
-- cooldown especial impede spam.
-
-## Defesa B — Recuo Ofensivo
-
-Perfil:
-anti-dive.
-
-- salto/deslocamento curto para trás no plano;
-- dispara um tiro leve na direção oposta ao recuo;
-- dano baixo;
-- sem stun;
-- Assassino pode ler a direção e continuar perseguindo.
-
-## Movimento base — Dash Tático
-
-- deslocamento médio;
-- direção livre;
-- sem dano;
-- cooldown médio.
-
-## Movimento A — Gancho de Reposição
-
-Perfil:
-escape / reposicionamento de longo alcance.
-
-- puxa rapidamente o Arqueiro até um ponto válido no chão;
-- sem elevação;
-- alcance maior que Dash Tático;
-- cooldown alto;
-- trajetória/telegraph visível;
-- pode ser lido por quem persegue.
-
-## Movimento B — Passos Laterais
-
-Perfil:
-duelo ranged / evasão.
-
-- duas pequenas cargas laterais;
-- segunda direção pode ser escolhida separadamente;
-- distância total menor que Gancho;
-- ótimo para alterar ângulo de tiro;
-- não atravessa grandes distâncias.
-
-## Ultimate base — Rajada Perfurante
-
-- sequência curta de tiros alinhados;
-- exige mira;
-- sem auto-aim;
-- dano alto se vários acertarem;
-- jogador mantém controle e pode esquivar.
-
-## Ultimate A — Disparo Perfurante
-
-Perfil:
-dano concentrado.
-
-- um disparo muito longo e muito telegráfico;
-- alto dano;
-- atravessa alvos/efeitos compatíveis conforme regras futuras;
-- errou = grande perda de oportunidade;
-- não é morte inevitável.
-
-## Ultimate B — Sobrecarga Cinética
-
-Perfil:
-mobilidade + cadência.
-
-- aumenta velocidade de movimento;
-- aumenta velocidade/cadência de ataque;
-- NÃO aumenta o dano bruto de cada tiro;
-- duração curta;
-- serve para kite e reposicionamento.
-
-## Kits emergentes do Arqueiro
-
-Anti-Mago/ranged:
-- Tiro de Interceptação
-- Passos Laterais
-- Disparo Perfurante
-
-Anti-dive:
-- Recuo Ofensivo
-- Gancho de Reposição
-- Sobrecarga Cinética
-
-Generalista:
-- Rolamento Reativo
-- Dash Tático
-- Rajada Perfurante
-
-Híbridos são permitidos.
+Essa habilidade ainda precisa de valores e detalhes antes da implementação.
 
 ---
 
-# Regra de balanceamento entre as quatro classes
+# MATCHUPS
 
-Não existe hard counter.
+## Guerreiro × Assassino
+Referência atual considerada próxima do equilíbrio desejado.
 
-Uma especialização pode criar vantagem de ferramentas, nunca vitória automática.
+- Guerreiro domina troca direta;
+- Assassino domina mobilidade/entrada/saída;
+- Guerreiro pode punir entrada;
+- Assassino pode evitar ferramentas lentas.
 
-Alvo de design:
-- Guerreiro domina troca frontal, mas sofre para alcançar;
-- Assassino domina escolha de distância/entrada, mas sofre se errar a entrada;
-- Mago domina espaço, mas sofre sob pressão próxima;
-- Arqueiro domina alcance, mas sofre quando encurralado.
+## Guerreiro × Mago
+Equilíbrio deve vir de:
+- Mago usando ângulos, mobilidade e skills não interceptáveis;
+- Guerreiro usando timing para interceptar parte dos projéteis;
+- Mago usando slow/homing para pressionar;
+- Guerreiro punindo magias lentas/previsíveis quando lê corretamente.
 
-Toda classe deve possuir:
-- pelo menos uma rota de vitória contra cada outra;
-- pelo menos uma fraqueza explorável;
-- respostas baseadas em leitura e execução;
-- cooldowns que impeçam defesa perfeita permanente.
+## Guerreiro × Arqueiro
+Equilíbrio deve vir de:
+- Arqueiro mudando ângulo, trap e kite;
+- Guerreiro interceptando alguns disparos;
+- Arqueiro usando ataques difíceis de acertar para dano alto;
+- Guerreiro tentando fechar distância sem possuir perseguição infinita.
 
-## Status de implementação
+## Assassino × Mago
+- Assassino possui mobilidade suficiente para evitar skills lentas;
+- Mago usa perseguidoras/slow/clone para criar leitura;
+- homing do Mago causa pouco dano;
+- Mago precisa sobreviver à aproximação, não impedir aproximação automaticamente.
+
+## Assassino × Arqueiro
+- Arqueiro prepara terreno e controla aproximação;
+- Assassino tenta quebrar preparação por mobilidade;
+- armadilhas/control podem dificultar dive sem stun;
+- ranged fácil de acertar não pode causar burst alto.
+
+## Mago × Arqueiro
+- luta de espaço, linha, preparação e leitura;
+- nenhum deve ser superior apenas por alcance;
+- Mago possui combinações e área;
+- Arqueiro possui precisão, trap e ângulos.
+
+---
+
+# STATUS
 
 Agora:
-- Guerreiro: desenvolver e rebalancear.
-- Assassino: desenvolver, manter identidade e ajustar detalhes.
-- Mago: somente documentação.
-- Arqueiro: somente documentação.
+- Guerreiro: implementação ativa;
+- Assassino: implementação ativa;
+- Mago: arquitetura e primeira Ultimate definidas; demais skills em definição;
+- Arqueiro: identidade e conceito de armadilha definidos; demais skills em definição.
 
-Não implementar Mago/Arqueiro até o 1x1 Guerreiro x Assassino estar estável o suficiente para servir como referência mecânica.
+Não implementar Mago/Arqueiro no runtime até a especificação de suas Skills 1/2 e primeiras variações estar fechada.
