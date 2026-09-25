@@ -7,13 +7,43 @@ namespace BattleRoyaleX
     public sealed class HealthRegenerationController : MonoBehaviour
     {
         HealthComponent health;
+        CharacterRuntime runtime;
         Coroutine routine;
+
+        [Header("Natural regeneration")]
+        [Min(0f)] public float outOfCombatDelay = 8f;
+        [Min(0f)] public float naturalPercentPerSecond = 0.025f;
+        public float LastCombatTime { get; private set; } = -999f;
 
         public bool IsRegenerating => routine != null;
         public float RemainingAmount { get; private set; }
         public float RemainingDuration { get; private set; }
 
-        void Awake() => health = GetComponent<HealthComponent>();
+        void Awake()
+        {
+            health = GetComponent<HealthComponent>();
+            runtime = GetComponent<CharacterRuntime>();
+        }
+
+        void OnEnable() => CombatEvents.Raised += OnCombatEvent;
+        void OnDisable() => CombatEvents.Raised -= OnCombatEvent;
+
+        void Update()
+        {
+            if (routine != null || health == null || health.IsDead || health.CurrentHealth >= health.MaxHealth) return;
+            if (Time.time - Mathf.Max(LastCombatTime, health.LastDamageTime) < outOfCombatDelay) return;
+            health.Heal(health.MaxHealth * naturalPercentPerSecond * Time.deltaTime);
+        }
+
+        void OnCombatEvent(CombatEventData data)
+        {
+            if (runtime == null) return;
+            bool damaging = data.kind == CombatEventKind.Hit ||
+                data.kind == CombatEventKind.Block && data.value > 0f || data.kind == CombatEventKind.Clash;
+            if (damaging && (data.source == runtime || data.target == runtime)) LastCombatTime = Time.time;
+        }
+
+        public void ResetNaturalRegenerationTimer() => LastCombatTime = Time.time;
 
         public bool StartRegeneration(float amount, float duration)
         {

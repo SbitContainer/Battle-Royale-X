@@ -25,11 +25,21 @@ namespace BattleRoyaleX
         Coroutine modifierRoutine;
         float speedBonusUntil;
         float speedBonusMultiplier = 1f;
+        float slowUntil;
+        float slowMultiplier = 1f;
         public float MovementSpeedBonus => Time.time < speedBonusUntil ? speedBonusMultiplier : 1f;
+        public float MovementSlowMultiplier => Time.time < slowUntil ? slowMultiplier : 1f;
         public void ApplyMovementSpeedBonus(float multiplier, float duration)
         {
             speedBonusMultiplier = Mathf.Max(1f, multiplier);
             speedBonusUntil = Time.time + Mathf.Max(0f, duration);
+        }
+
+        public void ApplyMovementSlow(float multiplier, float duration)
+        {
+            float clamped = Mathf.Clamp(multiplier, 0.1f, 1f);
+            if (Time.time >= slowUntil || clamped < slowMultiplier) slowMultiplier = clamped;
+            slowUntil = Mathf.Max(slowUntil, Time.time + Mathf.Max(0f, duration));
         }
 
         void Awake()
@@ -55,6 +65,7 @@ namespace BattleRoyaleX
         {
             definition = source;
             HealthRegeneration.CancelRegeneration();
+            HealthRegeneration.ResetNaturalRegenerationTimer();
             Health.Initialize(source.maxHealth);
             Energy.Initialize(source.maxEnergy, source.energyRegenPerSecond);
             Modifiers = RuntimeModifiers.Identity;
@@ -71,6 +82,8 @@ namespace BattleRoyaleX
         public void CancelTimedModifiers()
         {
             speedBonusUntil = 0f;
+            slowUntil = 0f;
+            slowMultiplier = 1f;
             if (modifierRoutine != null) StopCoroutine(modifierRoutine);
             modifierRoutine = null;
             Modifiers = RuntimeModifiers.Identity;

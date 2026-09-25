@@ -103,6 +103,21 @@ namespace BattleRoyaleX.EditorTools
                 "Cena/controles touch para teste Android existem");
             Check(UnityEngine.Object.FindAnyObjectByType<PrototypeTrainingBot>() != null,
                 "Cena/bot de treino do Guerreiro existe");
+            PrototypeLabController lab = UnityEngine.Object.FindAnyObjectByType<PrototypeLabController>();
+            Check(lab != null && lab.warriorDefinition != null && lab.assassinDefinition != null &&
+                lab.mageDefinition != null && lab.archerDefinition != null,
+                "Cena/laboratório possui as quatro classes e adversário Guerreiro");
+            Check(UnityEngine.Object.FindAnyObjectByType<CombatVFXRouter>() != null,
+                "Cena/router de VFX desacoplado existe");
+            Check(UnityEngine.Object.FindObjectsByType<ArcaneDemoObject>().Select(x => x.kind).Distinct().Count() == 6,
+                "Cena/seis objetos arcanos de demonstração existem");
+
+            CharacterDefinition[] definitions = { lab?.warriorDefinition, lab?.assassinDefinition,
+                lab?.mageDefinition, lab?.archerDefinition };
+            Check(definitions.All(d => d != null && d.basicAttack != null &&
+                Enumerable.Range(0,3).All(i => d.GetVariant(AbilitySlot.Skill1,i) != null &&
+                    d.GetVariant(AbilitySlot.Skill2,i) != null && d.GetVariant(AbilitySlot.Ultimate,i) != null)),
+                "Dados/4 Basics e 36 habilidades A-B-C estão completos");
 
             WorldPickup[] pickups = UnityEngine.Object.FindObjectsByType<WorldPickup>(FindObjectsSortMode.None);
             string[] expectedVariations = { "Var_Assassin_Counter","Var_Assassin_Double","Var_Assassin_Travel","Var_Assassin_Return","Var_Assassin_Exec","Var_Assassin_Hunt",

@@ -6,11 +6,11 @@ namespace BattleRoyaleX
     {
         public CharacterRuntime playerOne;
         public CharacterRuntime playerTwo;
-        public PrototypeCombatLabController lab;
+        public PrototypeLabController lab;
 
         void OnGUI()
         {
-            GUI.Box(new Rect(10, 10, 460, 355), "Battle Royale X — Laboratório de Combate");
+            GUI.Box(new Rect(10, 10, 520, 430), "Battle Royale X — Laboratório V1");
             DrawCharacter(new Rect(20, 35, 370, 45), "P1", playerOne);
             DrawCharacter(new Rect(20, 85, 370, 45), "P2", playerTwo);
             GUI.Label(new Rect(20, 130, 370, 20), "P1: WASD F/G/H/R 1-4 | P2: Arrows Numpad1/2/3/0 4-7");
@@ -18,14 +18,23 @@ namespace BattleRoyaleX
             GUI.Label(new Rect(20, 157, 440, 20), "Slot do oponente: GUERREIRO (fixo) | Slot do jogador:");
             if (GUI.Button(new Rect(20, 180, 100, 30), "Guerreiro")) lab.SwitchPlayerClass(CharacterClass.Warrior);
             if (GUI.Button(new Rect(125, 180, 100, 30), "Assassino")) lab.SwitchPlayerClass(CharacterClass.Assassin);
-            if (GUI.Button(new Rect(230, 180, 100, 30), "Reiniciar")) lab.ResetLab();
-            DrawVariations(AbilitySlot.Defense, "Defesa", 218f);
-            DrawVariations(AbilitySlot.Movement, "Movimento", 250f);
+            if (GUI.Button(new Rect(230, 180, 100, 30), "Mago")) lab.SwitchPlayerClass(CharacterClass.Mage);
+            if (GUI.Button(new Rect(335, 180, 100, 30), "Arqueiro")) lab.SwitchPlayerClass(CharacterClass.Archer);
+            DrawVariations(AbilitySlot.Skill1, "Skill 1", 218f);
+            DrawVariations(AbilitySlot.Skill2, "Skill 2", 250f);
             DrawVariations(AbilitySlot.Ultimate, "Ultimate", 282f);
-            GUI.Label(new Rect(20, 319, 95, 24), "Modo do bot");
-            if (GUI.Button(new Rect(115, 314, 105, 28), "Normal")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.Normal);
-            if (GUI.Button(new Rect(225, 314, 105, 28), "Parado")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.Stationary);
-            if (GUI.Button(new Rect(335, 314, 115, 28), "Bate parado")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.StationaryAttack);
+            bool evolved = lab.IsTitanEvolved;
+            bool toggled = GUI.Toggle(new Rect(20, 316, 175, 24), evolved, "Evolução Titânica");
+            if (toggled != evolved) lab.SetTitanEvolved(toggled);
+            if (GUI.Button(new Rect(200, 312, 92, 28), "Reset HP")) lab.ResetHealth();
+            if (GUI.Button(new Rect(297, 312, 92, 28), "Reset EN")) lab.ResetEnergy();
+            if (GUI.Button(new Rect(394, 312, 116, 28), "Reset CDs")) lab.ResetCooldowns();
+            if (GUI.Button(new Rect(20, 345, 100, 28), "Respawn")) lab.ResetLab();
+            GUI.Label(new Rect(130, 350, 85, 24), "Modo bot");
+            if (GUI.Button(new Rect(210, 345, 90, 28), "Normal")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.Normal);
+            if (GUI.Button(new Rect(305, 345, 90, 28), "Parado")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.Stationary);
+            if (GUI.Button(new Rect(400, 345, 110, 28), "Bate parado")) lab.SetBotMode(PrototypeTrainingBot.TrainingMode.StationaryAttack);
+            GUI.Label(new Rect(20, 382, 480, 38), "Teclas: F Basic | G Skill1 | H Skill2 | R Ultimate\nToda troca é instantânea e exclusiva do laboratório.");
         }
 
         void DrawVariations(AbilitySlot slot, string label, float y)

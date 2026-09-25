@@ -108,8 +108,8 @@ namespace BattleRoyaleX
             Check(warriorBar!=null && assassinBar!=null && warriorFill!=null && warriorFill.anchorMax.x<fillBefore &&
                 !Near(w.Health.MaxHealth,a.Health.MaxHealth), "Barras mundiais respondem ao dano e a MaxHealth diferente nas duas classes");
 
-            bool mageRejected=lab!=null&&!lab.SwitchPlayerClass(CharacterClass.Mage);
-            bool marksmanRejected=lab!=null&&!lab.SwitchPlayerClass(CharacterClass.Marksman);
+            bool mageAccepted=lab!=null&&lab.SwitchPlayerClass(CharacterClass.Mage);
+            bool archerAccepted=lab!=null&&lab.SwitchPlayerClass(CharacterClass.Archer);
             bool switchedWarrior=lab!=null&&lab.SwitchPlayerClass(CharacterClass.Warrior);
             AbilityDefinition warriorBasic=a.Abilities.GetEquipped(AbilitySlot.BasicAttack);
             int inventoryBefore=a.Inventory.Slots.Count;
@@ -118,8 +118,8 @@ namespace BattleRoyaleX
                 for(int variant=0;variant<3;variant++) variants&=lab.EquipVariation(slot,variant);
             bool basicUnchanged=a.Abilities.GetEquipped(AbilitySlot.BasicAttack)==warriorBasic;
             bool switchedAssassin=lab.SwitchPlayerClass(CharacterClass.Assassin);
-            Check(switchedWarrior && switchedAssassin && mageRejected && marksmanRejected && w.Definition.characterClass==CharacterClass.Warrior,
-                "Laboratório alterna Guerreiro/Assassino, rejeita classes futuras e mantém oponente Guerreiro");
+            Check(switchedWarrior && switchedAssassin && mageAccepted && archerAccepted && w.Definition.characterClass==CharacterClass.Warrior,
+                "Laboratório alterna as quatro classes e mantém oponente Guerreiro");
             Check(variants && basicUnchanged && a.Inventory.Slots.Count==inventoryBefore,
                 "Defesa/Movimento/Ultimate Base-A-B trocam grátis; basic e inventário permanecem intactos");
             Check(Item("Var_Assassin_Travel")!=null && a.Inventory.TryAdd(Item("Var_Assassin_Travel")),

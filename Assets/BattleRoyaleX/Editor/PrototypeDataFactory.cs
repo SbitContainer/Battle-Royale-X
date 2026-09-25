@@ -19,6 +19,7 @@ namespace BattleRoyaleX.EditorTools
 
             AbilityDefinition assassinAttack = Ability("Assassin_Basic", "Corte Rápido", AbilitySlot.BasicAttack, AbilityBehavior.MeleeAttack, 1.2f, 0f, 15f, 1.65f, 0.8f);
             assassinAttack.canDestroyMagicalProjectiles = true; assassinAttack.attackInteractionCooldown = 30f;
+            assassinAttack.tags = AbilityTags.Physical | AbilityTags.Melee;
             assassinAttack.comboSteps = 3; assassinAttack.comboInputBuffer = 0.20f; assassinAttack.comboSecondDamageMultiplier = 1.05f; assassinAttack.comboThirdDamageMultiplier = 1.38f;
             assassinAttack.startup = 0.10f; assassinAttack.recovery = 0.18f;
             AbilityDefinition assassinDefense = Defense("Assassin_Defense_Base", "Esquiva Sombria", AbilityBehavior.Dodge, DefenseKind.None, 5f, 14f, 0.12f, 2.6f, 0.16f);
@@ -36,6 +37,7 @@ namespace BattleRoyaleX.EditorTools
 
             AbilityDefinition warriorAttack = Ability("Warrior_Basic", "Corte Pesado", AbilitySlot.BasicAttack, AbilityBehavior.MeleeAttack, 1.55f, 0f, 13f, 2.2f, 1.25f);
             warriorAttack.canDestroyMagicalProjectiles = true; warriorAttack.attackInteractionCooldown = 30f;
+            warriorAttack.tags = AbilityTags.Physical | AbilityTags.Melee | AbilityTags.Heavy; warriorAttack.heavy = true;
             warriorAttack.startup = 0.15f; warriorAttack.recovery = 0.25f; warriorAttack.knockback = 1.5f;
             warriorAttack.skillLockOnHit = 0.10f;
             warriorAttack.comboSteps = 3; warriorAttack.comboInputBuffer = 0.20f; warriorAttack.comboSecondDamageMultiplier = 1.12f; warriorAttack.comboThirdDamageMultiplier = 1.55f;
@@ -124,6 +126,78 @@ namespace BattleRoyaleX.EditorTools
             CharacterDefinition warrior = Character("Warrior", "Guerreiro", CharacterClass.Warrior, 125f, 90f, 7f, 4.9f);
             SetLoadout(warrior, warriorAttack, warriorGuard, warriorMove, warriorUlt, warriorParry, warriorFortress, warriorImpact, warriorAdvance, warriorRet, warriorPush);
 
+            // V1 Mage catalog. Values are deliberately editable and follow the closed laboratory specification.
+            AbilityDefinition mageBasic = V1Projectile("Mage_Basic", "Orbe Arcano", AbilitySlot.BasicAttack,
+                AbilityBehavior.ProjectileAttack, 0.85f, 0f, 9f, 17f, false, false);
+            AbilityDefinition mageS1A = V1Projectile("Mage_S1_A", "Faíscas Caçadoras", AbilitySlot.Skill1,
+                AbilityBehavior.SeekingProjectile, 6f, 14f, 4f, 11f, false, true);
+            mageS1A.projectileCount = 3; mageS1A.turnRate = 185f;
+            AbilityDefinition mageS1B = V1Projectile("Mage_S1_B", "Orbe Pesado", AbilitySlot.Skill1,
+                AbilityBehavior.ProjectileAttack, 8.5f, 20f, 28f, 6f, true, false);
+            mageS1B.width = mageS1B.height = 1.5f; mageS1B.heavy = true; mageS1B.tags |= AbilityTags.Heavy;
+            AbilityDefinition mageS1C = V1Field("Mage_S1_C", "Campo de Lentidão", AbilitySlot.Skill1,
+                AbilityBehavior.SlowField, 10f, 18f, 0f, 3.8f, 4f);
+            mageS1C.slowPercent = 0.28f; mageS1C.range = 4f;
+            AbilityDefinition mageS2A = V1Movement("Mage_S2_A", "Blink", AbilitySlot.Skill2,
+                AbilityBehavior.Blink, 7f, 16f, 4.5f, 0.05f);
+            AbilityDefinition mageS2B = V1Movement("Mage_S2_B", "Ecos Arcanos", AbilitySlot.Skill2,
+                AbilityBehavior.CloneTeleport, 12f, 22f, 4.5f, 0.05f);
+            mageS2B.secondActivationDelay = 0.12f; mageS2B.secondActivationWindow = 2.5f;
+            AbilityDefinition mageS2C = V1Field("Mage_S2_C", "Pulso de Repulsão", AbilitySlot.Skill2,
+                AbilityBehavior.Repulsion, 9f, 18f, 5f, 3.2f, 0.15f);
+            mageS2C.knockback = 4.5f;
+            AbilityDefinition mageUltA = V1Projectile("Mage_Ult_A", "Convergência Arcana", AbilitySlot.Ultimate,
+                AbilityBehavior.ComboProjectileUltimate, 28f, 45f, 46f, 7f, true, false);
+            mageUltA.explosionRadius = 4.5f; mageUltA.secondActivationDelay = 0.25f;
+            mageUltA.secondActivationWindow = 3.2f; mageUltA.comboSuccessCooldown = 34f; mageUltA.comboFailureCooldown = 14f;
+            AbilityDefinition mageUltB = V1Field("Mage_Ult_B", "Tempestade Arcana", AbilitySlot.Ultimate,
+                AbilityBehavior.AreaAttack, 30f, 48f, 7f, 5f, 3.5f);
+            mageUltB.startup = 0.55f; mageUltB.activeTime = 2.6f;
+            AbilityDefinition mageUltC = V1Projectile("Mage_Ult_C", "Prisma Fraturado", AbilitySlot.Ultimate,
+                AbilityBehavior.MultiShot, 26f, 42f, 9f, 15f, false, false);
+            mageUltC.projectileCount = 7; mageUltC.spreadAngle = 72f; mageUltC.reflectable = true;
+
+            // V1 Archer catalog.
+            AbilityDefinition archerBasic = V1Projectile("Archer_Basic", "Disparo Preciso", AbilitySlot.BasicAttack,
+                AbilityBehavior.ProjectileAttack, 0.75f, 0f, 10f, 23f, true, false);
+            AbilityDefinition archerS1A = V1Projectile("Archer_S1_A", "Flechas Rastreadoras", AbilitySlot.Skill1,
+                AbilityBehavior.SeekingProjectile, 6.5f, 14f, 4f, 16f, true, true);
+            archerS1A.projectileCount = 3; archerS1A.turnRate = 145f;
+            AbilityDefinition archerS1B = V1Projectile("Archer_S1_B", "Flecha Pesada", AbilitySlot.Skill1,
+                AbilityBehavior.ProjectileAttack, 9f, 20f, 30f, 11f, true, false);
+            archerS1B.startup = 0.55f; archerS1B.heavy = true; archerS1B.tags |= AbilityTags.Heavy;
+            AbilityDefinition archerS1C = V1Field("Archer_S1_C", "Armadilha Gravitacional", AbilitySlot.Skill1,
+                AbilityBehavior.PullTrap, 11f, 20f, 3f, 4f, 4.5f);
+            archerS1C.range = 5f; archerS1C.pullStrength = 5.5f;
+            AbilityDefinition archerS2A = V1Movement("Archer_S2_A", "Recuo Ofensivo", AbilitySlot.Skill2,
+                AbilityBehavior.Dash, 7f, 14f, 3.5f, 0.18f);
+            archerS2A.damage = 6f; archerS2A.passThroughCharacters = false; archerS2A.reverseMovement = true;
+            archerS2A.fireProjectileOnMove = true; archerS2A.movementDealsDamage = false;
+            AbilityDefinition archerS2B = V1Movement("Archer_S2_B", "Gancho de Reposição", AbilitySlot.Skill2,
+                AbilityBehavior.Dash, 11f, 20f, 7f, 0.32f);
+            archerS2B.requiresSurfacePoint = true; archerS2B.movementDealsDamage = false;
+            AbilityDefinition archerS2C = V1Movement("Archer_S2_C", "Passos Laterais", AbilitySlot.Skill2,
+                AbilityBehavior.MultiDash, 6.5f, 15f, 2.5f, 0.13f);
+            archerS2C.chargeCount = 2; archerS2C.chargeWindow = 1.5f; archerS2C.secondActivationDelay = 0.2f;
+            AbilityDefinition archerUltA = V1Projectile("Archer_Ult_A", "Rajada Perfurante", AbilitySlot.Ultimate,
+                AbilityBehavior.MultiShot, 25f, 40f, 8f, 24f, true, false);
+            archerUltA.projectileCount = 6; archerUltA.spreadAngle = 9f;
+            AbilityDefinition archerUltB = V1Buff("Archer_Ult_B", "Sobrecarga Cinética", 28f, 42f, 6f, 1.28f);
+            AbilityDefinition archerUltC = V1Projectile("Archer_Ult_C", "Disparo de Ruptura", AbilitySlot.Ultimate,
+                AbilityBehavior.ProjectileAttack, 34f, 50f, 45f, 19f, true, false);
+            archerUltC.startup = 0.85f; archerUltC.heavy = true; archerUltC.destroyWhenIntercepted = false;
+            archerUltC.tags |= AbilityTags.Heavy | AbilityTags.FragmentTrigger;
+
+            Restrict(CharacterClass.Mage, mageBasic, mageS1A, mageS1B, mageS1C, mageS2A, mageS2B, mageS2C,
+                mageUltA, mageUltB, mageUltC);
+            Restrict(CharacterClass.Archer, archerBasic, archerS1A, archerS1B, archerS1C, archerS2A, archerS2B,
+                archerS2C, archerUltA, archerUltB, archerUltC);
+            CharacterDefinition mage = Character("Mage", "Mago", CharacterClass.Mage, 95f, 120f, 10f, 5.4f);
+            SetLoadout(mage, mageBasic, mageS1A, mageS2A, mageUltA, mageS1B, mageS1C, mageS2B, mageS2C, mageUltB, mageUltC);
+            CharacterDefinition archer = Character("Archer", "Arqueiro", CharacterClass.Archer, 95f, 110f, 9f, 5.8f);
+            SetLoadout(archer, archerBasic, archerS1A, archerS2A, archerUltA, archerS1B, archerS1C,
+                archerS2B, archerS2C, archerUltB, archerUltC);
+
             ItemDefinition heal = Item("Heal", "Poção de Cura", ItemKind.Heal, 30f); heal.healDuration = 5f; heal.useDuration = 0f; heal.interruptible = false;
             ItemDefinition energyItem = Item("Energy", "Poção de Essência", ItemKind.Energy, 32f); energyItem.useDuration = 0.75f; energyItem.interruptible = true;
             ItemDefinition cooldownItem = Item("Cooldown", "Orbe de Recarga", ItemKind.CooldownRefresh, 0f, 2.5f); cooldownItem.useDuration = 0.5f; cooldownItem.interruptible = true;
@@ -175,13 +249,66 @@ namespace BattleRoyaleX.EditorTools
             var a=Ability(id,name,AbilitySlot.Ultimate,AbilityBehavior.UltimateBuff,cooldown,energy,0f,1f,1f); a.buffDuration=duration; a.damageMultiplier=dmg; a.moveSpeedMultiplier=speed; a.staggerResistanceMultiplier=stagger; a.defenseWindowMultiplier=defense; a.movementCooldownMultiplier=moveCd; return a;
         }
 
+        static AbilityDefinition V1Projectile(string id, string name, AbilitySlot slot, AbilityBehavior behavior,
+            float cooldown, float energy, float damage, float speed, bool interceptable, bool seeking)
+        {
+            AbilityDefinition a = Ability(id, name, slot, behavior, cooldown, energy, damage, 12f, 0.55f);
+            a.attackKind = AttackKind.Projectile; a.projectileSpeed = speed; a.interceptable = interceptable;
+            a.seeking = seeking; a.reflectable = true; a.amplifiable = true; a.nullifiable = true;
+            a.tags = AbilityTags.Projectile | (seeking ? AbilityTags.Seeking : AbilityTags.None) |
+                (interceptable ? AbilityTags.Interceptable : AbilityTags.None) | AbilityTags.Reflectable |
+                AbilityTags.Amplifiable | AbilityTags.Nullifiable;
+            a.startup = 0.16f; a.activeTime = 0.12f; a.recovery = 0.18f;
+            return a;
+        }
+
+        static AbilityDefinition V1Field(string id, string name, AbilitySlot slot, AbilityBehavior behavior,
+            float cooldown, float energy, float damage, float radius, float duration)
+        {
+            AbilityDefinition a = Ability(id, name, slot, behavior, cooldown, energy, damage, 0f, 1f);
+            a.attackKind = AttackKind.Area; a.explosionRadius = radius; a.fieldRadius = radius; a.fieldDuration = duration;
+            a.tags = AbilityTags.Magical | AbilityTags.Area; a.clashable = false; a.startup = 0.25f; a.recovery = 0.16f;
+            return a;
+        }
+
+        static AbilityDefinition V1Movement(string id, string name, AbilitySlot slot, AbilityBehavior behavior,
+            float cooldown, float energy, float distance, float duration)
+        {
+            AbilityDefinition a = Ability(id, name, slot, behavior, cooldown, energy, 0f, 0f, 0.8f);
+            a.movementDistance = distance; a.movementDuration = duration; a.startup = 0.04f; a.recovery = 0.10f;
+            return a;
+        }
+
+        static AbilityDefinition V1Buff(string id, string name, float cooldown, float energy, float duration, float speed)
+        {
+            AbilityDefinition a = Ability(id, name, AbilitySlot.Ultimate, AbilityBehavior.TimedBuff,
+                cooldown, energy, 0f, 0f, 1f);
+            a.buffDuration = duration; a.damageMultiplier = 1f; a.moveSpeedMultiplier = speed;
+            a.staggerResistanceMultiplier = 1f; a.defenseWindowMultiplier = 1f;
+            a.movementCooldownMultiplier = 0.78f; return a;
+        }
+
         static CharacterDefinition Character(string id,string name,CharacterClass cls,float hp,float energy,float regen,float speed)
         {
             string path=$"{Root}/Characters/{id}.asset"; var a=AssetDatabase.LoadAssetAtPath<CharacterDefinition>(path) ?? ScriptableObject.CreateInstance<CharacterDefinition>(); a.characterId=id; a.displayName=name; a.characterClass=cls; a.maxHealth=hp; a.maxEnergy=energy; a.energyRegenPerSecond=regen; a.moveSpeed=speed; if(!AssetDatabase.Contains(a)) AssetDatabase.CreateAsset(a,path); EditorUtility.SetDirty(a); return a;
         }
 
         static void SetLoadout(CharacterDefinition c, AbilityDefinition basic, AbilityDefinition def, AbilityDefinition move, AbilityDefinition ult, AbilityDefinition defA, AbilityDefinition defB, AbilityDefinition moveA, AbilityDefinition moveB, AbilityDefinition ultA, AbilityDefinition ultB)
-        { c.basicAttack=basic;c.defenseBase=def;c.movementBase=move;c.ultimateBase=ult;c.defenseVariantA=defA;c.defenseVariantB=defB;c.movementVariantA=moveA;c.movementVariantB=moveB;c.ultimateVariantA=ultA;c.ultimateVariantB=ultB;EditorUtility.SetDirty(c); }
+        {
+            c.basicAttack=basic;c.defenseBase=def;c.movementBase=move;c.ultimateBase=ult;
+            c.defenseVariantA=defA;c.defenseVariantB=defB;c.movementVariantA=moveA;c.movementVariantB=moveB;
+            c.ultimateVariantA=ultA;c.ultimateVariantB=ultB;
+            c.SetV1Loadout(def,defA,defB,move,moveA,moveB,ult,ultA,ultB);
+            SetVariantIndexes(c.skill1Variants); SetVariantIndexes(c.skill2Variants); SetVariantIndexes(c.ultimateVariants);
+            EditorUtility.SetDirty(c);
+        }
+
+        static void SetVariantIndexes(AbilityDefinition[] variants)
+        {
+            if (variants == null) return;
+            for (int i = 0; i < variants.Length; i++) if (variants[i] != null)
+            { variants[i].variantIndex = i; EditorUtility.SetDirty(variants[i]); }
+        }
 
         static ItemDefinition Item(string id,string name,ItemKind kind,float amount,float cooldown=0f,AbilityDefinition variation=null,int capacity=4)
         { string path=$"{Root}/Items/{id}.asset"; var a=AssetDatabase.LoadAssetAtPath<ItemDefinition>(path) ?? ScriptableObject.CreateInstance<ItemDefinition>(); a.itemId=id;a.displayName=name;a.kind=kind;a.amount=amount;a.cooldownReductionSeconds=cooldown;a.variationAbility=variation;a.backpackCapacity=capacity;if(!AssetDatabase.Contains(a))AssetDatabase.CreateAsset(a,path);EditorUtility.SetDirty(a);return a; }

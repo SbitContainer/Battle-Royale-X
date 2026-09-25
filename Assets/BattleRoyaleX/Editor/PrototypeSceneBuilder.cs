@@ -14,6 +14,7 @@ namespace BattleRoyaleX.EditorTools
         {
             PrototypeVisualFactory.ConfigureVisualAssets();
             PrototypeDataFactory.CreateDefaultData();
+            PrototypeVFXFactory.CreatePrototypeVFX();
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -31,6 +32,8 @@ namespace BattleRoyaleX.EditorTools
 
             CharacterDefinition warrior = Find<CharacterDefinition>("Warrior");
             CharacterDefinition assassin = Find<CharacterDefinition>("Assassin");
+            CharacterDefinition mage = Find<CharacterDefinition>("Mage");
+            CharacterDefinition archer = Find<CharacterDefinition>("Archer");
             CharacterRuntime p1 = CreateCharacter("Opponent_Warrior_Slot", warrior, TeamId.PlayerOne, new Vector3(-7f,1f,0f), false);
             CharacterRuntime p2 = CreateCharacter("Player_Lab_Slot", assassin, TeamId.PlayerTwo, new Vector3(7f,1f,0f), true, true);
             p1.gameObject.AddComponent<PrototypeTrainingBot>();
@@ -50,14 +53,20 @@ namespace BattleRoyaleX.EditorTools
             PrototypeCombatHUD hud = systems.AddComponent<PrototypeCombatHUD>(); hud.playerOne=p1; hud.playerTwo=p2;
             PrototypeCombatLabController lab = systems.AddComponent<PrototypeCombatLabController>();
             lab.fixedOpponent=p1; lab.playerSlot=p2; lab.warriorDefinition=warrior; lab.assassinDefinition=assassin;
+            lab.mageDefinition=mage; lab.archerDefinition=archer;
+            lab.visualProfiles=AssetDatabase.LoadAssetAtPath<VisualProfileRegistry>("Assets/BattleRoyaleX/Visual/Profiles/VisualProfileRegistry.asset");
             PrototypeDebugHUD debugHud = systems.AddComponent<PrototypeDebugHUD>(); debugHud.playerOne=p1; debugHud.playerTwo=p2; debugHud.lab=lab;
             systems.AddComponent<PrototypeMobileTouchControls>();
             systems.AddComponent<CombatEventVfxPresenter>();
+            CombatVFXRouter vfxRouter=systems.AddComponent<CombatVFXRouter>();
+            vfxRouter.library=AssetDatabase.LoadAssetAtPath<CombatVFXLibrary>("Assets/BattleRoyaleX/Visual/Profiles/CombatVFXLibrary.asset");
+            vfxRouter.profiles=lab.visualProfiles;
             AirdropManager drop = systems.AddComponent<AirdropManager>();
             drop.firstDropDelay = 12f;
             drop.itemPool = AssetDatabase.FindAssets("t:ItemDefinition", new[]{"Assets/BattleRoyaleX/GeneratedData/Items"}).Select(g=>AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(g))).Where(x=>x!=null).ToList();
 
             CreateGroundPickups();
+            CreateArcaneDemoObjects();
 
             string sceneFolder="Assets/BattleRoyaleX/GeneratedScenes";
             if(!AssetDatabase.IsValidFolder(sceneFolder)) AssetDatabase.CreateFolder("Assets/BattleRoyaleX", "GeneratedScenes");
@@ -80,9 +89,13 @@ namespace BattleRoyaleX.EditorTools
             GameObject primaryVisual = PrototypeVisualFactory.CreateCharacterVisual(go.transform, def.characterClass);
             if (primaryVisual != null && createLabVisuals)
             {
-                CharacterClass other = def.characterClass == CharacterClass.Assassin ? CharacterClass.Warrior : CharacterClass.Assassin;
-                GameObject alternate = PrototypeVisualFactory.CreateCharacterVisual(go.transform, other);
-                if (alternate != null) { alternate.name = "LabVisual_" + other; alternate.SetActive(false); }
+                foreach (CharacterClass other in new[] { CharacterClass.Warrior, CharacterClass.Assassin,
+                    CharacterClass.Mage, CharacterClass.Archer })
+                {
+                    if (other == def.characterClass) continue;
+                    GameObject alternate = PrototypeVisualFactory.CreateCharacterVisual(go.transform, other);
+                    if (alternate != null) { alternate.name = "LabVisual_" + other; alternate.SetActive(false); }
+                }
             }
             if (primaryVisual == null)
             {
@@ -124,6 +137,22 @@ namespace BattleRoyaleX.EditorTools
                 SphereCollider trigger=go.AddComponent<SphereCollider>();trigger.isTrigger=true;trigger.radius=1.25f;trigger.center=Vector3.up*0.55f;
                 WorldPickup wp=go.AddComponent<WorldPickup>();wp.item=item;
             }
+        }
+
+        static void CreateArcaneDemoObjects()
+        {
+            ArcaneDemoObject.Create("Arcane_PhaseWall", ArcaneDemoKind.PhaseWall,
+                new Vector3(-12f, 1.5f, 0f), new Vector3(0.45f, 3f, 6f));
+            ArcaneDemoObject.Create("Arcane_PrismaticWall", ArcaneDemoKind.PrismaticWall,
+                new Vector3(12f, 1.5f, 0f), new Vector3(0.45f, 3f, 6f));
+            ArcaneDemoObject.Create("Arcane_Amplifier", ArcaneDemoKind.AmplificationBarrier,
+                new Vector3(0f, 1.5f, 10f), new Vector3(6f, 3f, 0.35f));
+            ArcaneDemoObject.Create("Arcane_FragmentCrystal", ArcaneDemoKind.FragmentCrystal,
+                new Vector3(0f, 1f, -10f), Vector3.one * 1.6f);
+            ArcaneDemoObject.Create("Arcane_SpeedRune", ArcaneDemoKind.SpeedRune,
+                new Vector3(-7f, 0.08f, 10f), new Vector3(3f, 0.12f, 3f));
+            ArcaneDemoObject.Create("Arcane_ReactiveBush", ArcaneDemoKind.ReactiveBush,
+                new Vector3(7f, 1f, -10f), new Vector3(3f, 2f, 3f));
         }
 
         static T Find<T>(string name) where T:Object

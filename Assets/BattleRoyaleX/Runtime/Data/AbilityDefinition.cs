@@ -9,9 +9,12 @@ namespace BattleRoyaleX
         public string abilityId;
         public string displayName;
         public AbilitySlot slot;
+        [Range(0, 2)] public int variantIndex;
         public bool classRestricted = false;
         public CharacterClass requiredClass;
         public AbilityBehavior behavior;
+        public AbilityTags tags;
+        public AbilityVisualProfile visualProfile;
 
         [Header("Costs / Timing")]
         [Min(0f)] public float cooldown = 3f;
@@ -41,10 +44,31 @@ namespace BattleRoyaleX
         public bool reflectable = false;
         public bool nullifiable = false;
         public bool canDestroyMagicalProjectiles = false;
+        [Tooltip("Allows a compatible Warrior strike to intercept this projectile.")]
+        public bool interceptable;
+        [Range(0f, 1f)] public float interceptDamageReduction = 0.60f;
+        public bool destroyWhenIntercepted;
+        public bool seeking;
+        public bool amplifiable;
+        public bool fragmentTrigger;
+        public bool heavy;
         [Min(0f)] public float attackInteractionCooldown = 30f;
         [Min(0f)] public float projectileSpeed = 14f;
         [Min(0f)] public float explosionRadius = 2.5f;
         [Range(0f, 1f)] public float clashDamageFactor = 0.25f;
+
+        [Header("Generic V1 behavior")]
+        [Min(0f)] public float turnRate = 240f;
+        [Range(0f, 0.95f)] public float slowPercent = 0.25f;
+        [Min(0f)] public float pullStrength = 5f;
+        [Min(0f)] public float fieldRadius = 3f;
+        [Min(0f)] public float fieldDuration = 3f;
+        [Min(0f)] public float secondActivationDelay = 0.2f;
+        [Min(0f)] public float secondActivationWindow = 2f;
+        [Min(1)] public int projectileCount = 1;
+        [Range(0f, 90f)] public float spreadAngle = 8f;
+        [Min(0f)] public float comboSuccessCooldown = 28f;
+        [Min(0f)] public float comboFailureCooldown = 12f;
 
         [Header("Defense")]
         public DefenseKind defenseKind = DefenseKind.None;
@@ -59,6 +83,10 @@ namespace BattleRoyaleX
         [Min(0f)] public float invulnerabilityDuration = 0f;
         [Min(0f)] public float returnWindow = 1.8f;
         public bool passThroughCharacters = false;
+        public bool reverseMovement;
+        public bool fireProjectileOnMove;
+        public bool movementDealsDamage = true;
+        public bool requiresSurfacePoint;
 
         [Header("Bounded pursuit movement")]
         [Tooltip("When enabled, this movement can acquire one visible enemy in front and steer toward it for a short, bounded travel.")]

@@ -160,3 +160,27 @@
 - [ ] Projectiles são destruídos corretamente.
 - [ ] Clones não recebem gameplay indevido.
 - [ ] Trocas de classe repetidas não vazam objetos.
+
+## 17. Cobertura automatizada BRX-PROD-002
+- [ ] Catálogo contém exatamente 4 ataques básicos e 36 habilidades de slot.
+- [ ] Arrays `skill1Variants`, `skill2Variants` e `ultimateVariants` têm A/B/C nas quatro classes.
+- [ ] Aliases legados `Defense/Movement` preservam a serialização sem permanecer como arquitetura do laboratório.
+- [ ] Faíscas Caçadoras cria três projéteis com correção limitada.
+- [ ] Campo de Lentidão reduz velocidade sem `MovementLock`.
+- [ ] Ecos Arcanos cria três clones sem hitbox e permite teleportar ou não usar a segunda ativação.
+- [ ] Convergência Arcana diferencia cooldown de sucesso e falha.
+- [ ] Armadilha Gravitacional puxa sem bloquear movimento/skills.
+- [ ] Passos Laterais aceita duas direções independentes.
+- [ ] Interceptação reduz 60% somente em projétil explicitamente marcado.
+- [ ] Troca de classe remove efeitos, projéteis e coroutines do owner anterior.
+- [ ] Todas as 40 habilidades possuem `AbilityVisualProfile` substituível.
+- [ ] Efeito de morte continua emitindo um único evento, sangue estilizado e marca temporária.
+- [ ] Compilação C# de runtime e editor passa com zero erros.
+
+## 18. Validação humana no Unity/Astra
+- [ ] Sensação de cada habilidade do Mago em Play Mode.
+- [ ] Sensação de cada habilidade do Arqueiro em Play Mode.
+- [ ] Clareza de telegraph em tela pequena Android.
+- [ ] Retarget/Animator das quatro classes.
+- [ ] Materiais URP e VFX finais não escondem personagens ou áreas de resposta.
+- [ ] Guerreiro e Assassino mantêm dano, cooldown, timing e sensação aprovados.

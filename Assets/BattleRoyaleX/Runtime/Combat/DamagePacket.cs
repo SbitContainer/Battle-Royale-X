@@ -15,6 +15,10 @@ namespace BattleRoyaleX
         public bool nullifiable;
         public float clashDamageFactor;
         public bool canDestroyMagicalProjectiles;
+        public bool interceptable;
+        public float interceptDamageReduction;
+        public bool destroyWhenIntercepted;
+        public bool wasIntercepted;
         public float attackInteractionCooldown;
         public float explosionRadius;
         public Vector3 direction;
@@ -36,6 +40,10 @@ namespace BattleRoyaleX
             nullifiable = ability.nullifiable;
             clashDamageFactor = ability.clashDamageFactor;
             canDestroyMagicalProjectiles = ability.canDestroyMagicalProjectiles;
+            interceptable = ability.interceptable || (ability.tags & AbilityTags.Interceptable) != 0;
+            interceptDamageReduction = Mathf.Clamp01(ability.interceptDamageReduction);
+            destroyWhenIntercepted = ability.destroyWhenIntercepted;
+            wasIntercepted = false;
             attackInteractionCooldown = ability.attackInteractionCooldown;
             explosionRadius = ability.explosionRadius;
             this.direction = direction.sqrMagnitude > 0.001f ? direction.normalized : Vector3.forward;

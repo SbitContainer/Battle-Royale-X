@@ -3,9 +3,26 @@ using UnityEngine;
 
 namespace BattleRoyaleX
 {
-    public enum CharacterClass { Warrior, Assassin, Mage, Marksman }
+    public enum CharacterClass
+    {
+        Warrior = 0,
+        Assassin = 1,
+        Mage = 2,
+        Marksman = 3,
+        // Friendly V1 name. Keep Marksman as a serialized alias for existing assets.
+        Archer = Marksman
+    }
     public enum TeamId { Neutral = 0, PlayerOne = 1, PlayerTwo = 2 }
-    public enum AbilitySlot { BasicAttack, Defense, Movement, Ultimate }
+    public enum AbilitySlot
+    {
+        BasicAttack = 0,
+        Skill1 = 1,
+        Skill2 = 2,
+        Ultimate = 3,
+        // Compatibility aliases for the approved Warrior/Assassin assets.
+        Defense = Skill1,
+        Movement = Skill2
+    }
     public enum AbilityBehavior
     {
         MeleeAttack,
@@ -21,7 +38,35 @@ namespace BattleRoyaleX
         // Append-only: serialized AbilityDefinition assets depend on the numeric values above.
         ChargedDashSequence,
         HuntSequence,
-        SmokeEscape
+        SmokeEscape,
+        SeekingProjectile,
+        SlowField,
+        PullTrap,
+        Blink,
+        Repulsion,
+        CloneTeleport,
+        MultiDash,
+        TimedBuff,
+        MultiShot,
+        ComboProjectileUltimate
+    }
+
+    [Flags]
+    public enum AbilityTags
+    {
+        None = 0,
+        Physical = 1 << 0,
+        Magical = 1 << 1,
+        Projectile = 1 << 2,
+        Melee = 1 << 3,
+        Area = 1 << 4,
+        Seeking = 1 << 5,
+        Interceptable = 1 << 6,
+        Reflectable = 1 << 7,
+        Amplifiable = 1 << 8,
+        Nullifiable = 1 << 9,
+        Heavy = 1 << 10,
+        FragmentTrigger = 1 << 11
     }
 
     public enum AttackKind { Physical, Magical, Projectile, Area }

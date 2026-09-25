@@ -113,8 +113,33 @@ namespace BattleRoyaleX
                 return;
             }
 
-            if (aPhysical && bMagic && TryPhysicalNullify(a, b)) return;
-            if (bPhysical && aMagic && TryPhysicalNullify(b, a)) return;
+            if (aPhysical && bMagic && (TryWarriorIntercept(a, b) || TryPhysicalNullify(a, b))) return;
+            if (bPhysical && aMagic && (TryWarriorIntercept(b, a) || TryPhysicalNullify(b, a))) return;
+        }
+
+        static bool TryWarriorIntercept(Hitbox physical, Hitbox projectile)
+        {
+            if (!projectile.Packet.interceptable || projectile.Packet.wasIntercepted || physical.Owner.Definition == null ||
+                physical.Owner.Definition.characterClass != CharacterClass.Warrior) return false;
+
+            Vector3 position = (physical.transform.position + projectile.transform.position) * 0.5f;
+            DamagePacket reduced = projectile.Packet;
+            reduced.damage *= 1f - Mathf.Clamp01(reduced.interceptDamageReduction);
+            reduced.wasIntercepted = true;
+            projectile.UpdatePacket(reduced);
+            physical.Cancel();
+            if (reduced.destroyWhenIntercepted)
+            {
+                projectile.Cancel();
+                CombatEvents.Raise(new CombatEventData(CombatEventKind.Nullify, position,
+                    physical.Owner, projectile.Owner, ability: projectile.Packet.ability));
+            }
+            else
+            {
+                CombatEvents.Raise(new CombatEventData(CombatEventKind.Block, position,
+                    projectile.Owner, physical.Owner, 0f, projectile.Packet.ability));
+            }
+            return true;
         }
 
         static bool IsMagicLike(AttackKind kind) => kind == AttackKind.Magical || kind == AttackKind.Projectile;
@@ -174,6 +199,25 @@ namespace BattleRoyaleX
                 CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, center, sourceA, target, damage));
                 if (died) RaiseDeath(sourceA ?? sourceB, target, center, null,
                     target.transform.position - center);
+            }
+        }
+
+        public static void ResolveAreaEffect(Vector3 center, float radius, float damage,
+            CharacterRuntime source, AbilityDefinition ability)
+        {
+            Collider[] hits = Physics.OverlapSphere(center, Mathf.Max(0.1f, radius), ~0,
+                QueryTriggerInteraction.Collide);
+            HashSet<CharacterRuntime> damaged = new HashSet<CharacterRuntime>();
+            foreach (Collider hit in hits)
+            {
+                CharacterRuntime target = hit.GetComponentInParent<CharacterRuntime>();
+                if (target == null || target == source || damaged.Contains(target) || target.Health == null ||
+                    target.Health.IsDead || source != null && target.TeamId == source.TeamId) continue;
+                damaged.Add(target);
+                bool died = ApplyDamage(target, damage);
+                CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, center, source, target,
+                    damage, ability, AbilityPhase.Active, direction: target.transform.position - center));
+                if (died) RaiseDeath(source, target, center, ability, target.transform.position - center);
             }
         }
 

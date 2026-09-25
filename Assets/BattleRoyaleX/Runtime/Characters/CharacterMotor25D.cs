@@ -57,7 +57,7 @@ namespace BattleRoyaleX
             if (runtime == null || runtime.State == null || runtime.State.MovementLocked || dashing) return;
 
             float speed = runtime.Definition != null ? runtime.Definition.moveSpeed : 5f;
-            speed *= runtime.Modifiers.moveSpeedMultiplier * runtime.MovementSpeedBonus;
+            speed *= runtime.Modifiers.moveSpeedMultiplier * runtime.MovementSpeedBonus * runtime.MovementSlowMultiplier;
             float response = movementInput.sqrMagnitude > 0.001f ? acceleration : deceleration;
             float blend = 1f - Mathf.Exp(-response * Time.deltaTime);
             smoothedMovement = Vector3.Lerp(smoothedMovement, movementInput, blend);

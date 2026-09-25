@@ -370,6 +370,7 @@ namespace BattleRoyaleX
             yield return TestWarriorPursuitAndBotModes();
             yield return TestMobileV4();
             yield return TestCombatLab001();
+            yield return TestProductionV1();
             yield return TestVariationPresentation();
 
             stage = "Resultado da partida";

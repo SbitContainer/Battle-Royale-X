@@ -32,8 +32,8 @@ namespace BattleRoyaleX
             runtime.Motor.SetMoveInput(move.normalized);
 
             if (Input.GetKeyDown(basicAttack)) runtime.Abilities.TryUse(AbilitySlot.BasicAttack);
-            if (Input.GetKeyDown(defense)) runtime.Abilities.TryUse(AbilitySlot.Defense);
-            if (Input.GetKeyDown(movement)) runtime.Abilities.TryUse(AbilitySlot.Movement);
+            if (Input.GetKeyDown(defense)) runtime.Abilities.TryUse(AbilitySlot.Skill1);
+            if (Input.GetKeyDown(movement)) runtime.Abilities.TryUse(AbilitySlot.Skill2);
             if (Input.GetKeyDown(ultimate)) runtime.Abilities.TryUse(AbilitySlot.Ultimate);
             if (Input.GetKeyDown(inventory1)) runtime.Inventory.UseSlot(0);
             if (Input.GetKeyDown(inventory2)) runtime.Inventory.UseSlot(1);
