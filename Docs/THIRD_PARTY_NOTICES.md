@@ -34,7 +34,7 @@ As licenças abaixo foram lidas nos próprios arquivos distribuídos pelos autor
 | [Universal Animation Library](https://quaternius.com/packs/universalanimationlibrary.html) | Já importado: locomoção, reação, morte e conjuração | `Assets/ThirdParty/Quaternius/UniversalAnimationLibrary/LICENSE.txt` — CC0 |
 | [Universal Animation Library 2](https://quaternius.com/packs/universalanimationlibrary2.html) | Já importado: combate físico | `Assets/ThirdParty/Quaternius/UniversalAnimationLibrary2/LICENSE.txt` — CC0 |
 | [Medieval Village MegaKit](https://quaternius.com/packs/medievalvillagemegakit.html) | Download em 2026-09-25: piso, arco, parede e duas texturas em `Assets/ThirdParty/Quaternius/MedievalVillage` | `License_Standard.txt` na mesma pasta — CC0 |
-| [Fantasy Props MegaKit](https://quaternius.com/packs/fantasypropsmegakit.html) | Download em 2026-09-25: espada/escudo e duas texturas em `Assets/ThirdParty/Quaternius/FantasyProps`; encaixe visual nas mãos ainda pendente | `License_Standard.txt` na mesma pasta — CC0 |
+| [Fantasy Props MegaKit](https://quaternius.com/packs/fantasypropsmegakit.html) | Download em 2026-09-25: espada/escudo e duas texturas em `Assets/ThirdParty/Quaternius/FantasyProps`; V2 conecta espada/escudo ao Guerreiro e duas lâminas menores ao Assassino | `License_Standard.txt` na mesma pasta — CC0 |
 | [Stylized Nature MegaKit](https://quaternius.com/packs/stylizednaturemegakit.html) | Download em 2026-09-25: árvore, moita, pedra e texturas em `Assets/ThirdParty/Quaternius/Nature` | `License_Standard.txt` na mesma pasta — CC0 |
 | [Kenney UI Pack](https://kenney.nl/assets/ui-pack) | Download em 2026-09-25: dois botões em `Assets/ThirdParty/Kenney/UI`; retangular aplicado ao laboratório | `License.txt` na mesma pasta — CC0 |
 

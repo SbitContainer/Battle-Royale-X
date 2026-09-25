@@ -2,6 +2,8 @@
 
 Estado: **PARTIAL**. Integração funcional na Unity real; não representa acabamento visual final nem validação Android.
 
+Continuação: `VISUAL_POLISH_V2_RESULTS.md` registra a rodada posterior sem login. As pendências abaixo são o retrato da V1; encaixe de armas, barreiras e campos receberam alterações adicionais na V2.
+
 ## Implementado
 
 - Unity 6000.6.1f1 + URP: Hub instalado como aplicativo Windows reconhecido e licença Personal existente resolvida. Geradores de dados, cena e VFX executados.

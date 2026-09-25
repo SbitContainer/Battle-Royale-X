@@ -35,6 +35,12 @@ namespace BattleRoyaleX
             {
                 Vector3 direction = label.transform.position - Camera.main.transform.position;
                 label.transform.rotation = Quaternion.LookRotation(direction, Camera.main.transform.up);
+                // Nearby labels remain useful; distant loot must not cover combat silhouettes.
+                float nearest = float.PositiveInfinity;
+                foreach (CharacterRuntime character in nearbyCharacters)
+                    if (character != null && character.isActiveAndEnabled)
+                        nearest = Mathf.Min(nearest, (character.transform.position - transform.position).sqrMagnitude);
+                label.gameObject.SetActive(nearest < 36f);
             }
         }
 
@@ -73,8 +79,11 @@ namespace BattleRoyaleX
             TryCollect(other.GetComponentInParent<CharacterRuntime>());
         }
 
+        CharacterRuntime[] nearbyCharacters = System.Array.Empty<CharacterRuntime>();
+
         void BuildPresentation()
         {
+            nearbyCharacters = FindObjectsByType<CharacterRuntime>();
             foreach (Renderer renderer in GetComponents<Renderer>()) renderer.enabled = false;
 
             Color color = ColorFor(item);
@@ -89,14 +98,7 @@ namespace BattleRoyaleX
             else if (item != null && item.kind == ItemKind.BackpackUpgrade) CreateBackpack(color);
             else CreateOrb(color);
 
-            GameObject lightObject = new GameObject("Pickup_Light");
-            lightObject.transform.SetParent(visual, false);
-            lightObject.transform.localPosition = Vector3.up * 0.32f;
-            Light light = lightObject.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = color;
-            light.range = 2.7f;
-            light.intensity = 1.25f;
+            // Emissive pickup geometry supplies the glow; avoid a realtime point light per item.
 
             GameObject labelObject = new GameObject("Pickup_Label");
             labelObject.transform.SetParent(transform, false);

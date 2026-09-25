@@ -22,6 +22,8 @@ namespace BattleRoyaleX.EditorTools
             Dictionary<string, GameObject> shared = new Dictionary<string, GameObject>();
             foreach (string id in new[] { "Hit", "BloodLight", "BloodHeavy", "Block", "Parry", "Clash", "Dodge", "Heal" })
                 shared[id] = CreateParticlePrefab(Root + "/Shared/VFX_" + id + ".prefab", SharedColor(id), id.Contains("Heavy") ? 1.5f : 1f);
+            GameObject convergenceRing = CreateWorldPrefab(Root + "/Mage/VFX_Convergence_Shockwave.prefab",
+                new Color(0.2f, 0.75f, 1f), true, false);
 
             string[] abilityGuids = AssetDatabase.FindAssets("t:AbilityDefinition", new[] { "Assets/BattleRoyaleX/GeneratedData/Abilities" });
             List<AbilityVisualProfile> profiles = new List<AbilityVisualProfile>();
@@ -44,6 +46,7 @@ namespace BattleRoyaleX.EditorTools
                     ability.requiredClass == CharacterClass.Archer) : null;
                 profile.areaPrefab = IsArea(ability) ? CreateWorldPrefab(
                     $"{Root}/{classFolder}/VFX_{ability.abilityId}_Field.prefab", color, true, false) : null;
+                if (ability.behavior == AbilityBehavior.ComboProjectileUltimate) profile.areaPrefab = convergenceRing;
                 profile.impactPrefab = prefab;
                 profile.primaryTint = color;
                 profile.visualScale = ability.slot == AbilitySlot.Ultimate ? 1.5f : 1f;
@@ -121,16 +124,18 @@ namespace BattleRoyaleX.EditorTools
         static GameObject CreateWorldPrefab(string path, Color color, bool field, bool arrow)
         {
             GameObject root = new GameObject(Path.GetFileNameWithoutExtension(path));
-            Material material = MaterialFor(root.name, color);
+            Material material = MaterialFor(root.name, field ? Color.white : color);
             if (field)
             {
+                material.SetTexture("_BaseMap", Texture2D.whiteTexture);
+                EditorUtility.SetDirty(material);
                 for (int ringIndex = 0; ringIndex < 2; ringIndex++)
                 {
                     GameObject ring = new GameObject("Radius_" + ringIndex);
                     ring.transform.SetParent(root.transform, false);
                     LineRenderer line = ring.AddComponent<LineRenderer>();
                     line.useWorldSpace = false; line.loop = true; line.positionCount = 64;
-                    line.sharedMaterial = material; line.startWidth = line.endWidth = 0.035f;
+                    line.sharedMaterial = material; line.startWidth = line.endWidth = 0.06f;
                     line.startColor = line.endColor = color;
                     float radius = ringIndex == 0 ? 1f : 0.78f;
                     for (int i = 0; i < 64; i++)
@@ -139,6 +144,37 @@ namespace BattleRoyaleX.EditorTools
                         line.SetPosition(i, new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius);
                     }
                 }
+                // Small runic spokes keep the boundary readable without filling the whole disc.
+                for (int i = 0; i < 12; i++)
+                {
+                    GameObject mark = new GameObject("Rune_" + i);
+                    mark.transform.SetParent(root.transform, false);
+                    LineRenderer line = mark.AddComponent<LineRenderer>();
+                    line.useWorldSpace = false; line.positionCount = 3;
+                    line.sharedMaterial = material; line.startWidth = line.endWidth = 0.04f;
+                    line.startColor = line.endColor = color;
+                    Quaternion rotation = Quaternion.Euler(0f, i * 30f, 0f);
+                    line.SetPositions(new[] { rotation * new Vector3(-0.035f, 0f, 0.85f),
+                        rotation * new Vector3(0f, 0f, 0.92f), rotation * new Vector3(0.035f, 0f, 0.85f) });
+                }
+                GameObject flow = new GameObject("InwardMotes"); flow.transform.SetParent(root.transform, false);
+                ParticleSystem motes = flow.AddComponent<ParticleSystem>();
+                motes.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                var main = motes.main;
+                main.loop = true; main.startLifetime = 1.6f; main.startSpeed = 0f;
+                main.startSize = 0.035f; main.startColor = color; main.maxParticles = 32;
+                main.simulationSpace = ParticleSystemSimulationSpace.Local;
+                main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+                var emission = motes.emission; emission.rateOverTime = 12f;
+                var shape = motes.shape; shape.shapeType = ParticleSystemShapeType.Circle;
+                shape.radius = 0.88f; shape.radiusThickness = 0f; shape.rotation = new Vector3(90f, 0f, 0f);
+                var fade = motes.colorOverLifetime; fade.enabled = true;
+                Gradient gradient = new Gradient();
+                gradient.SetKeys(new[] { new GradientColorKey(color, 0f), new GradientColorKey(color, 1f) },
+                    new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.8f, 0.2f), new GradientAlphaKey(0f, 1f) });
+                fade.color = gradient;
+                motes.GetComponent<ParticleSystemRenderer>().sharedMaterial = MaterialFor(root.name + "_Motes", Color.white);
+                root.AddComponent<ArcaneFieldPresentation>();
             }
             else
             {

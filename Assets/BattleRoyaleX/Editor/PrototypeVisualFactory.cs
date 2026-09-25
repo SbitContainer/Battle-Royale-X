@@ -161,13 +161,25 @@ namespace BattleRoyaleX.EditorTools
             Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
             Material metal = AssetDatabase.LoadAssetAtPath<Material>(WeaponMetalPath);
             Material bronze = AssetDatabase.LoadAssetAtPath<Material>(ShieldBronzePath);
+            if (characterClass == CharacterClass.Warrior && rightHand != null && leftHand != null)
+            {
+                AttachProp("Sword_Bronze", rightHand, 1.05f, false);
+                AttachProp("Shield_Wooden", leftHand, 0.72f, true);
+                return;
+            }
+            if (characterClass == CharacterClass.Assassin && rightHand != null && leftHand != null)
+            {
+                AttachProp("Sword_Bronze", rightHand, 0.52f, false).name = "Assassin_Dagger";
+                AttachProp("Sword_Bronze", leftHand, 0.52f, false).name = "Assassin_OffhandDagger";
+                return;
+            }
             if (characterClass == CharacterClass.Mage && rightHand != null)
             {
                 GameObject staff = Primitive("Mage_Staff", PrimitiveType.Cylinder, rightHand, bronze);
                 staff.transform.localPosition = new Vector3(0f, 0.35f, 0f);
                 staff.transform.localScale = new Vector3(0.045f, 0.7f, 0.045f);
                 GameObject orb = Primitive("Mage_ArcaneOrb", PrimitiveType.Sphere, rightHand,
-                    AssetDatabase.LoadAssetAtPath<Material>(MaterialsRoot + "/Mage_Body.mat"));
+                    AssetDatabase.LoadAssetAtPath<Material>(MaterialsRoot + "/Mage_Orb.mat"));
                 orb.transform.localPosition = new Vector3(0f, 1.1f, 0f);
                 orb.transform.localScale = Vector3.one * 0.22f;
                 return;
@@ -229,6 +241,54 @@ namespace BattleRoyaleX.EditorTools
             renderer.sharedMaterial = material;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             return go;
+        }
+
+        static GameObject AttachProp(string name, Transform hand, float height, bool shield)
+        {
+            const string root = "Assets/ThirdParty/Quaternius/FantasyProps/";
+            GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(root + name + ".fbx");
+            if (asset == null) throw new InvalidOperationException("Missing licensed prop: " + name);
+            GameObject socket = new GameObject(shield ? "Warrior_Shield" : "Warrior_Sword");
+            socket.transform.SetParent(hand, false);
+            GameObject prop = (GameObject)PrefabUtility.InstantiatePrefab(asset, socket.transform);
+            prop.transform.localPosition = Vector3.zero;
+            prop.transform.localRotation = Quaternion.identity;
+            MeshFilter[] filters = prop.GetComponentsInChildren<MeshFilter>();
+            Bounds bounds = new Bounds(); bool first = true;
+            foreach (MeshFilter filter in filters)
+            {
+                if (filter.sharedMesh == null) continue;
+                Bounds mesh = filter.sharedMesh.bounds;
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector3 p = mesh.center + Vector3.Scale(mesh.extents,
+                        new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                    p = socket.transform.InverseTransformPoint(filter.transform.TransformPoint(p));
+                    if (first) { bounds = new Bounds(p, Vector3.zero); first = false; } else bounds.Encapsulate(p);
+                }
+            }
+            Vector3 dimensions = bounds.size;
+            int longest = dimensions.x > dimensions.y ? 0 : 1;
+            if (dimensions.z > dimensions[longest]) longest = 2;
+            int shortest = dimensions.x < dimensions.y ? 0 : 1;
+            if (dimensions.z < dimensions[shortest]) shortest = 2;
+            Vector3 upAxis = longest == 0 ? Vector3.right : longest == 1 ? Vector3.up : Vector3.forward;
+            Vector3 normalAxis = shortest == 0 ? Vector3.right : shortest == 1 ? Vector3.up : Vector3.forward;
+            Quaternion alignment = shield && shortest != longest ?
+                Quaternion.Inverse(Quaternion.LookRotation(normalAxis, upAxis)) : Quaternion.FromToRotation(upAxis, Vector3.up);
+            float scale = height / Mathf.Max(0.01f, dimensions[longest]);
+            prop.transform.localRotation = alignment;
+            prop.transform.localScale *= scale;
+            prop.transform.localPosition = -(alignment * bounds.center) * scale + Vector3.up * (shield ? 0.12f : height * 0.36f);
+            socket.transform.localRotation = shield ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;
+            string materialPath = MaterialsRoot + "/" + name + ".mat";
+            CreateOrUpdateLitMaterial(materialPath, root + (shield ? "T_Trim_Props_BaseColor.png" : "T_Trim_Metal_BaseColor.png"),
+                null, Color.white, shield ? 0.3f : 0.6f);
+            foreach (Renderer renderer in prop.GetComponentsInChildren<Renderer>())
+                renderer.sharedMaterials = Enumerable.Repeat(AssetDatabase.LoadAssetAtPath<Material>(materialPath),
+                    renderer.sharedMaterials.Length).ToArray();
+            foreach (Collider collider in prop.GetComponentsInChildren<Collider>()) UnityEngine.Object.DestroyImmediate(collider);
+            return socket;
         }
 
         static void ConfigureModelImporter(string path, bool importAnimation)
@@ -327,6 +387,12 @@ namespace BattleRoyaleX.EditorTools
 
         static void CreateOrUpdateMaterials()
         {
+            string orbPath = MaterialsRoot + "/Mage_Orb.mat";
+            CreateOrUpdateLitMaterial(orbPath, null, null, new Color(0.12f, 0.75f, 1f), 0.75f);
+            Material orbMaterial = AssetDatabase.LoadAssetAtPath<Material>(orbPath);
+            orbMaterial.EnableKeyword("_EMISSION");
+            orbMaterial.SetColor("_EmissionColor", new Color(0.1f, 0.8f, 1.2f));
+            EditorUtility.SetDirty(orbMaterial);
             CreateOrUpdateLitMaterial(MaterialsRoot + "/Mage_Body.mat", OutfitRoot + "T_Ranger_3_BaseColor.png",
                 OutfitRoot + "T_Ranger_Normal.png", new Color(0.3f, 0.8f, 1f), 0.3f);
             CreateOrUpdateLitMaterial(MaterialsRoot + "/Archer_Body.mat", OutfitRoot + "T_Ranger_BaseColor.png",

@@ -1,4 +1,4 @@
-# Matriz ao vivo — 25/09/2026 19:27:50
+# Matriz ao vivo — 25/09/2026 19:52:18
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -160,9 +160,11 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Projéteis seeking possuem apresentação visível durante o deslocamento
 - PASSOU: Campo de Lentidão reduz velocidade sem stun ou MovementLock
 - PASSOU: Campo mágico mostra limites no chão na posição real da habilidade
+- PASSOU: Campo refinado mantém fluxo visual limitado a 32 partículas por emissor
 - PASSOU: Clones usam silhuetas renderizadas sem duplicar hitboxes ou hurtboxes
 - PASSOU: Ecos Arcanos cria três clones e permite teleportar ou deixar a janela expirar
 - PASSOU: Convergência combina projétil lento e rápido e aplica cooldown de sucesso
+- PASSOU: Convergência emite onda visual com raio real e sem colisores adicionais
 - PASSOU: Armadilha Gravitacional puxa sem retirar movimento ou skills
 - PASSOU: Passos Laterais aceita dois deslocamentos com direções independentes
 - PASSOU: Guerreiro intercepta apenas projétil marcado e reduz 60% do dano restante
@@ -195,4 +197,4 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Morte visual permanece ativa no mobile até o reinício da rodada
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 192 passaram; 0 falharam.
+Resultado: 194 passaram; 0 falharam.

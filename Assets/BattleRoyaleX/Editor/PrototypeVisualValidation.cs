@@ -29,6 +29,23 @@ namespace BattleRoyaleX.EditorTools
             ValidateAnimationAssets();
             ValidateController();
             ValidateGeneratedScene();
+            Shader arcane = Shader.Find("BattleRoyaleX/ArcaneSurface");
+            Check(arcane != null && arcane.isSupported && !ShaderUtil.ShaderHasError(arcane),
+                "Polish/shader arcano URP compila sem erro");
+            Check(UnityEngine.Object.FindObjectsByType<ArcaneDemoObject>().Where(d =>
+                d.kind == ArcaneDemoKind.PhaseWall || d.kind == ArcaneDemoKind.PrismaticWall ||
+                d.kind == ArcaneDemoKind.AmplificationBarrier || d.kind == ArcaneDemoKind.SpeedRune)
+                .All(d => d.GetComponent<Renderer>().sharedMaterial.shader == arcane && d.GetComponent<Collider>().isTrigger),
+                "Polish/barreiras translúcidas preservam triggers de gameplay");
+            CharacterRuntime warrior = UnityEngine.Object.FindObjectsByType<CharacterRuntime>().FirstOrDefault(c =>
+                c.Definition != null && c.Definition.characterClass == CharacterClass.Warrior);
+            Check(warrior != null && warrior.GetComponentsInChildren<Transform>().Any(t => t.name == "Sword_Bronze") &&
+                warrior.GetComponentsInChildren<Transform>().Any(t => t.name == "Shield_Wooden"),
+                "Polish/Guerreiro usa espada e escudo licenciados");
+            Check(warrior != null && warrior.GetComponentsInChildren<Transform>().Where(t =>
+                t.name == "Sword_Bronze" || t.name == "Shield_Wooden").SelectMany(t => t.GetComponentsInChildren<Renderer>())
+                .All(r => r.bounds.size.x < 1.6f && r.bounds.size.y < 1.6f && r.bounds.size.z < 1.6f),
+                "Polish/armas importadas mantêm escala humana em todos os eixos");
 
             Debug.Log($"[BRX VISUAL SUMMARY] pass={passCount} fail={failures.Count}");
             if (failures.Count > 0)

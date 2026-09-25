@@ -38,7 +38,7 @@ namespace BattleRoyaleX.EditorTools
                 else if(action=="stop") EditorApplication.isPlaying=false;
                 else if(action=="capture") Capture();
                 else if(action=="preview") Preview();
-                else if(action=="labpreview") PreviewClass(request.Split(':')[1]);
+                else if(action=="labpreview") PreviewClass(request.Split(':')[1], request.Split(':').Length > 2 ? request.Split(':')[2] : "default");
                 else if(action=="inspect") InspectModels();
                 else if(action=="build") Build();
                 else throw new InvalidOperationException("Unknown polish action");
@@ -93,7 +93,7 @@ namespace BattleRoyaleX.EditorTools
             }
             File.WriteAllText("Logs/polish-source-meshes.txt",report.ToString());
         }
-        static void PreviewClass(string className)
+        static void PreviewClass(string className, string mode)
         {
             if (!EditorApplication.isPlaying) throw new InvalidOperationException("Enter Play Mode first.");
             if (!Enum.TryParse(className, true, out CharacterClass selected)) throw new ArgumentException("Unknown class");
@@ -107,6 +107,9 @@ namespace BattleRoyaleX.EditorTools
             lab.playerSlot.Motor.Teleport(new Vector3(3f, 1f, 0f));
             lab.fixedOpponent.Motor.FaceDirection(Vector3.right);
             lab.playerSlot.Motor.FaceDirection(Vector3.left);
+            AbilitySlot slot = mode == "clones" ? AbilitySlot.Skill2 : AbilitySlot.Skill1;
+            if (mode == "field") lab.EquipVariation(slot, 2);
+            if (mode == "clones") lab.EquipVariation(slot, 1);
             double start = EditorApplication.timeSinceStartup;
             bool cast = false;
             void Frame()
@@ -116,11 +119,12 @@ namespace BattleRoyaleX.EditorTools
                 if (!cast && elapsed > 1f)
                 {
                     cast = true;
-                    lab.playerSlot.Abilities.TryUse(AbilitySlot.Skill1, Vector3.left);
+                    lab.playerSlot.Abilities.TryUse(slot, Vector3.left);
                 }
                 if (elapsed > 1.45f)
                 {
-                    ScreenCapture.CaptureScreenshot(Path.GetFullPath("Logs/astra-" + className.ToLowerInvariant() + ".png"));
+                    string suffix = mode == "field" || mode == "clones" ? "-" + mode : "";
+                    ScreenCapture.CaptureScreenshot(Path.GetFullPath("Logs/polish-v2-" + className.ToLowerInvariant() + suffix + ".png"));
                     EditorApplication.update -= Frame;
                 }
             }

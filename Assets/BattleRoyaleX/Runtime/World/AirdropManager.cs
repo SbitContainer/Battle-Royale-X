@@ -56,8 +56,8 @@ namespace BattleRoyaleX
             GameObject beam = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             beam.name = "Airdrop_Beacon";
             beam.transform.SetParent(parent, false);
-            beam.transform.localPosition = Vector3.up * 3f;
-            beam.transform.localScale = new Vector3(0.22f, 3f, 0.22f);
+            beam.transform.localPosition = Vector3.up * 0.9f;
+            beam.transform.localScale = new Vector3(0.08f, 0.9f, 0.08f);
             Collider collider = beam.GetComponent<Collider>();
             if (collider != null) Destroy(collider);
             Renderer renderer = beam.GetComponent<Renderer>();
@@ -89,14 +89,14 @@ namespace BattleRoyaleX
 
             GameObject labelObject = new GameObject("Airdrop_Label");
             labelObject.transform.SetParent(parent, false);
-            labelObject.transform.localPosition = Vector3.up * 6.4f;
+            labelObject.transform.localPosition = Vector3.up * 2f;
             labelObject.transform.rotation = Quaternion.Euler(68f, 45f, 0f);
             TextMesh label = labelObject.AddComponent<TextMesh>();
             label.text = "AIRDROP";
             label.anchor = TextAnchor.MiddleCenter;
             label.alignment = TextAlignment.Center;
-            label.characterSize = 0.16f;
-            label.fontSize = 72;
+            label.characterSize = 0.035f;
+            label.fontSize = 48;
             label.color = new Color(1f, 0.55f, 0.1f);
         }
     }

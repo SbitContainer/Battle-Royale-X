@@ -19,21 +19,39 @@ namespace BattleRoyaleX
         {
             AbilityVisualProfile abilityProfile = profiles != null && data.ability != null
                 ? profiles.GetAbility(data.ability.abilityId) : data.ability != null ? data.ability.visualProfile : null;
+            if (abilityProfile != null && data.kind == CombatEventKind.Clash &&
+                data.phase == AbilityPhase.Completed && data.ability.behavior == AbilityBehavior.ComboProjectileUltimate)
+            {
+                if (abilityProfile.areaPrefab != null)
+                {
+                    GameObject wave = Instantiate(abilityProfile.areaPrefab,
+                        new Vector3(data.position.x, 0.07f, data.position.z), Quaternion.identity);
+                    foreach (ParticleSystem particles in wave.GetComponentsInChildren<ParticleSystem>())
+                        particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    wave.AddComponent<ExpandingImpactPresentation>().radius = Mathf.Max(1f, data.ability.explosionRadius);
+                }
+                Spawn(abilityProfile.impactPrefab, data.position, 2.2f, 0.8f);
+                return;
+            }
             if (abilityProfile != null && (data.kind == CombatEventKind.AbilityAttack ||
                 data.kind == CombatEventKind.AbilityGuard || data.kind == CombatEventKind.AbilityMove ||
                 data.kind == CombatEventKind.AbilityUltimate))
             {
                 if (data.phase != AbilityPhase.Startup && data.phase != AbilityPhase.Active) return;
                 bool worldField = data.ability.behavior == AbilityBehavior.SlowField ||
-                    data.ability.behavior == AbilityBehavior.PullTrap;
+                    data.ability.behavior == AbilityBehavior.PullTrap ||
+                    data.ability.behavior == AbilityBehavior.ComboProjectileUltimate;
                 if (data.phase == AbilityPhase.Active && worldField) return;
                 GameObject cast = data.phase == AbilityPhase.Active && abilityProfile.areaPrefab != null
                     ? abilityProfile.areaPrefab : abilityProfile.castPrefab;
                 if (data.phase == AbilityPhase.Active && abilityProfile.areaPrefab == null) return;
                 float titanScale = data.source != null && data.source.Abilities != null && data.source.Abilities.IsTitanEvolved &&
                     data.ability.slot == AbilitySlot.Ultimate ? 1.35f : 1f;
-                Spawn(cast, data.position + abilityProfile.castOffset,
-                    abilityProfile.visualScale * titanScale, abilityProfile.fallbackLifetime);
+                bool groundArea = data.phase == AbilityPhase.Active;
+                Vector3 position = groundArea ? new Vector3(data.position.x, 0.06f, data.position.z) :
+                    data.position + abilityProfile.castOffset;
+                float scale = groundArea ? Mathf.Max(0.5f, data.ability.explosionRadius) : abilityProfile.visualScale * titanScale;
+                Spawn(cast, position, scale, abilityProfile.fallbackLifetime);
                 if (abilityProfile.castClip != null) AudioSource.PlayClipAtPoint(abilityProfile.castClip, data.position);
                 return;
             }

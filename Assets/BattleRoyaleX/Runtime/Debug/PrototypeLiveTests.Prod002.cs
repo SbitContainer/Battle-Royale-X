@@ -63,6 +63,9 @@ namespace BattleRoyaleX
             Check(visibleField != null && visibleField.GetComponentsInChildren<LineRenderer>().Length >= 2 &&
                 Near(visibleField.GetComponentInChildren<LineRenderer>().transform.position.y, 0.06f),
                 "Campo mágico mostra limites no chão na posição real da habilidade");
+            Check(visibleField != null && visibleField.GetComponentInChildren<ArcaneFieldPresentation>() != null &&
+                visibleField.GetComponentsInChildren<ParticleSystem>().All(p => p.main.maxParticles <= 32),
+                "Campo refinado mantém fluxo visual limitado a 32 partículas por emissor");
 
             ResetPair(10f); lab.EquipVariation(AbilitySlot.Skill2, 1);
             Vector3 cloneOrigin = a.transform.position;
@@ -89,6 +92,10 @@ namespace BattleRoyaleX
                 e.ability != null && e.ability.abilityId == "Mage_Ult_A") &&
                 a.Abilities.GetCooldownRemaining(AbilitySlot.Ultimate) > 20f,
                 "Convergência combina projétil lento e rápido e aplica cooldown de sucesso");
+            ExpandingImpactPresentation shockwave = FindAnyObjectByType<ExpandingImpactPresentation>();
+            Check(shockwave != null && Near(shockwave.radius, a.Abilities.GetEquipped(AbilitySlot.Ultimate).explosionRadius) &&
+                shockwave.GetComponentInChildren<Collider>() == null,
+                "Convergência emite onda visual com raio real e sem colisores adicionais");
 
             stage = "BRX-PROD-002: Arqueiro e interações";
             lab.SwitchPlayerClass(CharacterClass.Archer);

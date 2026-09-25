@@ -45,6 +45,30 @@ namespace BattleRoyaleX.EditorTools
             RenderSettings.ambientEquatorColor = new Color(0.35f, 0.4f, 0.43f);
             RenderSettings.ambientGroundColor = new Color(0.16f, 0.2f, 0.19f);
             if (Camera.main != null) Camera.main.backgroundColor = new Color(0.1f, 0.16f, 0.22f);
+            foreach (Light light in Object.FindObjectsByType<Light>())
+                if (light.type == LightType.Directional)
+                {
+                    light.color = new Color(1f, 0.94f, 0.84f);
+                    light.intensity = 1.5f; light.shadows = LightShadows.Soft;
+                }
+            foreach (ArcaneDemoObject demo in Object.FindObjectsByType<ArcaneDemoObject>())
+            {
+                if (demo.kind == ArcaneDemoKind.ReactiveBush || demo.kind == ArcaneDemoKind.FragmentCrystal) continue;
+                Renderer renderer = demo.GetComponent<Renderer>();
+                Color tint = renderer.sharedMaterial.color;
+                string path = Materials + "Arcane_" + demo.kind + ".mat";
+                Material energy = AssetDatabase.LoadAssetAtPath<Material>(path);
+                Shader shader = Shader.Find("BattleRoyaleX/ArcaneSurface");
+                if (shader == null) throw new System.InvalidOperationException("ArcaneSurface shader unavailable");
+                if (energy == null) { energy = new Material(shader); AssetDatabase.CreateAsset(energy, path); }
+                energy.shader = shader;
+                tint.a = demo.kind == ArcaneDemoKind.SpeedRune ? 0.8f : 0.42f;
+                energy.SetColor("_BaseColor", tint);
+                energy.SetFloat("_Rune", demo.kind == ArcaneDemoKind.SpeedRune ? 1f : 0f);
+                renderer.sharedMaterial = energy;
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                EditorUtility.SetDirty(energy);
+            }
             AssetDatabase.SaveAssets();
         }
 

@@ -28,4 +28,4 @@ MonoBehaviour:
   fallbackLifetime: 2
   primaryTint: {r: 0.1, g: 0.85, b: 1, a: 1}
   secondaryTint: {r: 1, g: 1, b: 1, a: 1}
-  visualNotes:
+  visualNotes: 
