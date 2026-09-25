@@ -32,6 +32,27 @@ A especificação mais recente prevalece sobre código/README antigo.
 
 Faça o máximo possível em código/editor tooling sem depender de asset externo.
 
+**NÃO ALTERAR O GAMEPLAY ATUAL DO GUERREIRO E DO ASSASSINO.**
+Eles já estão aprovados pelo usuário para esta fase.
+
+Preservar:
+- dano atual;
+- cooldowns atuais;
+- distâncias atuais;
+- timings atuais;
+- comportamento das habilidades;
+- lógica de esquiva/retorno/caçada;
+- lógica de guarda/parry/investida;
+- sensação atual do 1x1.
+
+Só é permitido mexer em Guerreiro/Assassino quando for estritamente necessário para:
+- compatibilidade com a nova infraestrutura de slots;
+- troca de classe no laboratório;
+- hooks visuais/VFX;
+- correção de bug comprovado.
+
+Se a migração de arquitetura exigir adaptadores, preferir adaptadores/wrappers sem mudar comportamento.
+
 Não tente redesenhar gameplay.
 
 Não implementar nesta tarefa:
@@ -150,23 +171,24 @@ No `CombatResolver`:
 
 Preservar Clash físico.
 
-# FASE 5 — CATÁLOGO COMPLETO
+# FASE 5 — CATÁLOGO DE TESTE
 
-Atualizar `PrototypeDataFactory.cs` para gerar todas as habilidades de:
-- Guerreiro;
-- Assassino;
+Atualizar `PrototypeDataFactory.cs` para gerar integralmente as habilidades NOVAS de:
 - Mago;
-- Arqueiro;
+- Arqueiro.
 
-exatamente conforme `Docs/ABILITY_CATALOG_V1_TEST.md`.
+Para Guerreiro e Assassino:
+- reaproveitar os ScriptableObjects/valores/comportamentos já existentes;
+- apenas criar o mapeamento/adaptação necessário para aparecerem corretamente no laboratório;
+- NÃO substituir números ou mecânicas atuais pelo catálogo conceitual.
 
-Gerar:
-- 4 ataques básicos;
-- 12 Skill1 (4 classes × A/B/C);
-- 12 Skill2;
-- 12 Ultimates.
+Gerar para Mago/Arqueiro:
+- ataques básicos;
+- Skill1 A/B/C;
+- Skill2 A/B/C;
+- Ultimate A/B/C.
 
-Não tratar números como balanceamento final.
+Preservar Guerreiro/Assassino como estão.
 
 # FASE 6 — MAGO
 
@@ -207,23 +229,28 @@ Armadilha:
 - não stun;
 - alvo mantém movimento/skills.
 
-# FASE 8 — GUERREIRO / ASSASSINO
+# FASE 8 — PRESERVAR GUERREIRO / ASSASSINO
 
-Migrar comportamento atual para os novos slots sem piorar o feel já aprovado.
+Não recriar nem rebalancear as habilidades atuais do Guerreiro e do Assassino.
 
-Guerreiro:
-- Guarda Retaliação / Parry / Guarda Arcana;
-- Investida / Caçada / Avanço Protegido;
-- três Ultimates do catálogo.
+Objetivo desta fase:
+- somente adaptar a infraestrutura para que eles continuem funcionando dentro do novo laboratório;
+- preservar exatamente o comportamento atual aprovado;
+- mapear as habilidades existentes aos slots de teste sem alterar sua mecânica;
+- conectar VisualProfiles/VFX sem alterar hitbox, dano, cooldown ou timing.
 
-Assassino:
-- Esquiva / Duplo Passo / Contra-Sombra;
-- Passo Fantasma / Retorno / Caçada;
-- três Ultimates.
+Não implementar agora novas versões de:
+- Guarda Retaliação;
+- Guarda Arcana;
+- novas Ultimates do Guerreiro;
+- novas versões de Esquiva/Duplo Passo/Contra-Sombra;
+- novas Ultimates do Assassino;
+- qualquer rebalanceamento sugerido em documentos conceituais.
 
-Duplo Passo:
-- duas direções lidas separadamente;
-- intervalo ~0,20 s.
+Os trechos de Guerreiro/Assassino em `Docs/ABILITY_CATALOG_V1_TEST.md` devem ser tratados como referência futura/visual, NÃO como autorização para substituir a implementação atual.
+
+Se existir conflito entre catálogo e runtime atual:
+> PRESERVAR O RUNTIME ATUAL DO GUERREIRO/ASSASSINO.
 
 # FASE 9 — LABORATÓRIO
 
