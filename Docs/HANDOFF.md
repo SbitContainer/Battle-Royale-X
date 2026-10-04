@@ -1,6 +1,14 @@
 # Continuação do Battle Royale X
 
-## Etapa vigente — BRX-VISUAL-007 (03/10/2026)
+## Entrega atual — BRX-RELEASE-008 (03/10/2026 local)
+
+Pedido explícito do usuário: publicar efeitos VISUAL-007 e registrar todo trabalho no Git. Fonte integrada e histórico local enviados a `origin/main`: commit `0d28b6b` (398 arquivos), seguido de `f60282a` com lockfile idêntico e quinze capturas reais em Docs/engenharia/evidencias/BRX-VISUAL-007. Regra de registro contínuo no Git salva em AGENTS.md; caches/temporários/anexos não entram na fonte. Nada foi rebalanceado nesta entrega.
+
+**APK 0.9.15-lab/código15 publicado e verificado:** [release](https://github.com/SbitContainer/Battle-Royale-X/releases/tag/android-lab-15), [APK](https://github.com/SbitContainer/Battle-Royale-X/releases/download/android-lab-15/BattleRoyaleX-15.apk). Registro em [android-lab-15.json](engenharia/releases/android-lab-15.json), tarefa [BRX-RELEASE-008](engenharia/tarefas/BRX-RELEASE-008.md). Zero erros de build; mesmo pacote/assinatura; downloads públicos APK/catálogo/inventário validados por SHA256 e latest API15 confirmada. Tag remota aponta f60282a: todos os 1144 inputs recuperáveis no Git, sem diferenças canônicas/inventário. Matriz314/0 e48/0, Node16/0 e publisher10/0. Quinze capturas do Editor, não do celular.
+
+Sem instalação ADB nesta entrega; instalar sobre versão existente (não desinstalar) pelo APK ou confirmar atualização no jogo. Android pode pedir consentimento/permissão de instalação. Toque, FPS, aparência física e ciclo real A→B **AGUARDANDO_VALIDACAO**. Release14 abaixo é histórica. Publicador desta entrega executado com Windows PowerShell5: PS7 rejeitou corretamente sem sobrescrever por diferença cosmética de indentação JSON; não alteramos a ferramenta fora do escopo.
+
+## Etapa visual concluída — BRX-VISUAL-007 (03/10/2026)
 
 Adaptação visual autorizada das três referências fornecidas: básico crescente/cross/espiral, Guarda curva azul/dourada, Usurpador com meia-cúpula hexagonal, Fortaleza com os três escudos chanfrados originais em azul translúcido, Bastião com coluna/fragmentos, Domínio com oito lâminas espectrais e Ruptura com dupla hélice. Carga, execução e contato continuam separados. Geometria/shader procedurais originais, sem importar JPEG como plano ou adicionar pacote. Dano, alcance, timing, energia, cooldown e interações preservados: SHA256 de 136 arquivos GeneratedData e cinco AbilityController*.cs idênticos à entrada desta tarefa.
 

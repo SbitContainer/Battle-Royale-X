@@ -1,6 +1,6 @@
 # BRX-RELEASE-008 — APK dos efeitos e registro Git
 
-03/10/2026. Pedido: usuário autorizou gerar/publicar APK de VISUAL-007 e registrar todo trabalho deste projeto no Git. Sem autorização nova de instalação ADB. Estado EM EXECUÇÃO.
+03/10/2026. Pedido: usuário autorizou gerar/publicar APK de VISUAL-007 e registrar todo trabalho deste projeto no Git. Sem autorização nova de instalação ADB. Estado PUBLICADO_VERIFICADO / AGUARDANDO_VALIDACAO_ANDROID.
 
 Setor A: fonte Git e release existente; consumidores B/C: builder, manifesto/hash/pacote/assinatura, GitHub release/tag/catálogo e atualizador instalado. Proibido: rebalancear ou alterar combate, dependências, assinatura, configurações permanentes, implementar OTA ou apagar dados do aparelho.
 
@@ -18,4 +18,7 @@ Evidência de entrada: VISUAL-007 validado Editor com 314 combate/UI e 48 estrut
 - APK: `Builds/Releases/15/BattleRoyaleX-15.apk`, `0.9.15-lab`, código15, pacote `com.sbitcontainer.battleroyalex.prototype`, 57171295 bytes, SHA256 `d2c36480fca6ac3b2590f8c40866ad47772ffbb037dff1814ab71f69ebd169d7`.
 - Publisher sem -Publish passou identidade aapt, validade apksigner e mesmo certificado `9cb3ed07529afefbd8f304a78fe349484ccf445357d7f777ca530a493598dc17`. Sem mudar chave/assinatura; versão14 preservada.
 - Inventário SHA256 `f732e59d6665ac68d63534366ba9bcd778a50780ba8e8fc76dd539d8a5d6502b`; log matriz SHA256 `dcbb83b2661c5cb2507a3967bf14198a58d63b60957552a584fc35170ac3c616`. Gates: 314/0 +48/0 Unity, 16/0 ferramentas Node e 10/0 publisher offline; validação referências/docs passou.
-- Publicação e revisão final do APK ainda em execução. Instalação/toque/FPS no Moto G54 NÃO EXECUTADOS.
+- Revisão final independente APROVADA: APK/assinatura/hash e 1144/1144 inputs registrados, zero diferenças canônicas Git ou SHA256 do inventário, ProjectSettings restaurado. Commit `f60282afd8ee3e5ee7af1e21e44c9d576272f8bf`, também enviado ao origin/main, inclui lockfile e quinze capturas (20 arquivos nesse commit).
+- Publicação **PUBLISHED_VERIFIED**, 04/10/2026 01:15:58 UTC (03/10 local). Release android-lab-15; downloads públicos APK, brx-update.json e source-inputs.json conferidos por SHA256 antes do recibo. API latest confirma tag15/draftfalse/três assets; tag remota f60282a recupera a fonte completa, incluindo lock. Registro sanitizado em `Docs/engenharia/releases/android-lab-15.json`; APK/binários de build ficam nas Releases, não no Git source.
+- Observação de ferramenta: revisor repetiu offline em PS7 e encontrou recusa segura por indentação diferente no catálogo existente (campos equivalentes); offline/publicação final rodaram no mesmo Windows PowerShell5, sem sobrescrever catálogo nem alterar ferramenta fora da tarefa.
+- Documentação/registro final enviados em commit separado; conferir `git log` e igualdade HEAD/origin no encerramento. Sem force push/pull/reset; arquivos locais preservados. Publicação não é instalação: instalação/toque/FPS e ciclo real de atualização no Moto G54 NÃO EXECUTADOS.

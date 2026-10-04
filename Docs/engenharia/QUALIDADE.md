@@ -9,5 +9,5 @@ Adaptado de QUALIDADE do kit para Unity/Android.
 - Interface precisa feedback de rejeição/cooldown, contraste de área, botões acessíveis, orientação e cancelamento de gesto. Capturas complementam teste de toque, não o substituem.
 - Logging proporcional e sanitizado: IDs de habilidade/ação, versão, fase e duração; sem segredos, contas do usuário ou gravação contínua de input.
 - Menor privilégio, temporários isolados e caminhos resolvidos; não apagar caches/dados para esconder falhas. Não portar `.env`, credenciais, IPs ou autorizações da origem.
-- Logs/Builds/Library são ignorados. Selecionar evidências duráveis em Docs; não versionar caches/APKs por acidente. Lockfile Unity ignorado é risco conhecido, não “resolvido” pela documentação.
+- Logs/Builds/Library são ignorados. Selecionar evidências duráveis em Docs; não versionar caches/APKs por acidente. Lockfile Unity é rastreado desde BRX-RELEASE-008 com os bytes da resolução existente, sem atualizar dependências; isso não prova reprodução de APK/SDK por si só.
 - Revisão estática é amostral. Validador de nomes não prova semântica, segurança completa, carregamento de agentes ou ausência de bugs.
