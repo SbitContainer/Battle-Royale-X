@@ -24,7 +24,7 @@ Inventário local de 03/10/2026. Este documento aplica o kit de engenharia ao la
 
 Usar os módulos existentes; o mapa descreve conexões, não exige nova camada, banco ou event bus. CombatEvents já oferece eventos de apresentação. Sem multiplayer/autenticação/servidor/outbox no escopo. `Docs/OTA_CONTENT_PLAN.md` é plano: Addressables não está declarado no manifest atual; não há OTA implementado por esta adoção.
 
-O `.gitignore` atual ignora `Packages/packages-lock.json`. Risco de reprodutibilidade registrado; uma futura tarefa deve avaliar versionamento do lockfile com a resolução Unity, sem upgrade em massa. Logs e Builds também são ignorados: arquivar evidências sanitizadas necessárias em Docs, não prometer que estão no Git.
+Na adoção inicial, `.gitignore` ignorava `Packages/packages-lock.json`. Em BRX-RELEASE-008, o usuário pediu registrar todo trabalho no Git: o lockfile existente passa a ser rastreado byte a byte, sem resolver/atualizar dependências. SHA256 da entrada usada no APK15: `2e761a905e58eeefda4a979da21975e1458ff77754a7a15d33a2b83984614723`. Logs e Builds continuam ignorados: arquivar evidências sanitizadas necessárias em Docs; APKs ficam nas GitHub Releases, não no código-fonte.
 
 ## Comandos e autorização
 

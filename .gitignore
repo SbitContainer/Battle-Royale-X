@@ -43,5 +43,4 @@ sysinfo.txt
 # Asset Store tooling
 AssetStoreTools*
 
-# Packages cache / generated
-Packages/packages-lock.json
+# Packages/packages-lock.json is tracked to preserve the resolved Unity dependencies.
