@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.sbitcontainer.brxupdates">
+    <uses-sdk android:minSdkVersion="26" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <application>
+        <provider android:name="com.sbitcontainer.brxupdates.ApkProvider"
+            android:authorities="${applicationId}.brxupdates"
+            android:exported="false" android:grantUriPermissions="true" />
+    </application>
+</manifest>

@@ -49,6 +49,12 @@ namespace BattleRoyaleX
         public CombatOutcome ResolveIncoming(DamagePacket packet, out float damageAfterDefense)
         {
             damageAfterDefense = packet.damage;
+            if (runtime.Abilities.TryWarriorProtection(packet, out damageAfterDefense, out CombatOutcome warriorOutcome)) return warriorOutcome;
+            if (runtime.Abilities.TryRepelWithDaggers(packet))
+            {
+                damageAfterDefense = 0f;
+                return CombatOutcome.Dodged;
+            }
             if (packet.source != null && runtime.Abilities.TryDefensiveRedirect(packet.source, false))
             {
                 damageAfterDefense = 0f;
@@ -63,6 +69,16 @@ namespace BattleRoyaleX
             if (Time.time > activeUntil || activeKind == DefenseKind.None)
                 return CombatOutcome.Hit;
 
+            if (ActiveAbility != null && ActiveAbility.behavior == AbilityBehavior.WarriorSkillCapture)
+            {
+                if (!runtime.Abilities.TryCaptureSkill(packet)) return CombatOutcome.Hit;
+                damageAfterDefense = 0f;
+                Deactivate();
+                return CombatOutcome.Nullified;
+            }
+
+            if (ActiveAbility != null && ActiveAbility.defenseInteractionRule != null &&
+                !ActiveAbility.defenseInteractionRule.Allows(packet.ability)) return CombatOutcome.Hit;
             switch (activeKind)
             {
                 case DefenseKind.Guard:

@@ -48,7 +48,20 @@ namespace BattleRoyaleX
         MultiDash,
         TimedBuff,
         MultiShot,
-        ComboProjectileUltimate
+        ComboProjectileUltimate,
+        ArrowRain,
+        Grapple,
+        ExecutionStrike,
+        DaggerTeleport,
+        OrbitingDaggers,
+        WarriorFortress,
+        WarriorSkillCapture,
+        WarriorShieldCharge,
+        WarriorPursuitStrike,
+        WarriorPursuitLong,
+        WarriorGroundBlast,
+        WarriorGroundField,
+        WarriorGroundWaves
     }
 
     [Flags]
@@ -91,6 +104,7 @@ namespace BattleRoyaleX
         public float staggerResistanceMultiplier;
         public float defenseWindowMultiplier;
         public float movementCooldownMultiplier;
+        public float attackSpeedMultiplier;
 
         public static RuntimeModifiers Identity => new RuntimeModifiers
         {
@@ -98,7 +112,8 @@ namespace BattleRoyaleX
             moveSpeedMultiplier = 1f,
             staggerResistanceMultiplier = 1f,
             defenseWindowMultiplier = 1f,
-            movementCooldownMultiplier = 1f
+            movementCooldownMultiplier = 1f,
+            attackSpeedMultiplier = 1f
         };
     }
 

@@ -18,23 +18,24 @@ MonoBehaviour:
   variantIndex: 1
   classRestricted: 1
   requiredClass: 1
-  behavior: 9
+  behavior: 25
   tags: 0
   visualProfile: {fileID: 11400000, guid: 64d770cef197e4d4f91addf679a3e469, type: 2}
+  defenseInteractionRule: {fileID: 0}
   cooldown: 32
   energyCost: 50
   startup: 0.08
   activeTime: 0.12
-  recovery: 0.16
+  recovery: 0.12
   skillLockOnHit: 0
   comboSteps: 1
   comboInputBuffer: 0.18
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
   attackKind: 0
-  damage: 8
-  range: 0
-  width: 1
+  damage: 18
+  range: 9
+  width: 0.9
   height: 1.5
   knockback: 0
   clashable: 0
@@ -65,6 +66,9 @@ MonoBehaviour:
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
   defenseKind: 0
   defenseDuration: 0.45
   perfectWindow: 0.12
@@ -86,7 +90,7 @@ MonoBehaviour:
   pursuitStopDistance: 0.75
   speedBonusDuration: 0
   speedBonusMultiplier: 1
-  huntAcquireRange: 12
+  huntAcquireRange: 9
   huntSpeed: 22
   huntMaxDuration: 1.5
   huntFirstDamage: 6
@@ -104,8 +108,8 @@ MonoBehaviour:
   redirectDistance: 3
   redirectDuration: 0.18
   buffDuration: 4
-  damageMultiplier: 1.35
-  moveSpeedMultiplier: 0.92
+  damageMultiplier: 1
+  moveSpeedMultiplier: 1
   staggerResistanceMultiplier: 1
   defenseWindowMultiplier: 1
   movementCooldownMultiplier: 1

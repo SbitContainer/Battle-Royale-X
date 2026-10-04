@@ -27,15 +27,17 @@ namespace BattleRoyaleX
                 Vector3 direction = Quaternion.Euler(0f, i * 120f, 0f) * runtime.Motor.Facing;
                 GameObject clone = CreateProjection(runtime);
                 clone.name = $"ArcaneClone_{i + 1}";
-                clone.transform.position = transform.position + direction * distance;
+                clone.transform.position = transform.position + direction * Mathf.Min(2.2f, distance * 0.5f);
+                clone.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
                 Collider collider = clone.GetComponent<Collider>();
                 if (collider != null) Destroy(collider);
                 clone.AddComponent<OwnedAbilityEffect>().Configure(runtime, ability);
+                clone.AddComponent<ArcaneCloneMotion>().Configure(runtime, ability, direction);
                 clones.Add(clone);
             }
         }
 
-        static GameObject CreateProjection(CharacterRuntime source)
+        internal static GameObject CreateProjection(CharacterRuntime source)
         {
             SkinnedMeshRenderer[] skins = source.GetComponentsInChildren<SkinnedMeshRenderer>();
             if (skins.Length == 0) return GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -116,6 +118,38 @@ namespace BattleRoyaleX
             clones.Clear();
             Ability = null;
             opensAt = expiresAt = 0f;
+        }
+    }
+
+    // A visual decoy that advances and fires once. The projectile uses the normal combat resolver.
+    public sealed class ArcaneCloneMotion : MonoBehaviour
+    {
+        CharacterRuntime owner;
+        AbilityDefinition ability;
+        Vector3 direction;
+        float bornAt;
+        bool fired;
+
+        public void Configure(CharacterRuntime source, AbilityDefinition definition, Vector3 forward)
+        {
+            owner = source; ability = definition; direction = forward.normalized; bornAt = Time.time;
+        }
+
+        void Update()
+        {
+            if (owner == null || owner.Health == null || owner.Health.IsDead) { Destroy(gameObject); return; }
+            float age = Time.time - bornAt;
+            if (age < 0.8f)
+            {
+                float step = 2.6f * Time.deltaTime;
+                if (!Physics.Raycast(transform.position + Vector3.up, direction, step + 0.4f,
+                    ~0, QueryTriggerInteraction.Ignore)) transform.position += direction * step;
+            }
+            if (!fired && age >= 0.28f)
+            {
+                fired = true;
+                owner.Abilities.SpawnCloneProjectile(ability, transform.position, direction);
+            }
         }
     }
 

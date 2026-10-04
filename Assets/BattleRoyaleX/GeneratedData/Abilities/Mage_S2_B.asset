@@ -31,9 +31,9 @@ MonoBehaviour:
   comboInputBuffer: 0.18
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
-  attackKind: 0
-  damage: 0
-  range: 0
+  attackKind: 2
+  damage: 3
+  range: 7
   width: 0.8
   height: 1.5
   knockback: 1
@@ -51,7 +51,7 @@ MonoBehaviour:
   fragmentTrigger: 0
   heavy: 0
   attackInteractionCooldown: 30
-  projectileSpeed: 14
+  projectileSpeed: 15
   explosionRadius: 2.5
   clashDamageFactor: 0.25
   turnRate: 240

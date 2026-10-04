@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "template": true,
+  "runId": null,
+  "taskId": null,
+  "role": null,
+  "contribution": null,
+  "outcome": "NOT_RUN",
+  "startedAt": null,
+  "finishedAt": null,
+  "durationSeconds": null,
+  "modelDeclared": null,
+  "modelObserved": null,
+  "tokenUsageObserved": null,
+  "candidate": null,
+  "evidence": [],
+  "errors": [],
+  "rework": [],
+  "limitations": [],
+  "note": "Record observed facts only. Roles do not activate agents. Add new records; do not rewrite history or global memory."
+}

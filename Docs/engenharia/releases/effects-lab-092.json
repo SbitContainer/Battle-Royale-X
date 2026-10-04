@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "recordedOn": "2026-10-03",
+  "file": "Builds/BattleRoyaleX-effects-lab.apk",
+  "sizeBytes": 57131167,
+  "sha256": "667778a6f3dd339923e4b5ff0583ca7d95fa1ef3dfed0ad6f161285b30d10fc5",
+  "packageId": "com.sbitcontainer.battleroyalex.prototype",
+  "versionCode": 11,
+  "versionName": "0.9.2-effects-lab",
+  "sourceCommit": null,
+  "sourceSnapshot": null,
+  "sourceAttribution": "Historical APK built from a dirty tree; exact source snapshot was not recorded. Do not attribute it to current HEAD.",
+  "deviceEvidence": "Docs/EFFECTS_LAB_092.md records installation on 2026-09-26; not rechecked on 2026-10-03.",
+  "signatureVerification": "NOT_RUN_IN_THIS_ADOPTION",
+  "publicUrl": null
+}

@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: Assassin_Defense_B
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.AbilityDefinition
   abilityId: Assassin_Defense_B
-  displayName: Duplo Passo
+  displayName: "C\xEDrculo de Adagas"
   slot: 1
   variantIndex: 2
   classRestricted: 1
   requiredClass: 1
-  behavior: 5
-  tags: 0
+  behavior: 27
+  tags: 17
   visualProfile: {fileID: 11400000, guid: ab54ee6f66a13e14da3a8d01efdd5053, type: 2}
-  cooldown: 3.2
+  defenseInteractionRule: {fileID: 11400000, guid: 27a5f14b415e8b44182e1ef66c340053, type: 2}
+  cooldown: 8
   energyCost: 13
   startup: 0.03
   activeTime: 0.12
@@ -32,7 +33,7 @@ MonoBehaviour:
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
   attackKind: 0
-  damage: 3
+  damage: 2
   range: 1
   width: 1
   height: 1.5
@@ -57,7 +58,7 @@ MonoBehaviour:
   turnRate: 240
   slowPercent: 0.25
   pullStrength: 5
-  fieldRadius: 3
+  fieldRadius: 1.8
   fieldDuration: 3
   secondActivationDelay: 0.2
   secondActivationWindow: 2
@@ -65,14 +66,17 @@ MonoBehaviour:
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
   defenseKind: 0
   defenseDuration: 1
   perfectWindow: 0.1
   damageReduction: 0.7
   specialInteractionCooldown: 0
-  movementDistance: 1.2
+  movementDistance: 0
   movementDuration: 0.18
-  invulnerabilityDuration: 1
+  invulnerabilityDuration: 0
   returnWindow: 1.8
   passThroughCharacters: 1
   reverseMovement: 0
@@ -100,7 +104,7 @@ MonoBehaviour:
   counterWindow: 0
   counterKnockback: 0
   counterOnBlock: 0
-  redirectOnDefense: 1
+  redirectOnDefense: 0
   redirectDistance: 10
   redirectDuration: 0.25
   buffDuration: 5

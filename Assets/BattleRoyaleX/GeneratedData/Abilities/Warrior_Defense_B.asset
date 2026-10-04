@@ -18,25 +18,26 @@ MonoBehaviour:
   variantIndex: 2
   classRestricted: 1
   requiredClass: 0
-  behavior: 3
-  tags: 0
+  behavior: 28
+  tags: 5
   visualProfile: {fileID: 11400000, guid: 141ca0727400b38419bcc9c895c4272c, type: 2}
-  cooldown: 6
-  energyCost: 12
+  defenseInteractionRule: {fileID: 0}
+  cooldown: 10
+  energyCost: 18
   startup: 0.03
   activeTime: 0.12
-  recovery: 0.16
+  recovery: 0.08
   skillLockOnHit: 0
   comboSteps: 1
   comboInputBuffer: 0.18
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
-  attackKind: 0
-  damage: 0
-  range: 1
-  width: 1
+  attackKind: 2
+  damage: 14
+  range: 8
+  width: 0.9
   height: 1.5
-  knockback: 0
+  knockback: 3
   clashable: 0
   blockable: 1
   parryable: 1
@@ -51,7 +52,7 @@ MonoBehaviour:
   fragmentTrigger: 0
   heavy: 0
   attackInteractionCooldown: 30
-  projectileSpeed: 14
+  projectileSpeed: 12
   explosionRadius: 2.5
   clashDamageFactor: 0.25
   turnRate: 240
@@ -61,14 +62,19 @@ MonoBehaviour:
   fieldDuration: 3
   secondActivationDelay: 0.2
   secondActivationWindow: 2
-  projectileCount: 1
+  fieldTickInterval: 0.6
+  captureRecastWindow: 2
+  projectileCount: 3
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
-  defenseKind: 1
-  defenseDuration: 1.1
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
+  defenseKind: 0
+  defenseDuration: 1.5
   perfectWindow: 0.05
-  damageReduction: 0.85
+  damageReduction: 1
   specialInteractionCooldown: 0
   movementDistance: 0
   movementDuration: 0.05
@@ -96,10 +102,10 @@ MonoBehaviour:
   smokeDuration: 4
   chargeCount: 5
   chargeWindow: 6
-  counterBonusDamage: 3
-  counterWindow: 1.15
-  counterKnockback: 3.5
-  counterOnBlock: 1
+  counterBonusDamage: 0
+  counterWindow: 0
+  counterKnockback: 0
+  counterOnBlock: 0
   redirectOnDefense: 0
   redirectDistance: 3
   redirectDuration: 0.18
@@ -109,3 +115,4 @@ MonoBehaviour:
   staggerResistanceMultiplier: 1
   defenseWindowMultiplier: 1
   movementCooldownMultiplier: 1
+  attackSpeedMultiplier: 1

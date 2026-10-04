@@ -36,11 +36,27 @@ namespace BattleRoyaleX
                 lab.SwitchPlayerClass(CharacterClass.Archer);
             Check(allClasses && w.Definition.characterClass == CharacterClass.Warrior,
                 "Troca runtime seleciona as quatro classes sem alterar o Guerreiro adversário");
+            foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
             Check(a.Health.CurrentHealth == a.Health.MaxHealth && a.Energy.CurrentEnergy == a.Energy.MaxEnergy,
                 "Troca de classe restaura HP e energia");
 
             stage = "BRX-PROD-002: Mago";
             lab.SwitchPlayerClass(CharacterClass.Mage);
+            foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
+            ResetPair(6f);
+            a.Motor.FaceDirection(Vector3.left);
+            w.Motor.Teleport(w.transform.position + Vector3.forward * 2.5f);
+            Physics.SyncTransforms();
+            bool basicUsed = a.Abilities.TryUse(AbilitySlot.BasicAttack, Vector3.left);
+            yield return new WaitForSeconds(0.26f);
+            SeekingProjectileMover curvedBasic = FindObjectsByType<SeekingProjectileMover>()
+                .FirstOrDefault(m => m != null && m.GetComponent<Hitbox>() != null &&
+                    m.GetComponent<Hitbox>().Owner == a && m.GetComponent<Hitbox>().Packet.ability == a.Definition.basicAttack);
+            Check(basicUsed && curvedBasic != null && Near(curvedBasic.MaximumAngle, 20f) &&
+                Vector3.Angle(curvedBasic.InitialDirection, curvedBasic.transform.forward) <= 20.5f &&
+                Vector3.Angle(curvedBasic.InitialDirection, curvedBasic.transform.forward) > 1f,
+                "Orbe básico curva para o adversário até o limite de 20 graus");
+
             ResetPair(12f);
             lab.EquipVariation(AbilitySlot.Skill1, 0);
             bool sparksUsed = a.Abilities.TryUse(AbilitySlot.Skill1, Vector3.left);
@@ -59,6 +75,8 @@ namespace BattleRoyaleX
             yield return new WaitForSeconds(0.5f);
             Check(slowUsed && w.MovementSlowMultiplier < 0.99f && !w.State.MovementLocked,
                 "Campo de Lentidão reduz velocidade sem stun ou MovementLock");
+            Check(w.Health.CurrentHealth < w.Health.MaxHealth,
+                "Pântano causa dano periódico ao inimigo dentro da área");
             SlowField visibleField = FindAnyObjectByType<SlowField>();
             Check(visibleField != null && visibleField.GetComponentsInChildren<LineRenderer>().Length >= 2 &&
                 Near(visibleField.GetComponentInChildren<LineRenderer>().transform.position.y, 0.06f),
@@ -81,6 +99,31 @@ namespace BattleRoyaleX
             Check(clonesUsed && cloneCount == 3 && cloneTeleport && Vector3.Distance(a.transform.position, cloneOrigin) > 2f,
                 "Ecos Arcanos cria três clones e permite teleportar ou deixar a janela expirar");
 
+            ResetPair(12f); lab.EquipVariation(AbilitySlot.Skill2, 1);
+            bool clonesFireUsed = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.left);
+            yield return new WaitForSeconds(0.52f);
+            int cloneShots = FindObjectsByType<Hitbox>().Count(h => h.Owner == a &&
+                h.Packet.ability != null && h.Packet.ability.abilityId == "Mage_S2_B");
+            Check(clonesFireUsed && cloneShots == 3 && FindObjectsByType<ArcaneCloneMotion>().Length == 3,
+                "Três ecos avançam e cada um dispara um orbe de dano leve");
+
+            ResetPair(2.2f); lab.EquipVariation(AbilitySlot.Skill2, 0);
+            a.Motor.FaceDirection(Vector3.left); Physics.SyncTransforms();
+            bool blinkUsed = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.left);
+            yield return new WaitForSeconds(0.35f);
+            Check(blinkUsed && w.Health.CurrentHealth < w.Health.MaxHealth &&
+                FindAnyObjectByType<MageSoulEcho>() != null,
+                "Blink atravessa o inimigo com dano e deixa alma visual atrasada");
+
+            ResetPair(2.0f); lab.EquipVariation(AbilitySlot.Skill2, 2);
+            a.Motor.FaceDirection(Vector3.left); Physics.SyncTransforms();
+            float repulseOrigin = w.transform.position.x;
+            bool repulseUsed = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.left);
+            yield return new WaitForSeconds(0.4f);
+            Check(repulseUsed && w.transform.position.x < repulseOrigin - 0.1f &&
+                w.MovementSlowMultiplier < 0.99f && w.Health.CurrentHealth < w.Health.MaxHealth,
+                "Pulso de Repulsão causa dano, empurra radialmente e aplica lentidão");
+
             ResetPair(15f); lab.EquipVariation(AbilitySlot.Ultimate, 0);
             a.Motor.FaceDirection(Vector3.left);
             events.Clear();
@@ -99,6 +142,7 @@ namespace BattleRoyaleX
 
             stage = "BRX-PROD-002: Arqueiro e interações";
             lab.SwitchPlayerClass(CharacterClass.Archer);
+            foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
             ResetPair(12f); lab.EquipVariation(AbilitySlot.Skill1, 2);
             a.Motor.Teleport(new Vector3(-5f, 1f, 0f)); a.Motor.FaceDirection(Vector3.right);
             w.Motor.Teleport(new Vector3(1.5f, 1f, 0f)); Physics.SyncTransforms();
@@ -107,6 +151,100 @@ namespace BattleRoyaleX
             yield return new WaitForSeconds(0.8f);
             Check(pullUsed && w.transform.position.x < pullBefore.x - 0.05f && !w.State.MovementLocked && !w.State.SkillsLocked,
                 "Armadilha Gravitacional puxa sem retirar movimento ou skills");
+
+            AbilityDefinition bowBasic = lab.archerDefinition.basicAttack;
+            AbilityDefinition heavyArrow = lab.archerDefinition.GetVariant(AbilitySlot.Skill1, 1);
+            AbilityDefinition trap = lab.archerDefinition.GetVariant(AbilitySlot.Skill1, 2);
+            AbilityDefinition grapple = lab.archerDefinition.GetVariant(AbilitySlot.Skill2, 1);
+            AbilityDefinition overload = lab.archerDefinition.GetVariant(AbilitySlot.Ultimate, 1);
+            AbilityDefinition rain = lab.archerDefinition.GetVariant(AbilitySlot.Ultimate, 2);
+            Check(Near(bowBasic.damage, 8f) && Near(bowBasic.range, 15f) &&
+                heavyArrow.width < 0.3f && heavyArrow.projectileSpeed >= 60f && heavyArrow.range >= 20f,
+                "Arqueiro: básico mais leve e Flecha Pesada fina, rápida e de longa distância");
+            Check(trap.behavior == AbilityBehavior.PullTrap && grapple.behavior == AbilityBehavior.Grapple &&
+                rain.behavior == AbilityBehavior.ArrowRain && Near(overload.buffDuration, 4f) &&
+                Near(overload.moveSpeedMultiplier, 1.3f) && Near(overload.movementCooldownMultiplier, 0.7f),
+                "Arqueiro: armadilha, gancho, chuva e Sobrecarga usam os parâmetros especificados");
+
+            ResetPair(9f);
+            a.Motor.Teleport(new Vector3(-5f, 1f, 0f));
+            w.Motor.Teleport(new Vector3(3f, 1f, 2f));
+            a.Motor.FaceDirection(Vector3.back); Physics.SyncTransforms();
+            bool aimedBasic = a.Abilities.TryUse(AbilitySlot.BasicAttack);
+            Vector3 enemyDirection = w.transform.position - a.transform.position; enemyDirection.y = 0f;
+            Check(aimedBasic && Vector3.Dot(a.Motor.Facing, enemyDirection.normalized) > 0.98f,
+                "Ataque básico do Arqueiro aponta para o inimigo dentro do alcance mesmo se estava virado para trás");
+
+            GameObject rangedTest = new GameObject("HeavyArrow_Distance_Test");
+            rangedTest.transform.position = Vector3.up * 100f;
+            Hitbox rangedHit = rangedTest.AddComponent<Hitbox>();
+            rangedHit.Configure(a, new DamagePacket(a, heavyArrow, Vector3.right), Vector3.one, 1f);
+            float nearDamage = rangedHit.Packet.damage;
+            rangedTest.AddComponent<ArcherDistanceDamage>().Configure(heavyArrow.range);
+            rangedTest.transform.position += Vector3.right * (heavyArrow.range * 0.95f);
+            yield return null;
+            Check(rangedHit.Packet.damage > nearDamage * 1.7f,
+                "Flecha Pesada ganha dano com a distância real percorrida");
+            Destroy(rangedTest);
+
+            ResetPair(12f);
+            a.Motor.Teleport(new Vector3(-5f, 1f, 0f));
+            w.Motor.Teleport(new Vector3(3f, 1f, 0f)); Physics.SyncTransforms();
+            float beforeSweep = w.Health.CurrentHealth;
+            GameObject sweptArrow = new GameObject("HeavyArrow_Sweep_Test");
+            sweptArrow.transform.position = new Vector3(-3f, 1.8f, 0f);
+            Hitbox sweptHit = sweptArrow.AddComponent<Hitbox>();
+            sweptHit.Configure(a, new DamagePacket(a, heavyArrow, Vector3.right),
+                new Vector3(heavyArrow.width, heavyArrow.height, heavyArrow.width), 0.5f);
+            sweptArrow.AddComponent<ArcherDistanceDamage>().Configure(heavyArrow.range);
+            sweptArrow.transform.position = new Vector3(5f, 1.8f, 0f);
+            yield return null;
+            Check(w.Health.CurrentHealth < beforeSweep,
+                "Flecha Pesada detecta o alvo mesmo ao atravessar vários metros em um quadro");
+            Destroy(sweptArrow);
+
+            ResetPair(20f); lab.EquipVariation(AbilitySlot.Skill1, 2);
+            a.Motor.Teleport(new Vector3(-5f, 1f, 0f));
+            w.Motor.Teleport(new Vector3(8f, 1f, 0f)); Physics.SyncTransforms();
+            bool trapUsed = a.Abilities.TryUse(AbilitySlot.Skill1, Vector3.right);
+            yield return new WaitForSeconds(0.45f);
+            bool stillArmed = FindAnyObjectByType<ArcherProximityTrap>() != null &&
+                FindAnyObjectByType<PullField>() == null;
+            float beforeTrap = w.Health.CurrentHealth;
+            w.Motor.Teleport(new Vector3(0.8f, 1f, 0f)); Physics.SyncTransforms();
+            yield return new WaitForSeconds(0.25f);
+            Check(trapUsed && stillArmed && FindAnyObjectByType<PullField>() != null &&
+                w.Health.CurrentHealth < beforeTrap,
+                "Armadilha permanece armada até o inimigo entrar na proximidade e então causa dano");
+
+            ResetPair(20f); lab.EquipVariation(AbilitySlot.Ultimate, 1);
+            bool boosted = a.Abilities.TryUse(AbilitySlot.Ultimate);
+            yield return new WaitForSeconds(0.25f);
+            Check(boosted && Near(a.Modifiers.moveSpeedMultiplier, 1.3f) &&
+                Near(a.Modifiers.movementCooldownMultiplier, 0.7f),
+                "Sobrecarga aplica +30% movimento e -30% recarga de mobilidade por 4 s");
+
+            ResetPair(12f); lab.EquipVariation(AbilitySlot.Ultimate, 2);
+            a.Motor.Teleport(new Vector3(-5f, 1f, 0f)); a.Motor.FaceDirection(Vector3.right);
+            w.Motor.Teleport(new Vector3(3f, 1f, 0f)); Physics.SyncTransforms();
+            float rainBefore = w.Health.CurrentHealth;
+            bool rainUsed = a.Abilities.TryUse(AbilitySlot.Ultimate, Vector3.right);
+            yield return new WaitForSeconds(1.0f);
+            var rainProbe = FindAnyObjectByType<ArcherArrowRain>();
+            Debug.Log($"[BRX RAIN005 PROBE] used={rainUsed} field={(rainProbe != null ? rainProbe.transform.position.ToString() : "none")} a={a.transform.position} w={w.transform.position} hp={rainBefore}/{w.Health.CurrentHealth} immunity={w.Abilities.HasFortressDamageImmunity}/{w.State.IsInvulnerable} guard={w.Defense.IsActive} action={a.Abilities.IsActionBusy} energy={a.Energy.CurrentEnergy} events=" + string.Join(";", events.Where(e=>e.ability==Ability("Archer_Ult_C")).Select(e=>$"{e.kind}:{e.phase}:{e.position}:{e.value}")));
+            Check(rainUsed && FindAnyObjectByType<ArcherArrowRain>() != null &&
+                w.Health.CurrentHealth < rainBefore,
+                "Chuva de Flechas permanece na área e aplica pulsos de dano");
+
+            ResetPair(20f); lab.EquipVariation(AbilitySlot.Skill2, 1);
+            a.Motor.Teleport(new Vector3(-5f, 1f, 0f)); a.Motor.FaceDirection(Vector3.right);
+            w.Motor.Teleport(new Vector3(5f, 1f, 4f)); Physics.SyncTransforms();
+            Vector3 hookStart = a.transform.position;
+            bool hookUsed = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.right);
+            yield return new WaitForSeconds(0.2f);
+            Check(hookUsed && a.transform.position.x > hookStart.x + 0.1f &&
+                FindAnyObjectByType<ArcherGrappleRope>() != null,
+                "Gancho lança corda e puxa mesmo sem superfície ou inimigo acertado");
 
             ResetPair(10f); lab.EquipVariation(AbilitySlot.Skill2, 2);
             bool dashOne = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.forward);
@@ -117,6 +255,15 @@ namespace BattleRoyaleX
                 "Passos Laterais aceita dois deslocamentos com direções independentes");
 
             lab.SwitchPlayerClass(CharacterClass.Mage); ResetPair(8f);
+            foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
+            a.Motor.Teleport(new Vector3(-5f, 1f, 0f));
+            w.Motor.Teleport(new Vector3(2f, 1f, 2f));
+            a.Motor.FaceDirection(Vector3.back); Physics.SyncTransforms();
+            bool mageAimed = a.Abilities.TryUse(AbilitySlot.BasicAttack);
+            Vector3 mageDirection = w.transform.position - a.transform.position; mageDirection.y = 0f;
+            Check(mageAimed && Vector3.Dot(a.Motor.Facing, mageDirection.normalized) > 0.98f,
+                "Mago também aponta o básico para o inimigo dentro do alcance sem mira manual");
+            ResetPair(8f);
             AbilityDefinition interceptable = lab.mageDefinition.GetVariant(AbilitySlot.Skill1, 1);
             Hitbox warriorStrike = SpawnHit(w, w.Definition.basicAttack, Vector3.zero);
             Hitbox incoming = SpawnHit(a, interceptable, Vector3.zero);
@@ -151,6 +298,7 @@ namespace BattleRoyaleX
             yield return new WaitForSeconds(0.2f);
             bool hadOldEffects = FindObjectsByType<OwnedAbilityEffect>().Any(e => e.Owner == a);
             lab.SwitchPlayerClass(CharacterClass.Archer);
+            foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
             yield return null;
             bool cleaned = !FindObjectsByType<OwnedAbilityEffect>().Any(e => e.Owner == a);
             Check(hadOldEffects && cleaned,
@@ -172,6 +320,7 @@ namespace BattleRoyaleX
                 "Evolução Titânica acompanha o slot ao trocar a Ultimate");
             lab.SetTitanEvolved(false);
             lab.SwitchPlayerClass(CharacterClass.Assassin);
+            foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
             ResetPair(8f);
         }
     }

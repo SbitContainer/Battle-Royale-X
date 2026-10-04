@@ -64,13 +64,13 @@ namespace BattleRoyaleX
             RuntimeModifiers mods=RuntimeModifiers.Identity; mods.damageMultiplier=1.35f;
             a.ApplyTimedModifiers(mods,5f); a.Abilities.TryUse(AbilitySlot.Movement);
             yield return new WaitForSeconds(0.4f);
-            Check(Near(a.MovementSpeedBonus,1.35f) && Near(a.Modifiers.damageMultiplier,1.35f),
-                "Travessia aplica +35% velocidade após avanço sem substituir buff de ultimate");
+            Check(a.Abilities.CanRecast(AbilitySlot.Movement) && Near(a.MovementSpeedBonus,1f) && Near(a.Modifiers.damageMultiplier,1.35f),
+                "Travessia prepara teleporte sem bônus antigo nem substituir buff externo");
             yield return new WaitForSeconds(2.1f);
             Check(Near(a.MovementSpeedBonus,1f) && Near(a.Modifiers.damageMultiplier,1.35f),
-                "Bônus de Travessia expira após 2 segundos independentemente da ultimate");
+                "Travessia não modifica bônus independentes da ultimate");
 
-            foreach(string id in new[]{"Assassin_Defense_Base","Assassin_Defense_B"})
+            foreach(string id in new[]{"Assassin_Defense_Base"})
             {
                 ResetPair(2f); events.Clear(); a.Abilities.EquipVariation(Ability(id)); a.Abilities.TryUse(AbilitySlot.Defense,Vector3.forward);
                 yield return new WaitForSeconds(0.72f);
@@ -144,9 +144,27 @@ namespace BattleRoyaleX
             var uiGo=new GameObject("Test_MobileV4_Controls");
             var controls=uiGo.AddComponent<PrototypeMobileTouchControls>(); controls.runInEditor=true;
             yield return null; yield return null;
-            var labSelectors=controls.GetComponentsInChildren<RectTransform>().Where(r=>r.name.StartsWith("LabSkill_")).OrderBy(r=>r.name).ToArray();
-            Check(labSelectors.Length==3 && labSelectors.All(r=>r.anchorMin==Vector2.zero && r.anchoredPosition.x<480f && r.anchoredPosition.y<240f),
-                "Mobile mostra seletores 1/2/3 no canto inferior esquerdo");
+            var labSelectors=controls.GetComponentsInChildren<RectTransform>(true).Where(r=>r.name.StartsWith("LabSkill_")).OrderBy(r=>r.name).ToArray();
+            Check(labSelectors.Length==3 && labSelectors.All(r=>r.parent.name=="SafeAreaRoot" && r.gameObject.activeInHierarchy),
+                "Os três seletores A/B/C estão acessíveis na tela de combate");
+            bool actualSelectionWorked=true;
+            foreach(CharacterClass cls in new[]{CharacterClass.Mage,CharacterClass.Archer})
+            {
+                controls.SelectLabClass(cls);
+                for(int slotIndex=0;slotIndex<3;slotIndex++)
+                {
+                    AbilitySlot slot=(AbilitySlot)(slotIndex+1);
+                    for(int click=1;click<=3;click++)
+                    {
+                        var selectionPointer=new PointerEventData(EventSystem.current) { pointerId=31,
+                            position=RectTransformUtility.WorldToScreenPoint(null,labSelectors[slotIndex].position) };
+                        ExecuteEvents.Execute(labSelectors[slotIndex].gameObject,selectionPointer,ExecuteEvents.pointerDownHandler);
+                        actualSelectionWorked &= a.Abilities.GetEquipped(slot)==a.Definition.GetVariant(slot,click%3);
+                    }
+                }
+            }
+            Check(actualSelectionWorked,"Toques reais nos três seletores alternam A/B/C de Mago e Arqueiro");
+            controls.SelectLabClass(CharacterClass.Assassin);
             bool defenseA=controls.CycleLabVariation(AbilitySlot.Defense) && a.Abilities.GetEquipped(AbilitySlot.Defense)==a.Definition.defenseVariantA;
             bool defenseB=controls.CycleLabVariation(AbilitySlot.Defense) && a.Abilities.GetEquipped(AbilitySlot.Defense)==a.Definition.defenseVariantB;
             bool defenseBase=controls.CycleLabVariation(AbilitySlot.Defense) && a.Abilities.GetEquipped(AbilitySlot.Defense)==a.Definition.defenseBase;
@@ -163,16 +181,30 @@ namespace BattleRoyaleX
                 "Botão do laboratório alterna bot Normal/Parado/Parado + ataque");
             controls.OpenSettings();
             Check(controls.Player==a && Time.timeScale==0f,"Menu mobile pausa combate e identifica jogador Assassino");
+            Check(labSelectors.All(r=>r.parent.name=="SafeAreaRoot"), "Menu de classe mantém os seletores como controles da arena");
             controls.SwitchPlayer();
             Check(controls.Player==a && a.Definition.characterClass==CharacterClass.Warrior && w.Definition.characterClass==CharacterClass.Warrior &&
                 w.GetComponent<PrototypeTrainingBot>().enabled && !a.GetComponent<PrototypeTrainingBot>().enabled &&
                 !a.GetComponent<PrototypeLocalInput>().enabled && !w.GetComponent<PrototypeLocalInput>().enabled,
                 "Seletor mobile troca a classe do slot jogador para Guerreiro e mantém oponente Guerreiro bot");
             controls.SwitchPlayer();
+            Check(controls.Player==a && a.Definition.characterClass==CharacterClass.Mage &&
+                w.GetComponent<PrototypeTrainingBot>().enabled,
+                "Seletor mobile alcança a classe Mago");
+            controls.SwitchPlayer();
+            Check(controls.Player==a && a.Definition.characterClass==CharacterClass.Archer,
+                "Seletor mobile alcança a classe Arqueiro");
+            controls.SwitchPlayer();
             Check(controls.Player==a && a.Definition.characterClass==CharacterClass.Assassin &&
                 w.GetComponent<PrototypeTrainingBot>().enabled && !a.GetComponent<PrototypeTrainingBot>().enabled,
-                "Troca de volta restaura Assassino no slot jogador e Guerreiro no slot bot");
-            Check(AbilityTechnicalInfo.Describe(hunt).Contains("22") && AbilityTechnicalInfo.Describe(Ability("Assassin_Move_A")).Contains("35%"),
+                "Ciclo completo restaura Assassino no slot jogador e Guerreiro no slot bot");
+            bool selectedMage = controls.SelectLabClass(CharacterClass.Mage) &&
+                a.Definition.characterClass == CharacterClass.Mage;
+            bool selectedAssassin = controls.SelectLabClass(CharacterClass.Assassin) &&
+                a.Definition.characterClass == CharacterClass.Assassin;
+            Check(selectedMage && selectedAssassin,
+                "Menu permite selecionar diretamente a classe, sem percorrer todas as opções");
+            Check(AbilityTechnicalInfo.Describe(hunt).Contains("22") && AbilityTechnicalInfo.Describe(Ability("Assassin_Move_A")).Contains("teleporta"),
                 "Informações técnicas são geradas dos valores reais das habilidades");
             controls.BeginLayoutEdit();
             var attackRect=controls.GetComponentsInChildren<RectTransform>().First(r=>r.name=="Attack");

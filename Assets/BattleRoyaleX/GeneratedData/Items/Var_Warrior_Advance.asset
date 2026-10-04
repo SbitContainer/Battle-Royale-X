@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Var_Warrior_Advance
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.ItemDefinition
   itemId: Var_Warrior_Advance
-  displayName: "Runa: Avan\xE7o Defensivo"
+  displayName: "Runa: Avan\xE7o Implac\xE1vel"
   kind: 3
   icon: {fileID: 0}
   amount: 0

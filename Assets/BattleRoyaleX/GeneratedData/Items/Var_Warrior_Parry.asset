@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Var_Warrior_Parry
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.ItemDefinition
   itemId: Var_Warrior_Parry
-  displayName: 'Runa: Parry'
+  displayName: 'Runa: Escudo Usurpador'
   kind: 3
   icon: {fileID: 0}
   amount: 0

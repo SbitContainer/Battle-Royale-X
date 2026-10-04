@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Var_Warrior_Impact
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.ItemDefinition
   itemId: Var_Warrior_Impact
-  displayName: 'Runa: Impacto'
+  displayName: "Runa: Ca\xE7ada Brutal"
   kind: 3
   icon: {fileID: 0}
   amount: 0

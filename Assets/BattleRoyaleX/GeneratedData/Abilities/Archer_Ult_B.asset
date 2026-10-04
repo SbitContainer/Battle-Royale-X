@@ -103,9 +103,9 @@ MonoBehaviour:
   redirectOnDefense: 0
   redirectDistance: 3
   redirectDuration: 0.18
-  buffDuration: 6
+  buffDuration: 4
   damageMultiplier: 1
-  moveSpeedMultiplier: 1.28
+  moveSpeedMultiplier: 1.3
   staggerResistanceMultiplier: 1
   defenseWindowMultiplier: 1
-  movementCooldownMultiplier: 0.78
+  movementCooldownMultiplier: 0.7

@@ -15,7 +15,7 @@ MonoBehaviour:
   abilityId: Mage_S2_B
   characterClass: 2
   castPrefab: {fileID: 4771949815207301972, guid: 20973d7128a83f94cacbe7f29d658811, type: 3}
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 1816426043951062609, guid: efc1947a081c18c43ae0cb0b98a4de16, type: 3}
   impactPrefab: {fileID: 4771949815207301972, guid: 20973d7128a83f94cacbe7f29d658811, type: 3}
   areaPrefab: {fileID: 0}
   trailPrefab: {fileID: 0}

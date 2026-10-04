@@ -33,9 +33,9 @@ MonoBehaviour:
   comboThirdDamageMultiplier: 1.25
   attackKind: 2
   damage: 28
-  range: 12
-  width: 1.5
-  height: 1.5
+  range: 9
+  width: 2.1
+  height: 2.1
   knockback: 1
   clashable: 1
   blockable: 1

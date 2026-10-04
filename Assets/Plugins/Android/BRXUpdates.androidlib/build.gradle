@@ -1,0 +1,20 @@
+apply plugin: 'com.android.library'
+
+android {
+    namespace 'com.sbitcontainer.brxupdates'
+    compileSdk 36
+    defaultConfig {
+        minSdk 26
+        targetSdk 36
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+        }
+    }
+}

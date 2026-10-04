@@ -31,7 +31,7 @@ namespace BattleRoyaleX
         void LateUpdate()
         {
             if (meshes == null) return;
-            bool inside = SmokeField.Contains(transform.position);
+            bool inside = SmokeField.Contains(transform.position) || actor != null && actor.Abilities.IsExecutionHidden;
             int next = !inside || LocalPlayer == null ? 0 : actor == LocalPlayer ? 1 : 2;
             if (next == mode) return;
             mode = next;

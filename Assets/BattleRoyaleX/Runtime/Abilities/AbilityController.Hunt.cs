@@ -21,7 +21,7 @@ namespace BattleRoyaleX
             foreach (var candidate in FindObjectsByType<CharacterRuntime>())
             {
                 if (candidate == runtime || candidate.TeamId == runtime.TeamId || candidate.Health.IsDead ||
-                    SmokeField.BlocksSight(transform.position, candidate.transform.position)) continue;
+                    candidate.Abilities.IsExecutionHidden || SmokeField.BlocksSight(transform.position, candidate.transform.position)) continue;
                 Vector3 delta = candidate.transform.position - transform.position; delta.y = 0f;
                 if (delta.magnitude > ability.huntAcquireRange || !HuntPathClear(delta)) continue;
                 float candidateScore = delta.magnitude + (aim.sqrMagnitude > 0.01f ? (1f - Vector3.Dot(aim.normalized, delta.normalized)) * 4f : 0f);
@@ -41,7 +41,7 @@ namespace BattleRoyaleX
         bool TryHuntRecast()
         {
             if (!IsHuntRecastReady || runtime.State.SkillsLocked || actionBusy || comboInProgress || runtime.Motor.IsDashing ||
-                SmokeField.BlocksSight(transform.position, huntTarget.transform.position)) return false;
+                huntTarget.Abilities.IsExecutionHidden || SmokeField.BlocksSight(transform.position, huntTarget.transform.position)) return false;
             return StartHuntStage(true);
         }
 
@@ -105,7 +105,7 @@ namespace BattleRoyaleX
                     if (!ActionStillValid(id) || target == null || target.Health.IsDead) return transform.position;
                     if (contacted) return finish;
                     // A dash never breaks the lock; smoke does. Budget and world collisions bound pursuit.
-                    if (SmokeField.BlocksSight(transform.position, target.transform.position)) return transform.position;
+                    if (target.Abilities.IsExecutionHidden || SmokeField.BlocksSight(transform.position, target.transform.position)) return transform.position;
                     return target.transform.position;
                 });
             while (runtime.Motor.IsDashing && ActionStillValid(id)) yield return null;

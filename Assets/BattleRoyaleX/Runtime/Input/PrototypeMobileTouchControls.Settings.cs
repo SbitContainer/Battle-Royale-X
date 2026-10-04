@@ -30,12 +30,12 @@ namespace BattleRoyaleX
             foreach (var view in itemButtons) RegisterEditable(view.rect);
             RegisterEditable(pickupButton);
             LoadLayout();
-            BuildLabTestControls();
-
             var menu = MenuButton(safeRoot, "MENU / SKILLS", new Vector2(0f, -60f), new Vector2(290f, 80f), OpenSettings);
             menu.anchorMin = menu.anchorMax = new Vector2(0.5f, 1f);
             playerLabel = AddLabel(menu, "", 20);
             playerLabel.rectTransform.anchoredPosition = new Vector2(0f, -68f);
+            var reset = MenuButton(safeRoot, "RESET COOLDOWNS", new Vector2(340f, -60f), new Vector2(330f, 80f), ResetLabCooldowns);
+            reset.anchorMin = reset.anchorMax = new Vector2(0.5f, 1f);
 
             settingsPanel = CreateRect(safeRoot, "CombatSettings");
             settingsPanel.anchorMin = settingsPanel.anchorMax = settingsPanel.pivot = Vector2.one * 0.5f;
@@ -43,11 +43,20 @@ namespace BattleRoyaleX
             settingsPanel.gameObject.AddComponent<Image>().color = new Color(0.025f, 0.04f, 0.08f, 0.98f);
             MenuButton(settingsPanel, "VOLTAR", new Vector2(495f, 380f), new Vector2(235f, 75f), CloseSettings);
             MenuButton(settingsPanel, "EDITAR BOTÕES", new Vector2(-445f, 380f), new Vector2(320f, 75f), BeginLayoutEdit);
-            MenuButton(settingsPanel, "TROCAR PERSONAGEM", new Vector2(-30f, 380f), new Vector2(440f, 75f), SwitchPlayer);
+            MenuButton(settingsPanel, "TROCAR CLASSE", new Vector2(-30f, 380f), new Vector2(390f, 75f), SwitchPlayer);
+            MenuButton(settingsPanel, "GUERREIRO", new Vector2(-515f, 290f), new Vector2(245f, 65f),
+                () => SelectLabClass(CharacterClass.Warrior));
+            MenuButton(settingsPanel, "ASSASSINO", new Vector2(-180f, 290f), new Vector2(245f, 65f),
+                () => SelectLabClass(CharacterClass.Assassin));
+            MenuButton(settingsPanel, "MAGO", new Vector2(150f, 290f), new Vector2(245f, 65f),
+                () => SelectLabClass(CharacterClass.Mage));
+            MenuButton(settingsPanel, "ARQUEIRO", new Vector2(485f, 290f), new Vector2(245f, 65f),
+                () => SelectLabClass(CharacterClass.Archer));
+            BuildLabTestControls();
             infoText = AddLabel(settingsPanel, "", 27);
             infoText.alignment = TextAnchor.UpperLeft; infoText.fontStyle = FontStyle.Normal;
-            infoText.rectTransform.offsetMin = new Vector2(40f, 30f);
-            infoText.rectTransform.offsetMax = new Vector2(-40f, -120f);
+            infoText.rectTransform.offsetMin = new Vector2(460f, 30f);
+            infoText.rectTransform.offsetMax = new Vector2(-35f, -210f);
 
             editToolbar = CreateRect(safeRoot, "LayoutToolbar");
             editToolbar.anchorMin = editToolbar.anchorMax = new Vector2(0.5f, 1f);
@@ -66,26 +75,22 @@ namespace BattleRoyaleX
         void BuildLabTestControls()
         {
             combatLab = FindAnyObjectByType<PrototypeCombatLabController>();
-            CreateLabVariationButton(AbilitySlot.Defense, 1, new Vector2(100f, 92f), "DEF");
-            CreateLabVariationButton(AbilitySlot.Movement, 2, new Vector2(230f, 92f), "MOV");
-            CreateLabVariationButton(AbilitySlot.Ultimate, 3, new Vector2(360f, 92f), "ULT");
-
-            RectTransform bot = CreateRect(safeRoot, "LabBotMode");
-            bot.anchorMin = bot.anchorMax = bot.pivot = Vector2.zero;
-            bot.anchoredPosition = new Vector2(230f, 194f);
-            bot.sizeDelta = new Vector2(390f, 72f);
-            bot.gameObject.AddComponent<Image>().color = new Color(0.08f, 0.18f, 0.25f, 0.92f);
-            bot.gameObject.AddComponent<Button>().onClick.AddListener(() => CycleBotMode());
-            botModeLabel = AddLabel(bot, "BOT: NORMAL", 23);
+            CreateLabVariationButton(AbilitySlot.Defense, 1, new Vector2(100f, 100f), "SKILL 1");
+            CreateLabVariationButton(AbilitySlot.Movement, 2, new Vector2(260f, 100f), "SKILL 2");
+            CreateLabVariationButton(AbilitySlot.Ultimate, 3, new Vector2(420f, 100f), "ULT");
+            RectTransform bot = MenuButton(settingsPanel, "BOT", new Vector2(-500f, -275f),
+                new Vector2(350f, 72f), () => CycleBotMode());
+            botModeLabel = bot.GetComponentInChildren<Text>();
             RefreshLabControls();
         }
 
         void CreateLabVariationButton(AbilitySlot slot, int number, Vector2 position, string shortName)
         {
-            RectTransform rect = CreateCircle(safeRoot, "LabSkill_" + number, position, 116f,
+            RectTransform rect = CreateCircle(safeRoot, "LabSkill_" + number, position, 144f,
                 new Color(0.10f, 0.22f, 0.34f, 0.94f), true);
-            rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.zero;
-            Text label = AddLabel(rect, number + "\n" + shortName + " BASE", 19);
+            rect.anchorMin = rect.anchorMax = Vector2.zero;
+            rect.pivot = Vector2.one * 0.5f;
+            Text label = AddLabel(rect, number + "\n" + shortName + " A", 19);
             EventTrigger trigger = rect.gameObject.AddComponent<EventTrigger>();
             trigger.triggers = new List<EventTrigger.Entry>();
             AddTrigger(trigger, EventTriggerType.PointerDown, data => CycleLabVariation(slot));
@@ -114,6 +119,12 @@ namespace BattleRoyaleX
         public PrototypeTrainingBot.TrainingMode CurrentBotMode => combatLab != null
             ? combatLab.BotMode : PrototypeTrainingBot.TrainingMode.Normal;
 
+        public void ResetLabCooldowns()
+        {
+            if (combatLab == null) combatLab = FindAnyObjectByType<PrototypeCombatLabController>();
+            if (combatLab != null) combatLab.ResetCooldowns();
+        }
+
         void UpdateLabControls()
         {
             if (combatLab == null) combatLab = FindAnyObjectByType<PrototypeCombatLabController>();
@@ -123,8 +134,8 @@ namespace BattleRoyaleX
         void RefreshLabControls()
         {
             if (combatLab == null) return;
-            SetLabVariationLabel(AbilitySlot.Defense, 1, "DEF");
-            SetLabVariationLabel(AbilitySlot.Movement, 2, "MOV");
+            SetLabVariationLabel(AbilitySlot.Defense, 1, "SKILL 1");
+            SetLabVariationLabel(AbilitySlot.Movement, 2, "SKILL 2");
             SetLabVariationLabel(AbilitySlot.Ultimate, 3, "ULT");
             if (botModeLabel != null) botModeLabel.text = "BOT: " + BotModeName(combatLab.BotMode);
         }
@@ -133,7 +144,7 @@ namespace BattleRoyaleX
         {
             if (!labVariationLabels.TryGetValue(slot, out Text label) || label == null) return;
             int index = combatLab.GetVariationIndex(slot);
-            label.text = number + "\n" + shortName + " " + (index == 0 ? "BASE" : index == 1 ? "A" : "B");
+            label.text = number + "\n" + shortName + " " + (index == 0 ? "A" : index == 1 ? "B" : "C");
         }
 
         static string BotModeName(PrototypeTrainingBot.TrainingMode mode)
@@ -254,12 +265,22 @@ namespace BattleRoyaleX
             PrototypeCombatLabController lab = FindAnyObjectByType<PrototypeCombatLabController>();
             if (lab != null && lab.playerSlot != null)
             {
-                CharacterClass next = lab.PlayerClass == CharacterClass.Assassin ? CharacterClass.Warrior : CharacterClass.Assassin;
-                if (lab.SwitchPlayerClass(next)) { SelectPlayer(lab.playerSlot); RefreshSkillInfo(); }
+                CharacterClass next = lab.PlayerClass == CharacterClass.Assassin ? CharacterClass.Warrior :
+                    lab.PlayerClass == CharacterClass.Warrior ? CharacterClass.Mage :
+                    lab.PlayerClass == CharacterClass.Mage ? CharacterClass.Archer : CharacterClass.Assassin;
+                SelectLabClass(next);
                 return;
             }
             foreach (var candidate in FindObjectsByType<CharacterRuntime>())
                 if (candidate != player && candidate.TeamId != player.TeamId) { SelectPlayer(candidate); RefreshSkillInfo(); return; }
+        }
+        public bool SelectLabClass(CharacterClass characterClass)
+        {
+            PrototypeCombatLabController lab = FindAnyObjectByType<PrototypeCombatLabController>();
+            if (lab == null || lab.playerSlot == null || !lab.SwitchPlayerClass(characterClass)) return false;
+            SelectPlayer(lab.playerSlot);
+            RefreshSkillInfo();
+            return true;
         }
         public void SelectPlayer(CharacterRuntime chosen)
         {
@@ -284,7 +305,8 @@ namespace BattleRoyaleX
             if (infoText == null || player == null) return;
             var builder = new StringBuilder("<b>" + player.Definition.displayName.ToUpperInvariant() + " · HABILIDADES EQUIPADAS</b>\n");
             builder.AppendLine("Pegue runas no chão e toque no item para trocar a variação. O combate pausa neste menu.\n");
-            foreach (AbilitySlot slot in Enum.GetValues(typeof(AbilitySlot)))
+            foreach (AbilitySlot slot in new[] { AbilitySlot.BasicAttack, AbilitySlot.Skill1,
+                AbilitySlot.Skill2, AbilitySlot.Ultimate })
             {
                 var ability = player.Abilities.GetEquipped(slot); if (ability == null) continue;
                 builder.AppendLine(AbilityTechnicalInfo.Describe(ability)); builder.AppendLine();

@@ -55,10 +55,10 @@ MonoBehaviour:
   explosionRadius: 3.2
   clashDamageFactor: 0.25
   turnRate: 240
-  slowPercent: 0.25
+  slowPercent: 0.3
   pullStrength: 5
   fieldRadius: 3.2
-  fieldDuration: 0.15
+  fieldDuration: 1.5
   secondActivationDelay: 0.2
   secondActivationWindow: 2
   projectileCount: 1

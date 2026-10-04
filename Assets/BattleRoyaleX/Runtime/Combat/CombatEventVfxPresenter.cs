@@ -42,6 +42,8 @@ namespace BattleRoyaleX
         static Color SkillTint(AbilityDefinition ability, CharacterRuntime source)
         {
             if (ability == null) return Tint(source);
+            if (source != null && source.Definition != null && source.Definition.characterClass == CharacterClass.Mage)
+                return ability.behavior == AbilityBehavior.Repulsion ? new Color(1f, 0.36f, 0.08f) : Ice;
             switch (ability.abilityId)
             {
                 case "Assassin_Defense_Base": return new Color(0.36f, 0.66f, 1f);
@@ -68,12 +70,38 @@ namespace BattleRoyaleX
         }
         void Present(CombatEventData e)
         {
+            if(e.ability!=null && e.ability.classRestricted && e.ability.requiredClass==CharacterClass.Warrior &&
+                e.ability.slot==AbilitySlot.BasicAttack && e.kind==CombatEventKind.AbilityAttack) return;
+            // The Warrior now owns these visuals. Do not overlay the old identical ring/aura on every variant.
+            bool warriorPresentation = e.ability != null && e.ability.classRestricted &&
+                e.ability.requiredClass == CharacterClass.Warrior &&
+                (e.ability.behavior == AbilityBehavior.WarriorGroundBlast || e.ability.behavior == AbilityBehavior.WarriorGroundField ||
+                e.ability.behavior == AbilityBehavior.WarriorGroundWaves || e.ability.behavior == AbilityBehavior.WarriorFortress ||
+                e.ability.behavior == AbilityBehavior.WarriorSkillCapture || e.ability.behavior == AbilityBehavior.Guard ||
+                e.ability.behavior == AbilityBehavior.WarriorShieldCharge || e.ability.behavior == AbilityBehavior.WarriorPursuitStrike ||
+                e.ability.behavior == AbilityBehavior.WarriorPursuitLong);
+            if (warriorPresentation && (e.kind == CombatEventKind.AbilityUltimate || e.kind == CombatEventKind.AbilityGuard ||
+                e.kind == CombatEventKind.AbilityMove)) return;
             Color color = SkillTint(e.ability, e.source);
             Vector3 chest = e.source != null ? e.source.transform.position + Vector3.up * 0.35f : e.position;
             switch (e.kind)
             {
                 case CombatEventKind.AbilityAttack:
                     if (e.phase != AbilityPhase.Active) break;
+                    if (e.source != null && e.source.Definition != null &&
+                        e.source.Definition.characterClass == CharacterClass.Mage)
+                    {
+                        Burst(chest + e.source.Motor.Facing * 0.5f, color, 12, 1.3f, 0.18f);
+                        break;
+                    }
+                    if (e.source != null && e.source.Definition != null &&
+                        e.source.Definition.characterClass == CharacterClass.Archer)
+                    {
+                        Burst(chest + Vector3.up * 0.8f + e.source.Motor.Facing * 0.7f,
+                            e.ability != null && e.ability.abilityId == "Archer_S1_B" ? Color.white : Gold,
+                            e.ability != null && e.ability.abilityId == "Archer_S1_B" ? 20 : 8, 2.1f, 0.14f);
+                        break;
+                    }
                     StartCoroutine(Slash(e.source, Mathf.Clamp(Mathf.RoundToInt(e.value), 1, 3))); break;
                 case CombatEventKind.AbilityMove:
                     if (e.phase != AbilityPhase.Active) break;
@@ -114,7 +142,9 @@ namespace BattleRoyaleX
                 case CombatEventKind.Block:
                     Burst(e.position, Ice, 15, 3f, 0.26f);
                     if (e.value > 0.01f) BloodImpact(e.position, e.direction, true);
-                    StartCoroutine(Shield(e.target, 0.22f)); break;
+                    if(e.target==null||e.target.Definition==null||e.target.Definition.characterClass!=CharacterClass.Warrior)
+                        StartCoroutine(Shield(e.target, 0.22f));
+                    break;
                 case CombatEventKind.Hit:
                     Burst(e.position, color, 8, 1.8f, 0.16f);
                     BloodImpact(e.position, e.direction, false); break;

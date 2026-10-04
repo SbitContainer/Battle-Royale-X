@@ -18,14 +18,15 @@ MonoBehaviour:
   variantIndex: 0
   classRestricted: 1
   requiredClass: 0
-  behavior: 4
+  behavior: 3
   tags: 0
   visualProfile: {fileID: 11400000, guid: 28e6e602f7783e64f90d48cf2c396e8a, type: 2}
-  cooldown: 3.2
-  energyCost: 7
+  defenseInteractionRule: {fileID: 0}
+  cooldown: 6
+  energyCost: 10
   startup: 0.03
   activeTime: 0.12
-  recovery: 0.16
+  recovery: 0.08
   skillLockOnHit: 0
   comboSteps: 1
   comboInputBuffer: 0.18
@@ -57,18 +58,23 @@ MonoBehaviour:
   turnRate: 240
   slowPercent: 0.25
   pullStrength: 5
-  fieldRadius: 3
+  fieldRadius: 1.2
   fieldDuration: 3
   secondActivationDelay: 0.2
   secondActivationWindow: 2
+  fieldTickInterval: 0.6
+  captureRecastWindow: 2
   projectileCount: 1
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
-  defenseKind: 2
-  defenseDuration: 0.7
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
+  defenseKind: 1
+  defenseDuration: 2
   perfectWindow: 0.12
-  damageReduction: 0.75
+  damageReduction: 1
   specialInteractionCooldown: 0
   movementDistance: 0
   movementDuration: 0.05
@@ -96,9 +102,9 @@ MonoBehaviour:
   smokeDuration: 4
   chargeCount: 5
   chargeWindow: 6
-  counterBonusDamage: 6
-  counterWindow: 1.15
-  counterKnockback: 4
+  counterBonusDamage: 0
+  counterWindow: 0
+  counterKnockback: 0
   counterOnBlock: 0
   redirectOnDefense: 0
   redirectDistance: 3
@@ -109,3 +115,4 @@ MonoBehaviour:
   staggerResistanceMultiplier: 1
   defenseWindowMultiplier: 1
   movementCooldownMultiplier: 1
+  attackSpeedMultiplier: 1

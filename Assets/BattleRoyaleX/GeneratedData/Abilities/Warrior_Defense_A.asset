@@ -13,19 +13,20 @@ MonoBehaviour:
   m_Name: Warrior_Defense_A
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.AbilityDefinition
   abilityId: Warrior_Defense_A
-  displayName: Parry
+  displayName: Escudo Usurpador
   slot: 1
   variantIndex: 1
   classRestricted: 1
   requiredClass: 0
-  behavior: 4
+  behavior: 29
   tags: 0
   visualProfile: {fileID: 11400000, guid: c879fe1032c21c84388b02f7cc36362e, type: 2}
-  cooldown: 6.5
-  energyCost: 9
+  defenseInteractionRule: {fileID: 0}
+  cooldown: 9
+  energyCost: 15
   startup: 0.03
   activeTime: 0.12
-  recovery: 0.16
+  recovery: 0.08
   skillLockOnHit: 0
   comboSteps: 1
   comboInputBuffer: 0.18
@@ -61,15 +62,20 @@ MonoBehaviour:
   fieldDuration: 3
   secondActivationDelay: 0.2
   secondActivationWindow: 2
+  fieldTickInterval: 0.6
+  captureRecastWindow: 2
   projectileCount: 1
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
-  defenseKind: 2
-  defenseDuration: 0.35
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
+  defenseKind: 0
+  defenseDuration: 0.65
   perfectWindow: 0.12
-  damageReduction: 0.5
-  specialInteractionCooldown: 8
+  damageReduction: 1
+  specialInteractionCooldown: 0
   movementDistance: 0
   movementDuration: 0.05
   invulnerabilityDuration: 0
@@ -96,9 +102,9 @@ MonoBehaviour:
   smokeDuration: 4
   chargeCount: 5
   chargeWindow: 6
-  counterBonusDamage: 6
-  counterWindow: 1.15
-  counterKnockback: 4.5
+  counterBonusDamage: 0
+  counterWindow: 0
+  counterKnockback: 0
   counterOnBlock: 0
   redirectOnDefense: 0
   redirectDistance: 3
@@ -109,3 +115,4 @@ MonoBehaviour:
   staggerResistanceMultiplier: 1
   defenseWindowMultiplier: 1
   movementCooldownMultiplier: 1
+  attackSpeedMultiplier: 1

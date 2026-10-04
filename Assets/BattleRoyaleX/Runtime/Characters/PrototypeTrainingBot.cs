@@ -178,6 +178,11 @@ namespace BattleRoyaleX
             Move(movement);
 
             if (Time.time < nextActionAt) return;
+            var movementSkill = runtime.Abilities.GetEquipped(AbilitySlot.Movement);
+            if (movementSkill != null && movementSkill.behavior == AbilityBehavior.DaggerTeleport &&
+                runtime.Abilities.CanRecast(AbilitySlot.Movement) && !runtime.Abilities.IsComboInProgress &&
+                runtime.Abilities.TryUse(AbilitySlot.Movement, toward))
+            { nextActionAt = Time.time + 0.42f; return; }
             if (runtime.Abilities.IsHuntRecastReady && !runtime.Abilities.IsComboInProgress &&
                 runtime.Abilities.TryUse(AbilitySlot.Ultimate, toward))
             { nextActionAt = Time.time + 0.42f; return; }
@@ -243,6 +248,7 @@ namespace BattleRoyaleX
 
         bool CanSee(Vector3 position)
         {
+            if (target != null && target.Abilities.IsExecutionHidden && (target.transform.position - position).sqrMagnitude < 0.01f) return false;
             if (SmokeField.BlocksSight(transform.position, position)) return false;
             Vector3 delta = position - transform.position; delta.y = 0f;
             return delta.magnitude < 28f && PathClear(delta.normalized, delta.magnitude);

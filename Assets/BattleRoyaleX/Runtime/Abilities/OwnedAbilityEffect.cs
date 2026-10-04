@@ -18,7 +18,9 @@ namespace BattleRoyaleX
             if (Ability == null || Ability.visualProfile == null) return;
             AbilityVisualProfile profile = Ability.visualProfile;
             bool projectile = GetComponent<ProjectileHitboxMover>() != null;
-            bool field = GetComponent<SlowField>() != null || GetComponent<PullField>() != null;
+            bool field = GetComponent<SlowField>() != null || GetComponent<PullField>() != null ||
+                GetComponent<ArcherProximityTrap>() != null || GetComponent<ArcherArrowRain>() != null ||
+                GetComponent<AreaCastPresentation>() != null;
             GameObject prefab = projectile ? profile.projectilePrefab : field ? profile.areaPrefab : null;
             if (prefab == null) return;
             GameObject visual = Instantiate(prefab, transform);

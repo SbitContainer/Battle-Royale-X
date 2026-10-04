@@ -1,6 +1,14 @@
 # Codex / Astra — Start Here
 
-## Current continuation — 19/09/2026
+## Current continuation — 03/10/2026
+
+Read [HANDOFF.md](HANDOFF.md), [PROJETO.md](PROJETO.md), [MAPA.md](MAPA.md) and the root [AGENTS.md](../AGENTS.md). The reusable engineering kit has been adapted locally; see [adoption report](engenharia/ADOCAO.md). It changes development governance and adds offline verification tools, not gameplay.
+
+The lab already contains four classes. Preserve approved Warrior/Assassin behavior and the later Mage/Archer work. [EFFECTS_LAB_092.md](EFFECTS_LAB_092.md) records the September 26 build and installation; it does not prove current device state or final visual acceptance. Do not restart the capsule phase or execute old task files automatically.
+
+The original instructions below are historical integration context. Gameplay invariants still apply; “additional classes” means no newly requested expansion, not removal of Mage/Archer. Follow the current human request for scope.
+
+## Historical continuation — 19/09/2026
 
 The latest authorized implementation is defensive counterplay and a more reactive local bot. Read [DEFENSE_AI_V3.md](DEFENSE_AI_V3.md) for the current rules and [TEST_RESULTS_DEFENSE_AI_V3.md](TEST_RESULTS_DEFENSE_AI_V3.md) for measured validation. V3 explicitly supersedes the earlier defensive-damage numbers: Assassin defenses deal 2–3 damage with contact-triggered redirection; Warrior defenses grant a manual counter with knockback. The mobile V2 specification below is historical context, not a request to undo later changes.
 

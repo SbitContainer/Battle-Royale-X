@@ -26,6 +26,8 @@ namespace BattleRoyaleX
             // Final safety gate: clashes, reflections and area damage must also respect dodge immunity.
             var state = GetComponent<CharacterStateController>();
             if (state != null && state.IsInvulnerable) return;
+            var abilities = GetComponent<AbilityController>();
+            if (abilities != null && abilities.HasFortressDamageImmunity) return;
             LastDamageTime = Time.time;
             CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
             Changed?.Invoke(CurrentHealth, MaxHealth);

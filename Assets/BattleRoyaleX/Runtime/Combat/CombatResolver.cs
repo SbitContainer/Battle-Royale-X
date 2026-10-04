@@ -46,7 +46,9 @@ namespace BattleRoyaleX
 
                 case CombatOutcome.Reflected:
                     CombatEvents.Raise(new CombatEventData(CombatEventKind.Reflect, eventPos, target, attacker));
-                    bool reflectedDeath = ApplyDamage(attacker, hitbox.Packet.damage);
+                    DamagePacket reflectedPacket = hitbox.Packet; reflectedPacket.source = target;
+                    attacker.Defense.ResolveIncoming(reflectedPacket, out float reflectedDamage);
+                    bool reflectedDeath = ApplyDamage(attacker, reflectedDamage);
                     if (reflectedDeath)
                         RaiseDeath(target, attacker, eventPos, hitbox.Packet.ability, -hitbox.Packet.direction);
                     hitbox.Cancel();
@@ -74,6 +76,11 @@ namespace BattleRoyaleX
             if ((outcome == CombatOutcome.Hit || outcome == CombatOutcome.Blocked) && hitbox.Packet.ability != null &&
                 hitbox.Packet.ability.skillLockOnHit > 0f)
                 target.State.ApplySkillLock(hitbox.Packet.ability.skillLockOnHit);
+            if ((outcome == CombatOutcome.Hit || outcome == CombatOutcome.Blocked) && hitbox.Packet.ability != null &&
+                (hitbox.Packet.ability.behavior == AbilityBehavior.Repulsion ||
+                hitbox.Packet.ability.behavior == AbilityBehavior.WarriorShieldCharge) && finalDamage > 0f)
+                target.ApplyMovementSlow(1f - Mathf.Clamp01(hitbox.Packet.ability.slowPercent),
+                    Mathf.Max(0.1f, hitbox.Packet.ability.fieldDuration));
 
             Vector3 pushDirection = hitbox.Packet.direction;
             if (hitbox.Packet.isCounter)
@@ -82,7 +89,9 @@ namespace BattleRoyaleX
                 away.y = 0f;
                 if (away.sqrMagnitude > 0.001f) pushDirection = away.normalized;
             }
-            if (hitbox.Packet.knockback > 0f && target.Motor != null)
+            bool warriorBasic = attacker.Definition != null && attacker.Definition.characterClass == CharacterClass.Warrior &&
+                hitbox.Packet.ability != null && hitbox.Packet.ability.slot == AbilitySlot.BasicAttack;
+            if (!warriorBasic && finalDamage > 0f && hitbox.Packet.knockback > 0f && target.Motor != null)
                 target.Motor.ApplyImpulse(pushDirection,
                     hitbox.Packet.knockback * (outcome == CombatOutcome.Blocked ? 0.25f : 1f), hitbox.Packet.isCounter ? 0.28f : 0.12f);
             if (hitbox.Packet.isCounter && outcome == CombatOutcome.Hit)
@@ -148,12 +157,20 @@ namespace BattleRoyaleX
         {
             float damageToA = b.Packet.damage * Mathf.Clamp01(b.Packet.clashDamageFactor);
             float damageToB = a.Packet.damage * Mathf.Clamp01(a.Packet.clashDamageFactor);
+            DamagePacket packetToA = b.Packet; packetToA.damage = damageToA;
+            DamagePacket packetToB = a.Packet; packetToB.damage = damageToB;
+            a.Owner.Defense.ResolveIncoming(packetToA, out damageToA);
+            b.Owner.Defense.ResolveIncoming(packetToB, out damageToB);
             bool aDied = ApplyDamage(a.Owner, damageToA);
             bool bDied = ApplyDamage(b.Owner, damageToB);
             a.Owner.Abilities.InterruptOffensiveAction();
             b.Owner.Abilities.InterruptOffensiveAction();
             a.Owner.State.ApplyStagger(0.14f);
             b.Owner.State.ApplyStagger(0.14f);
+            Vector3 separation = b.Owner.transform.position - a.Owner.transform.position; separation.y = 0f;
+            if (separation.sqrMagnitude < 0.001f) separation = a.Packet.direction;
+            a.Owner.Motor.ApplyImpulse(-separation.normalized, 1.5f, 0.18f);
+            b.Owner.Motor.ApplyImpulse(separation.normalized, 1.5f, 0.18f);
 
             Vector3 pos = (a.transform.position + b.transform.position) * 0.5f;
             CombatEvents.Raise(new CombatEventData(CombatEventKind.Clash, pos, a.Owner, b.Owner, damageToB));
@@ -168,7 +185,7 @@ namespace BattleRoyaleX
             Vector3 pos = (a.transform.position + b.transform.position) * 0.5f;
             float radius = Mathf.Max(1f, Mathf.Max(a.Packet.explosionRadius, b.Packet.explosionRadius));
             float aoeDamage = (a.Packet.damage + b.Packet.damage) * 0.35f;
-            ApplyAreaDamage(pos, radius, aoeDamage, a.Owner, b.Owner);
+            ApplyAreaDamage(pos, radius, aoeDamage, a.Packet, b.Packet);
             CombatEvents.Raise(new CombatEventData(CombatEventKind.Clash, pos, a.Owner, b.Owner, aoeDamage));
             a.Cancel();
             b.Cancel();
@@ -186,8 +203,9 @@ namespace BattleRoyaleX
             return true;
         }
 
-        static void ApplyAreaDamage(Vector3 center, float radius, float damage, CharacterRuntime sourceA, CharacterRuntime sourceB)
+        static void ApplyAreaDamage(Vector3 center, float radius, float damage, DamagePacket packetA, DamagePacket packetB)
         {
+            CharacterRuntime sourceA = packetA.source, sourceB = packetB.source;
             Collider[] hits = Physics.OverlapSphere(center, radius);
             HashSet<CharacterRuntime> damaged = new HashSet<CharacterRuntime>();
             foreach (Collider hit in hits)
@@ -195,8 +213,10 @@ namespace BattleRoyaleX
                 CharacterRuntime target = hit.GetComponentInParent<CharacterRuntime>();
                 if (target == null || damaged.Contains(target)) continue;
                 damaged.Add(target);
-                bool died = ApplyDamage(target, damage);
-                CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, center, sourceA, target, damage));
+                DamagePacket incoming = sourceA != null && sourceA.TeamId != target.TeamId ? packetA : packetB;
+                if (ResolveAreaDefense(target, incoming.source, incoming.ability, damage, center, out float areaDamage)) continue;
+                bool died = ApplyDamage(target, areaDamage);
+                CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, center, sourceA, target, areaDamage));
                 if (died) RaiseDeath(sourceA ?? sourceB, target, center, null,
                     target.transform.position - center);
             }
@@ -214,11 +234,45 @@ namespace BattleRoyaleX
                 if (target == null || target == source || damaged.Contains(target) || target.Health == null ||
                     target.Health.IsDead || source != null && target.TeamId == source.TeamId) continue;
                 damaged.Add(target);
-                bool died = ApplyDamage(target, damage);
+                if (ResolveAreaDefense(target, source, ability, damage, center, out float areaDamage)) continue;
+                bool died = ApplyDamage(target, areaDamage);
+                if (areaDamage > 0f && ability != null && (ability.behavior == AbilityBehavior.WarriorGroundBlast ||
+                    ability.behavior == AbilityBehavior.WarriorGroundField || ability.behavior == AbilityBehavior.WarriorGroundWaves))
+                    target.ApplyMovementSlow(1f - ability.slowPercent, Mathf.Max(0.1f, ability.defenseDuration));
                 CombatEvents.Raise(new CombatEventData(CombatEventKind.Hit, center, source, target,
-                    damage, ability, AbilityPhase.Active, direction: target.transform.position - center));
+                    areaDamage, ability, AbilityPhase.Active, direction: target.transform.position - center));
                 if (died) RaiseDeath(source, target, center, ability, target.transform.position - center);
             }
+        }
+
+        // Existing guard/parry semantics are untouched; only the requested orbital defense is added to direct areas.
+        static bool RepelOrbitalArea(CharacterRuntime target, CharacterRuntime source, AbilityDefinition ability, float damage, Vector3 center)
+        {
+            if (target.Abilities == null || !target.Abilities.HasOrbitingDaggers || ability == null) return false;
+            DamagePacket packet = new DamagePacket(source, ability, target.transform.position - center) { damage = damage };
+            if (!target.Abilities.TryRepelWithDaggers(packet)) return false;
+            CombatEvents.Raise(new CombatEventData(CombatEventKind.Dodge, target.transform.position, source, target,
+                ability: ability, direction: packet.direction));
+            return true;
+        }
+
+        static bool ResolveAreaDefense(CharacterRuntime target, CharacterRuntime source, AbilityDefinition ability, float damage,
+            Vector3 center, out float result)
+        {
+            result = damage;
+            if (ability == null)
+            {
+                if (target.State.IsInvulnerable) { result = 0f; return true; }
+                return false;
+            }
+            DamagePacket packet = new DamagePacket(source, ability, target.transform.position - center) { damage = damage };
+            CombatOutcome outcome = target.Defense.ResolveIncoming(packet, out result);
+            if (result > 0f) return false;
+            CombatEventKind kind = outcome == CombatOutcome.Nullified ? CombatEventKind.Nullify :
+                outcome == CombatOutcome.Blocked ? CombatEventKind.Block : CombatEventKind.Dodge;
+            CombatEvents.Raise(new CombatEventData(kind, target.transform.position, source, target,
+                ability: ability, direction: packet.direction));
+            return true;
         }
 
         static bool ApplyDamage(CharacterRuntime target, float damage)

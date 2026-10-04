@@ -59,8 +59,20 @@ namespace BattleRoyaleX
         AbilitySlot aimSlot;
         Vector2 aimStart;
         Vector2 aimCurrent;
-        int attackPointer = int.MinValue;
-        float nextAttackRepeatAt;
+        float aimStartedAt;
+        int basicPointer = int.MinValue;
+        Vector2 basicStart, basicCurrent;
+        AbilityDefinition aimingAbility;
+        AbilityDefinition heldBasicAbility;
+        int touchResetVersion;
+        MobileAbilityAimPreview worldAim;
+        Text castFeedback;
+        float feedbackUntil;
+        bool bufferedCast;
+        AbilitySlot bufferedSlot;
+        Vector3 bufferedDirection, bufferedPoint;
+        bool bufferedManual;
+        float bufferUntil;
 
         void Start()
         {
@@ -83,15 +95,28 @@ namespace BattleRoyaleX
         void Update()
         {
             if (player == null || player.Motor == null) return;
+            if (player.Health.IsDead || menuOpen || editingLayout || Time.timeScale <= 0f)
+                ClearTouches();
+            if ((aimPointer != int.MinValue || basicPointer != int.MinValue) && player.Abilities.ResetVersion != touchResetVersion)
+                ClearTouches();
+            if (basicPointer != int.MinValue && player.Abilities.GetEquipped(AbilitySlot.BasicAttack) != heldBasicAbility)
+            { basicPointer = int.MinValue; player.Abilities.ReleaseBasicAttackInput(); }
+            if (aimPointer != int.MinValue && player.Abilities.GetAimDefinition(aimSlot) != aimingAbility)
+                CancelAimVisuals();
             UpdateSafeArea();
-            if (!menuOpen && !editingLayout)
+            RefreshJoystickTouch();
+            if (castFeedback != null && Time.unscaledTime > feedbackUntil) castFeedback.text = "";
+            if (aimPointer != int.MinValue) UpdateWorldAim();
+            if (basicPointer != int.MinValue && aimPointer == int.MinValue) RepeatBasicAttack();
+            if (bufferedCast)
+            {
+                if (Time.time > bufferUntil) { bufferedCast = false; ShowCastFeedback("AGUARDE A HABILIDADE ATUAL"); }
+                else if (!player.Abilities.IsActionBusy && !player.Motor.IsDashing)
+                { bufferedCast = false; SubmitCast(bufferedSlot, bufferedDirection, bufferedPoint, bufferedManual, false); }
+            }
+            if (!menuOpen && !editingLayout && !player.Health.IsDead)
                 player.Motor.SetMoveInput(new Vector2(joystickWorldDirection.x, joystickWorldDirection.z) * joystickMagnitude);
 
-            if (attackPointer != int.MinValue && Time.unscaledTime >= nextAttackRepeatAt)
-            {
-                TryAttack();
-                nextAttackRepeatAt = Time.unscaledTime + 0.12f;
-            }
             UpdateAbilityButtons();
             UpdateLabControls();
             UpdateItemButtons();
@@ -105,7 +130,13 @@ namespace BattleRoyaleX
 
         void ClearTouches()
         {
-            joystickPointer = aimPointer = attackPointer = int.MinValue;
+            bufferedCast = false;
+            if (player != null && player.Abilities != null) player.Abilities.ReleaseBasicAttackInput();
+            basicPointer = int.MinValue;
+            aimingAbility = null;
+            heldBasicAbility = null;
+            if (worldAim != null) worldAim.gameObject.SetActive(false);
+            joystickPointer = aimPointer = int.MinValue;
             joystickScreenDirection = Vector2.zero;
             joystickWorldDirection = Vector3.zero;
             joystickMagnitude = 0f;
@@ -158,6 +189,15 @@ namespace BattleRoyaleX
 
             CreatePickupButton();
             BuildSettings();
+            RectTransform feedbackRoot = CreateRect(safeRoot, "CastFeedback");
+            feedbackRoot.anchorMin = feedbackRoot.anchorMax = new Vector2(0.5f, 0f);
+            feedbackRoot.anchoredPosition = new Vector2(0f, 280f);
+            feedbackRoot.sizeDelta = new Vector2(780f, 55f);
+            castFeedback = AddLabel(feedbackRoot, "", 28);
+            GameObject preview = new GameObject("WorldAbilityAim");
+            preview.transform.SetParent(transform);
+            worldAim = preview.AddComponent<MobileAbilityAimPreview>();
+            preview.SetActive(false);
         }
 
         void CreateMovementRegion()
@@ -193,6 +233,7 @@ namespace BattleRoyaleX
             aimLine.anchorMin = aimLine.anchorMax = aimLine.pivot = Vector2.zero;
             aimLine.sizeDelta = new Vector2(160f, 12f);
             lineObject.GetComponent<Image>().color = new Color(0.62f, 0.38f, 1f, 0.72f);
+            lineObject.GetComponent<Image>().raycastTarget = false;
             lineObject.SetActive(false);
 
             cancelZone = CreateCircle(safeRoot, "CancelAim", new Vector2(-550f, 765f), 184f, new Color(0.35f, 0.06f, 0.10f, 0.82f), false);
@@ -226,23 +267,10 @@ namespace BattleRoyaleX
 
             EventTrigger trigger = rect.gameObject.AddComponent<EventTrigger>();
             trigger.triggers = new List<EventTrigger.Entry>();
-            if (slot == AbilitySlot.BasicAttack)
-            {
-                AddTrigger(trigger, EventTriggerType.PointerDown, BeginAttack);
-                AddTrigger(trigger, EventTriggerType.PointerUp, EndAttack);
-                AddTrigger(trigger, EventTriggerType.Cancel, EndAttack);
-            }
-            else if (slot == AbilitySlot.Defense)
-            {
-                AddTrigger(trigger, EventTriggerType.PointerDown, data => UseDefense(data as PointerEventData));
-            }
-            else
-            {
-                AddTrigger(trigger, EventTriggerType.PointerDown, data => BeginAim(slot, data as PointerEventData));
-                AddTrigger(trigger, EventTriggerType.Drag, DragAim);
-                AddTrigger(trigger, EventTriggerType.PointerUp, EndAim);
-                AddTrigger(trigger, EventTriggerType.Cancel, CancelAim);
-            }
+            AddTrigger(trigger, EventTriggerType.PointerDown, data => BeginAim(slot, data as PointerEventData));
+            AddTrigger(trigger, EventTriggerType.Drag, DragAim);
+            AddTrigger(trigger, EventTriggerType.PointerUp, EndAim);
+            AddTrigger(trigger, EventTriggerType.Cancel, CancelAim);
             abilityButtons[slot] = new AbilityButtonView { slot = slot, rect = rect, cooldown = cooldown, label = labelText, charge = charge };
         }
 
@@ -291,6 +319,7 @@ namespace BattleRoyaleX
             if (safeRoot == null || Screen.width <= 0 || Screen.height <= 0) return;
             Rect area = Screen.safeArea;
             if (area == lastSafeArea) return;
+            if (lastSafeArea.width > 0f) ClearTouches();
             lastSafeArea = area;
             safeRoot.anchorMin = new Vector2(area.xMin / Screen.width, area.yMin / Screen.height);
             safeRoot.anchorMax = new Vector2(area.xMax / Screen.width, area.yMax / Screen.height);
@@ -301,8 +330,8 @@ namespace BattleRoyaleX
         {
             PointerEventData pointer = data as PointerEventData;
             if (pointer == null || joystickPointer != int.MinValue) return;
-            joystickPointer = pointer.pointerId;
             if (!ScreenToSafe(pointer.position, out joystickOrigin)) return;
+            joystickPointer = pointer.pointerId;
             joystickBase.gameObject.SetActive(true);
             joystickBase.anchorMin = joystickBase.anchorMax = joystickBase.pivot = Vector2.zero;
             joystickBase.anchoredPosition = joystickOrigin;
@@ -319,12 +348,40 @@ namespace BattleRoyaleX
         {
             PointerEventData pointer = data as PointerEventData;
             if (pointer == null || pointer.pointerId != joystickPointer) return;
+            ClearJoystick();
+        }
+
+        void ClearJoystick()
+        {
             joystickPointer = int.MinValue;
             joystickScreenDirection = Vector2.zero;
             joystickWorldDirection = Vector3.zero;
             joystickMagnitude = 0f;
-            joystickKnob.anchoredPosition = Vector2.zero;
-            joystickBase.gameObject.SetActive(false);
+            if (joystickKnob != null) joystickKnob.anchoredPosition = Vector2.zero;
+            if (joystickBase != null) joystickBase.gameObject.SetActive(false);
+            if (player != null && player.Motor != null) player.Motor.SetMoveInput(Vector2.zero);
+        }
+
+        void RefreshJoystickTouch()
+        {
+            // UI drag/up delivery is not the source of truth for a physical finger.
+            // Read only the movement finger, never the first touch or the skill pointer.
+            if (joystickPointer < 0 || !Application.isMobilePlatform) return;
+            for (int index = 0; index < Input.touchCount; index++)
+            {
+                Touch touch = Input.GetTouch(index);
+                if (touch.fingerId != joystickPointer) continue;
+                ApplyJoystickTouch(touch.fingerId, touch.position, touch.phase);
+                return;
+            }
+            ClearJoystick(); // Lost release/cancel must not leave the last direction latched.
+        }
+
+        void ApplyJoystickTouch(int fingerId, Vector2 position, TouchPhase phase)
+        {
+            if (fingerId != joystickPointer) return;
+            if (phase == TouchPhase.Ended || phase == TouchPhase.Canceled) ClearJoystick();
+            else UpdateJoystick(position);
         }
 
         void UpdateJoystick(Vector2 screenPosition)
@@ -344,41 +401,29 @@ namespace BattleRoyaleX
             joystickKnob.anchoredPosition = Vector2.ClampMagnitude(delta, JoystickRadius);
         }
 
-        void BeginAttack(BaseEventData data)
-        {
-            PointerEventData pointer = data as PointerEventData;
-            if (pointer == null || attackPointer != int.MinValue) return;
-            attackPointer = pointer.pointerId;
-            TryAttack();
-            nextAttackRepeatAt = Time.unscaledTime + 0.12f;
-        }
-
-        void EndAttack(BaseEventData data)
-        {
-            PointerEventData pointer = data as PointerEventData;
-            if (pointer != null && pointer.pointerId == attackPointer) attackPointer = int.MinValue;
-        }
-
-        void TryAttack()
-        {
-            if (player == null || player.Abilities == null) return;
-            Vector3 direction = ResolveAimDirection(Vector2.zero, AbilitySlot.BasicAttack);
-            player.Abilities.TryUse(AbilitySlot.BasicAttack, direction);
-        }
-
-        void UseDefense(PointerEventData pointer)
-        {
-            if (pointer == null || player == null || player.Abilities == null) return;
-            Vector3 direction = joystickMagnitude > 0.15f ? joystickWorldDirection : player.Motor.Facing;
-            player.Abilities.TryUse(AbilitySlot.Defense, direction);
-        }
-
         void BeginAim(AbilitySlot slot, PointerEventData pointer)
         {
-            if (pointer == null || aimPointer != int.MinValue) return;
+            if (pointer == null || player == null || player.Health.IsDead) return;
+            if (slot == AbilitySlot.BasicAttack)
+            {
+                if (basicPointer != int.MinValue || aimPointer != int.MinValue) return;
+                basicPointer = pointer.pointerId;
+                touchResetVersion = player.Abilities.ResetVersion;
+                heldBasicAbility = player.Abilities.GetEquipped(AbilitySlot.BasicAttack);
+                basicStart = basicCurrent = pointer.position;
+                RepeatBasicAttack();
+                return;
+            }
+            if (aimPointer != int.MinValue) return;
+            // A skill gesture has priority over a held basic attack; never restart it implicitly.
+            basicPointer = int.MinValue;
+            player.Abilities.ReleaseBasicAttackInput();
             aimPointer = pointer.pointerId;
             aimSlot = slot;
+            aimingAbility = player.Abilities.GetAimDefinition(slot);
+            touchResetVersion = player.Abilities.ResetVersion;
             aimStart = aimCurrent = pointer.position;
+            aimStartedAt = Time.unscaledTime;
             aimLine.gameObject.SetActive(true);
             cancelZone.gameObject.SetActive(true);
             UpdateAimVisual();
@@ -387,6 +432,8 @@ namespace BattleRoyaleX
         void DragAim(BaseEventData data)
         {
             PointerEventData pointer = data as PointerEventData;
+            if (pointer != null && pointer.pointerId == basicPointer)
+            { basicCurrent = pointer.position; return; }
             if (pointer == null || pointer.pointerId != aimPointer) return;
             aimCurrent = pointer.position;
             UpdateAimVisual();
@@ -395,26 +442,98 @@ namespace BattleRoyaleX
         void EndAim(BaseEventData data)
         {
             PointerEventData pointer = data as PointerEventData;
+            if (pointer != null && pointer.pointerId == basicPointer)
+            { basicPointer = int.MinValue; player.Abilities.ReleaseBasicAttackInput(); return; }
             if (pointer == null || pointer.pointerId != aimPointer) return;
             aimCurrent = pointer.position;
             bool cancelled = IsOverCancel(pointer.position);
             AbilitySlot slot = aimSlot;
+            if (player.Health.IsDead || player.Abilities.ResetVersion != touchResetVersion ||
+                player.Abilities.GetAimDefinition(slot) != aimingAbility) cancelled = true;
             Vector2 drag = aimCurrent - aimStart;
             CancelAimVisuals();
             if (cancelled || player == null || player.Abilities == null) return;
+            AbilityDefinition selected = player.Abilities.GetAimDefinition(slot);
+            bool manualAim = drag.magnitude >= AimThreshold;
+            if (selected != null && selected.abilityId == "Archer_S1_B" && !manualAim &&
+                Time.unscaledTime - aimStartedAt < 0.18f)
+            { ShowCastFeedback("FLECHA PESADA: SEGURE E ARRASTE PARA MIRAR"); return; }
+            if (!manualAim && (selected == null || selected.abilityId != "Archer_S1_B") && player.Definition != null &&
+                (player.Definition.characterClass == CharacterClass.Archer ||
+                 player.Definition.characterClass == CharacterClass.Mage))
+            {
+                SubmitCast(slot, Vector3.zero, Vector3.zero, false);
+                return;
+            }
             Vector3 direction = ResolveAimDirection(drag, slot);
-            player.Abilities.TryUse(slot, direction);
+            Vector3 point = player.Abilities.PreviewAimPoint(slot, direction, manualAim, manualAim ? AimFraction(drag) : 1f);
+            if (!manualAim && selected != null && !AbilityAimSolution.IsSelfCentered(selected) &&
+                !selected.reverseMovement && (point - player.transform.position).sqrMagnitude > 0.001f)
+                direction = (point - player.transform.position).normalized;
+            SubmitCast(slot, direction, point, true);
+        }
+
+        float AimFraction(Vector2 drag) => Mathf.Clamp(drag.magnitude / (150f * Screen.height / 1080f), 0.15f, 1f);
+
+        void RepeatBasicAttack()
+        {
+            if (player == null || player.Abilities == null || player.Health.IsDead || IsOverCancel(basicCurrent)) return;
+            Vector2 drag = basicCurrent - basicStart;
+            if (drag.magnitude >= AimThreshold)
+                player.Abilities.TryUse(AbilitySlot.BasicAttack, ResolveAimDirection(drag, AbilitySlot.BasicAttack));
+            else player.Abilities.TryUse(AbilitySlot.BasicAttack);
+        }
+
+        void ShowCastFeedback(string text)
+        { if (castFeedback != null) castFeedback.text = text; feedbackUntil = Time.unscaledTime + 1.2f; }
+
+        void SubmitCast(AbilitySlot slot, Vector3 direction, Vector3 point, bool manual, bool allowBuffer = true)
+        {
+            bool accepted = manual ? player.Abilities.TryUseAimed(slot, direction, point) : player.Abilities.TryUse(slot);
+            if (accepted) { bufferedCast = false; return; }
+            AbilityDefinition ability = player.Abilities.GetEquipped(slot);
+            if (allowBuffer && player.Abilities.IsActionBusy && slot != AbilitySlot.BasicAttack)
+            {
+                bufferedCast = true; bufferedSlot = slot; bufferedDirection = direction; bufferedPoint = point;
+                bufferedManual = manual; bufferUntil = Time.time + 0.22f; return;
+            }
+            if (ability != null && player.Energy.CurrentEnergy < ability.energyCost) ShowCastFeedback("ENERGIA INSUFICIENTE");
+            else if (player.Abilities.GetCooldownRemaining(slot) > 0f && !player.Abilities.CanRecast(slot))
+                ShowCastFeedback("RECARGA: " + player.Abilities.GetCooldownRemaining(slot).ToString("0.0") + " s");
+            else ShowCastFeedback("AGUARDE A HABILIDADE ATUAL");
+        }
+
+        void UpdateWorldAim()
+        {
+            if (worldAim == null || player == null || player.Abilities == null) return;
+            Vector2 drag = aimCurrent - aimStart;
+            Vector3 direction = ResolveAimDirection(drag, aimSlot);
+            Vector3 endpoint = player.Abilities.PreviewAimPoint(aimSlot, direction,
+                drag.magnitude >= AimThreshold, drag.magnitude >= AimThreshold ? AimFraction(drag) : 1f);
+            worldAim.Show(player.transform.position, endpoint, player.Abilities.GetAimDefinition(aimSlot), player, direction);
+            if (castFeedback != null && !IsOverCancel(aimCurrent))
+            {
+                AbilityDefinition selected = player.Abilities.GetAimDefinition(aimSlot);
+                castFeedback.text = AbilityAimSolution.IsTracking(selected) || selected != null && selected.seeking
+                    ? "TRAJETO PREVISTO · ALVO PODE SE MOVER" :
+                    AbilityAimSolution.IsGroundTarget(selected) ? "ARRASTE: DIREÇÃO E DISTÂNCIA · SOLTE: EXECUTAR" : "ARRASTE: DIREÇÃO · SOLTE: EXECUTAR";
+                feedbackUntil = Time.unscaledTime + 0.12f;
+            }
         }
 
         void CancelAim(BaseEventData data)
         {
             PointerEventData pointer = data as PointerEventData;
+            if (pointer != null && pointer.pointerId == basicPointer)
+            { basicPointer = int.MinValue; player.Abilities.ReleaseBasicAttackInput(); }
             if (pointer != null && pointer.pointerId == aimPointer) CancelAimVisuals();
         }
 
         void CancelAimVisuals()
         {
+            if (worldAim != null) worldAim.gameObject.SetActive(false);
             aimPointer = int.MinValue;
+            aimingAbility = null;
             aimLine.gameObject.SetActive(false);
             cancelZone.gameObject.SetActive(false);
         }
@@ -441,11 +560,13 @@ namespace BattleRoyaleX
         {
             if (screenDrag.magnitude >= AimThreshold) return ScreenVectorToWorld(screenDrag.normalized);
             if (joystickMagnitude > 0.15f) return joystickWorldDirection;
-            if (slot != AbilitySlot.Defense)
+            if (slot != AbilitySlot.Defense &&
+                !(slot == AbilitySlot.BasicAttack && player.Definition != null &&
+                  player.Definition.characterClass == CharacterClass.Mage))
             {
                 CharacterRuntime nearest = FindObjectsByType<CharacterRuntime>()
                     .Where(c => c != player && c.TeamId != player.TeamId && c.Health != null && !c.Health.IsDead &&
-                        !SmokeField.BlocksSight(player.transform.position, c.transform.position))
+                        !c.Abilities.IsExecutionHidden && !SmokeField.BlocksSight(player.transform.position, c.transform.position))
                     .OrderBy(c => (c.transform.position - player.transform.position).sqrMagnitude)
                     .FirstOrDefault();
                 if (nearest != null && Vector3.Distance(nearest.transform.position, player.transform.position) <= 6f)
@@ -458,12 +579,16 @@ namespace BattleRoyaleX
         {
             if (worldCamera == null) worldCamera = Camera.main;
             if (worldCamera == null) return new Vector3(screenDirection.x, 0f, screenDirection.y).normalized;
-            Vector3 forward = worldCamera.transform.forward;
-            Vector3 right = worldCamera.transform.right;
-            forward.y = right.y = 0f;
-            forward.Normalize();
-            right.Normalize();
-            Vector3 result = right * screenDirection.x + forward * screenDirection.y;
+            // Project two screen points onto the same ground plane. Normalizing camera axes
+            // independently distorts diagonal aim with an oblique orthographic camera.
+            Vector2 center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+            Plane ground = new Plane(Vector3.up, player != null ? player.transform.position : Vector3.zero);
+            Ray start = worldCamera.ScreenPointToRay(center);
+            Ray end = worldCamera.ScreenPointToRay(center + screenDirection * 100f);
+            if (!ground.Raycast(start, out float a) || !ground.Raycast(end, out float b))
+                return new Vector3(screenDirection.x, 0f, screenDirection.y).normalized;
+            Vector3 result = end.GetPoint(b) - start.GetPoint(a);
+            result.y = 0f;
             return result.sqrMagnitude > 0.001f ? result.normalized : Vector3.zero;
         }
 
@@ -474,12 +599,13 @@ namespace BattleRoyaleX
             {
                 AbilityDefinition ability = player.Abilities.GetEquipped(view.slot);
                 float remaining = player.Abilities.GetCooldownRemaining(view.slot);
+                if (view.slot == AbilitySlot.BasicAttack) remaining = 0f;
                 float total = ability != null ? Mathf.Max(0.01f, ability.cooldown) : 1f;
                 bool hunt = view.slot == AbilitySlot.Ultimate && player.Abilities.IsHuntRecastReady;
-                bool activeCharges = view.slot == AbilitySlot.Ultimate && (player.Abilities.IsChargedSequenceActive || hunt);
+                bool activeCharges = player.Abilities.CanRecast(view.slot);
                 view.cooldown.fillAmount = activeCharges ? 0f : Mathf.Clamp01(remaining / total);
                 view.charge.text = hunt ? "2ª · " + player.Abilities.HuntTimeRemaining.ToString("0.0") + "s" :
-                    activeCharges ? player.Abilities.ChargedSequenceRemaining.ToString() :
+                    activeCharges ? "REATIVAR" :
                     remaining > 0f ? remaining.ToString("0.0") + "s" : "";
                 if (ability != null) view.label.text = AbilityLabel(ability, view.slot);
             }

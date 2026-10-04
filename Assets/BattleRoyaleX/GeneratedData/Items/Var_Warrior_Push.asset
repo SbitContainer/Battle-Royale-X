@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Var_Warrior_Push
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.ItemDefinition
   itemId: Var_Warrior_Push
-  displayName: "Runa: Avan\xE7o Implac\xE1vel"
+  displayName: "Runa: Ruptura Tit\xE2nica"
   kind: 3
   icon: {fileID: 0}
   amount: 0

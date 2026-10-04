@@ -18,23 +18,24 @@ MonoBehaviour:
   variantIndex: 1
   classRestricted: 1
   requiredClass: 1
-  behavior: 7
-  tags: 0
+  behavior: 26
+  tags: 5
   visualProfile: {fileID: 11400000, guid: 6528b1e318284bb4b80da1cebd24699e, type: 2}
+  defenseInteractionRule: {fileID: 0}
   cooldown: 6
   energyCost: 12
-  startup: 0.08
+  startup: 0.06
   activeTime: 0.12
-  recovery: 0.16
+  recovery: 0.1
   skillLockOnHit: 0
   comboSteps: 1
   comboInputBuffer: 0.18
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
-  attackKind: 0
-  damage: 24
-  range: 1
-  width: 1
+  attackKind: 2
+  damage: 4
+  range: 8
+  width: 0.35
   height: 1.5
   knockback: 0
   clashable: 1
@@ -51,8 +52,8 @@ MonoBehaviour:
   fragmentTrigger: 0
   heavy: 0
   attackInteractionCooldown: 30
-  projectileSpeed: 14
-  explosionRadius: 2.5
+  projectileSpeed: 18
+  explosionRadius: 1.5
   clashDamageFactor: 0.25
   turnRate: 240
   slowPercent: 0.25
@@ -60,11 +61,14 @@ MonoBehaviour:
   fieldRadius: 3
   fieldDuration: 3
   secondActivationDelay: 0.2
-  secondActivationWindow: 2
+  secondActivationWindow: 3
   projectileCount: 1
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
   defenseKind: 0
   defenseDuration: 0.45
   perfectWindow: 0.12
@@ -84,8 +88,8 @@ MonoBehaviour:
   pursuitSpeed: 14
   pursuitMaxDuration: 0.55
   pursuitStopDistance: 0.75
-  speedBonusDuration: 2
-  speedBonusMultiplier: 1.35
+  speedBonusDuration: 0
+  speedBonusMultiplier: 1
   huntAcquireRange: 12
   huntSpeed: 22
   huntMaxDuration: 1.5

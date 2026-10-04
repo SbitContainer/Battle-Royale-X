@@ -13,31 +13,31 @@ MonoBehaviour:
   m_Name: Archer_Ult_C
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.AbilityDefinition
   abilityId: Archer_Ult_C
-  displayName: Disparo de Ruptura
+  displayName: Chuva de Flechas
   slot: 3
   variantIndex: 2
   classRestricted: 1
   requiredClass: 3
-  behavior: 1
-  tags: 4036
+  behavior: 23
+  tags: 18
   visualProfile: {fileID: 11400000, guid: 1a4d3c86828f2da4c9947054bb6fad25, type: 2}
   cooldown: 34
   energyCost: 50
-  startup: 0.85
+  startup: 0.45
   activeTime: 0.12
-  recovery: 0.18
+  recovery: 0.16
   skillLockOnHit: 0
   comboSteps: 1
   comboInputBuffer: 0.18
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
-  attackKind: 2
-  damage: 45
-  range: 12
-  width: 0.55
+  attackKind: 3
+  damage: 5
+  range: 8
+  width: 1
   height: 1.5
   knockback: 1
-  clashable: 1
+  clashable: 0
   blockable: 1
   parryable: 1
   reflectable: 1
@@ -52,13 +52,13 @@ MonoBehaviour:
   heavy: 1
   attackInteractionCooldown: 30
   projectileSpeed: 19
-  explosionRadius: 2.5
+  explosionRadius: 3.5
   clashDamageFactor: 0.25
   turnRate: 240
   slowPercent: 0.25
   pullStrength: 5
-  fieldRadius: 3
-  fieldDuration: 3
+  fieldRadius: 3.5
+  fieldDuration: 3.5
   secondActivationDelay: 0.2
   secondActivationWindow: 2
   projectileCount: 1

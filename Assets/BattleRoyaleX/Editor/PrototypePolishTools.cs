@@ -156,8 +156,8 @@ namespace BattleRoyaleX.EditorTools
         static void Build()
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Stop Play Mode first.");
-            PlayerSettings.bundleVersion="0.8.0-blood-death";
-            PlayerSettings.Android.bundleVersionCode=8;
+            PlayerSettings.bundleVersion="0.9.2-effects-lab";
+            PlayerSettings.Android.bundleVersionCode=11;
             // The prototype uses Input + StandaloneInputModule. Android does not support Both.
             var settings=new SerializedObject(Unsupported.GetSerializedAssetInterfaceSingleton("PlayerSettings"));
             var input=settings.FindProperty("activeInputHandler");
@@ -165,9 +165,30 @@ namespace BattleRoyaleX.EditorTools
             input.intValue=0;settings.ApplyModifiedPropertiesWithoutUndo();AssetDatabase.SaveAssets();
             var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions {
                 scenes=new[]{"Assets/BattleRoyaleX/GeneratedScenes/Prototype01_Arena.unity"},
-                locationPathName="Builds/BattleRoyaleX-blood-death.apk",target=BuildTarget.Android,options=BuildOptions.None });
+                locationPathName="Builds/BattleRoyaleX-effects-lab.apk",target=BuildTarget.Android,options=BuildOptions.None });
             File.WriteAllText("Logs/polish-build.txt",result.summary.result+" errors="+result.summary.totalErrors+" bytes="+result.summary.totalSize);
             if(result.summary.result!=UnityEditor.Build.Reporting.BuildResult.Succeeded)throw new InvalidOperationException("Android build failed");
+        }
+
+        [MenuItem("Battle Royale X/Prototype 01/Build Latest Android")]
+        public static void BuildMageAndroid()
+        {
+            Prepare();
+            Build();
+        }
+
+        // Repackage after a presentation prefab or runtime UI change, then run the full scene matrix.
+        public static void RepackageMageAndroid()
+        {
+            Build();
+            PrototypeLiveTestLauncher.RunBatch();
+        }
+
+        [MenuItem("Battle Royale X/Prototype 01/Build Archer Lab Android")]
+        public static void BuildArcherAndroid()
+        {
+            Build();
+            PrototypeLiveTestLauncher.RunBatch();
         }
     }
 }

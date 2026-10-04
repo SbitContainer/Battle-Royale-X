@@ -15,7 +15,7 @@ MonoBehaviour:
   abilityId: Archer_S2_A
   characterClass: 3
   castPrefab: {fileID: 3960253353339078916, guid: 41182cb79e99e834bbb1b9868b339287, type: 3}
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 3046642715883787561, guid: 97c592f6beb00b044951f4d5208a7deb, type: 3}
   impactPrefab: {fileID: 3960253353339078916, guid: 41182cb79e99e834bbb1b9868b339287, type: 3}
   areaPrefab: {fileID: 0}
   trailPrefab: {fileID: 0}

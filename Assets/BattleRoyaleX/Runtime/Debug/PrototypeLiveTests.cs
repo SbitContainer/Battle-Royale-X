@@ -75,7 +75,7 @@ namespace BattleRoyaleX
                 "Ataque do Guerreiro causa dano uma vez por ativação via física");
             Check(FindObjectsByType<ParticleSystem>().Any(p=>p.name=="VFX_BloodImpact"),
                 "Contato com dano gera partículas de sangue direcionais");
-            Check(spamRejected, "Cooldown impede spam");
+            Check(spamRejected && Near(w.Abilities.GetCooldownRemaining(AbilitySlot.BasicAttack),0f), "Cadência das fases impede spam sem cooldown de básico");
             ResetPair(1.4f); events.Clear(); a.Abilities.TryUse(AbilitySlot.BasicAttack);
             yield return new WaitForSeconds(0.7f);
             Check(Near(w.Health.MaxHealth-w.Health.CurrentHealth,a.Definition.basicAttack.damage) && Count(CombatEventKind.Hit,w)==1,
@@ -113,19 +113,19 @@ namespace BattleRoyaleX
             ResetPair(1.4f); events.Clear(); w.Abilities.TryUse(AbilitySlot.Defense);
             yield return new WaitForSeconds(0.12f); a.Abilities.TryUse(AbilitySlot.BasicAttack);
             yield return new WaitForSeconds(0.6f);
-            Check(Count(CombatEventKind.Block,w)==1 && Near(w.Health.MaxHealth-w.Health.CurrentHealth,a.Definition.basicAttack.damage*0.25f), "Guarda reduz dano");
+            Check(Count(CombatEventKind.Block,w)==1 && Near(w.Health.CurrentHealth,w.Health.MaxHealth), "Guarda anula ataque básico totalmente");
             yield return new WaitForSeconds(0.4f);
             ResetPair(1.4f); events.Clear();
-            w.Abilities.EquipVariation(Ability("Warrior_Defense_A"));
+            w.Abilities.EquipVariation(GenericParryFixture());
             w.Abilities.TryUse(AbilitySlot.Defense); a.Abilities.TryUse(AbilitySlot.BasicAttack);
             bool parryStagger=false; until=Time.time+0.65f;
             while(Time.time<until) { parryStagger |= a.State.IsStaggered; yield return null; }
             Check(Count(CombatEventKind.Parry,a)==1 && Near(w.Health.CurrentHealth,w.Health.MaxHealth) && parryStagger && !a.State.IsStaggered,
                 "Parry perfeito zera dano e aplica micro-stagger no atacante");
             ResetPair(1.4f); events.Clear();
-            w.Abilities.EquipVariation(Ability("Warrior_Defense_A")); w.Abilities.TryUse(AbilitySlot.Defense);
+            var partialDefense = GenericParryFixture();
+            w.Abilities.EquipVariation(partialDefense); w.Abilities.TryUse(AbilitySlot.Defense);
             // Synchronize contact to the actual defense window, not an extra attack startup plus variable frame time.
-            var partialDefense = Ability("Warrior_Defense_A");
             float partialDeadline = Time.time + 1f;
             while (!w.Defense.IsActive && Time.time < partialDeadline) yield return null;
             while (w.Defense.Remaining > partialDefense.defenseDuration - partialDefense.perfectWindow - 0.02f) yield return null;
@@ -146,10 +146,10 @@ namespace BattleRoyaleX
             yield return new WaitForSeconds(0.6f);
             ResetPair(8f); wp=w.transform.position; w.Abilities.TryUse(AbilitySlot.Movement);
             yield return new WaitForSeconds(0.7f);
-            Check(Near(Vector3.Distance(wp,w.transform.position),w.Definition.movementBase.movementDistance,0.12f), "Dash percorre a distância configurada");
+            Check(Vector3.Distance(wp,w.transform.position)<0.03f && w.Definition.movementBase.behavior==AbilityBehavior.WarriorShieldCharge, "Arremesso de escudo mantém o Guerreiro parado");
             ResetPair(1.4f); a.Abilities.EquipVariation(Ability("Assassin_Move_A")); a.Abilities.TryUse(AbilitySlot.Movement);
             yield return new WaitForSeconds(0.6f);
-            Check(a.transform.position.x < w.transform.position.x-0.5f, "Travessia cruza o adversário");
+            Check(a.Abilities.CanRecast(AbilitySlot.Movement) && Near(w.Health.MaxHealth-w.Health.CurrentHealth,4f), "Travessia lança adaga, causa dano leve e arma teleporte");
             ResetPair(6f); ap=a.transform.position; a.Abilities.EquipVariation(Ability("Assassin_Move_B")); a.Abilities.TryUse(AbilitySlot.Movement);
             yield return new WaitForSeconds(0.65f);
             bool returned=a.Abilities.TryUse(AbilitySlot.Movement);
@@ -169,7 +169,7 @@ namespace BattleRoyaleX
             a.Abilities.TryUse(AbilitySlot.Movement); yield return new WaitForSeconds(1.1f);
             Check(Near(w.Health.MaxHealth-w.Health.CurrentHealth,6f) && Count(CombatEventKind.Block,w)==1,
                 "Guarda reduz travessia de 24 para 6 de dano");
-            ResetPair(2f); events.Clear(); w.Defense.Activate(DefenseKind.Parry,0.7f,0.6f,0.5f,0f);
+            ResetPair(2f); events.Clear(); w.Abilities.EquipVariation(GenericParryFixture()); w.Defense.Activate(DefenseKind.Parry,0.7f,0.6f,0.5f,0f);
             a.Abilities.TryUse(AbilitySlot.Movement); yield return new WaitForSeconds(0.9f);
             Check(Near(w.Health.CurrentHealth,w.Health.MaxHealth) && Count(CombatEventKind.Parry,a)==1 && Near(a.Health.CurrentHealth,a.Health.MaxHealth)
                 && w.Abilities.HasCounterOpportunity, "Parry nega travessia e abre contra-ataque manual");
@@ -181,8 +181,8 @@ namespace BattleRoyaleX
             ResetPair(2f); events.Clear(); w.Abilities.TryUse(AbilitySlot.Movement);
             yield return new WaitForSeconds(0.7f);
             Debug.Log($"[BRX DASH PROBE] hp={a.Health.CurrentHealth}/{a.Health.MaxHealth} hits={Count(CombatEventKind.Hit,a)} gap={Vector3.Distance(w.transform.position,a.transform.position)}");
-            Check(Near(a.Health.MaxHealth-a.Health.CurrentHealth,6f) && Count(CombatEventKind.Hit,a)==1,
-                "Investida do Guerreiro causa apenas 6 de dano uma vez");
+            Check(Near(a.Health.MaxHealth-a.Health.CurrentHealth,w.Definition.movementBase.damage) && Count(CombatEventKind.Hit,a)==1,
+                "Arremesso de escudo causa o dano configurado uma vez");
             ResetPair(2f); a.teamId=TeamId.PlayerOne; a.Abilities.TryUse(AbilitySlot.Movement);
             yield return new WaitForSeconds(0.7f);
             Check(Near(w.Health.CurrentHealth,w.Health.MaxHealth), "Travessia não causa friendly fire");
@@ -200,7 +200,8 @@ namespace BattleRoyaleX
             stage = "Ultimates: início, término e variantes";
             ResetPair(5f); w.Abilities.TryUse(AbilitySlot.Ultimate);
             yield return new WaitForSeconds(0.4f);
-            Check(Near(w.Modifiers.damageMultiplier,w.Definition.ultimateBase.damageMultiplier), "Buff de ultimate inicia");
+            yield return new WaitForSeconds(w.Definition.ultimateBase.startup);
+            Check(Identity(w.Modifiers) && events.Any(e=>e.ability==w.Definition.ultimateBase && e.phase==AbilityPhase.Active), "Ultimate de explosão ativa sem buff legado de dano");
             yield return new WaitForSeconds(w.Definition.ultimateBase.buffDuration+0.2f);
             Check(Identity(w.Modifiers), "Buff expira e todos os modificadores voltam a 1.0");
             ResetPair(1.4f); events.Clear();
@@ -226,7 +227,7 @@ namespace BattleRoyaleX
             ResetPair(5f); a.Abilities.EquipVariation(Ability("Assassin_Ult_A")); a.Abilities.TryUse(AbilitySlot.Ultimate);
             yield return new WaitForSeconds(0.5f); wp=w.transform.position; w.Motor.SetMoveInput(Vector2.up);
             yield return new WaitForSeconds(0.4f); w.Motor.SetMoveInput(Vector2.zero);
-            Check(a.Modifiers.damageMultiplier>1f && !w.State.InputLocked && w.transform.position.z>wp.z+0.5f, "Execução aumenta ameaça e preserva controle do oponente");
+            Check(a.Abilities.IsExecutionHidden && Identity(a.Modifiers) && !w.State.InputLocked && w.transform.position.z>wp.z+0.5f, "Execução golpeia e oculta sem buff antigo nem travar controle do oponente");
             yield return new WaitForSeconds(4f);
 
             stage = "Inventário: capacidade e cura contínua";
@@ -369,6 +370,9 @@ namespace BattleRoyaleX
             yield return TestDefenseAndAI();
             yield return TestWarriorPursuitAndBotModes();
             yield return TestMobileV4();
+            yield return TestWarriorRework();
+            yield return TestIndependentMobileMotion();
+            yield return TestAssassinRework();
             yield return TestCombatLab001();
             yield return TestProductionV1();
             yield return TestVariationPresentation();
@@ -403,24 +407,26 @@ namespace BattleRoyaleX
                 var defense = Ability(id);
                 w.Abilities.EquipVariation(defense);
                 w.Abilities.TryUse(AbilitySlot.Defense);
-                yield return new WaitForSeconds(0.06f);
+                yield return new WaitForSeconds(defense.startup+0.04f);
                 bool noFreeDamage = Near(a.Health.CurrentHealth, a.Health.MaxHealth);
                 var attack = SpawnHit(a, a.Definition.basicAttack, w.transform.position + Vector3.up);
                 attack.TryResolveHurtbox(w.GetComponentInChildren<Hurtbox>());
-                Check(noFreeDamage && w.Abilities.HasCounterOpportunity && Near(a.Health.CurrentHealth, a.Health.MaxHealth),
-                    id + ": defesa real abre counter sem causar dano automático");
+                bool capture = defense.behavior==AbilityBehavior.WarriorSkillCapture;
+                Check(noFreeDamage && !w.Abilities.HasCounterOpportunity && Near(a.Health.CurrentHealth, a.Health.MaxHealth) &&
+                    (capture ? w.Health.CurrentHealth<w.Health.MaxHealth && !w.Abilities.HasCapturedSkill : Near(w.Health.CurrentHealth,w.Health.MaxHealth)),
+                    id + ": defesa não causa dano gratuito; captura exclui básico e outras anulam");
                 attack.Cancel(); Destroy(attack.gameObject);
-                yield return new WaitForSeconds(0.12f);
+                yield return new WaitForSeconds(0.2f);
                 Vector3 before = a.transform.position;
                 bool used = w.Abilities.TryUse(AbilitySlot.BasicAttack, Vector3.right);
                 yield return new WaitForSeconds(0.55f);
-                Check(used && a.transform.position.x - before.x > defense.counterKnockback - 0.4f &&
-                    Near(a.Health.MaxHealth - a.Health.CurrentHealth, w.Definition.basicAttack.damage + defense.counterBonusDamage) &&
-                    !a.State.InputLocked && Count(CombatEventKind.CounterHit, a) == 1,
-                    id + ": próximo básico empurra longe, dano único e controle preservado");
+                Check(used && Vector3.Distance(a.transform.position,before)<0.04f &&
+                    Near(a.Health.MaxHealth - a.Health.CurrentHealth, w.Definition.basicAttack.damage) &&
+                    !a.State.InputLocked && Count(CombatEventKind.CounterHit, a) == 0,
+                    id + ": básico após defesa dá impacto sem empurrar nem counter legado");
             }
 
-            ResetPair(1.4f); events.Clear(); w.Abilities.GrantCounterOpportunity();
+            ResetPair(1.4f); events.Clear(); w.Abilities.EquipVariation(GenericParryFixture()); w.Abilities.GrantCounterOpportunity();
             a.Defense.Activate(DefenseKind.Guard, 1f, 0f, 0.75f, 0f);
             Vector3 blockedStart = a.transform.position;
             w.Abilities.TryUse(AbilitySlot.BasicAttack, Vector3.right);
@@ -429,11 +435,11 @@ namespace BattleRoyaleX
                 a.transform.position.x - blockedStart.x < 1.3f && Count(CombatEventKind.CounterHit,a) == 0,
                 "Counter também pode ser bloqueado: dano e empurrão reduzidos");
 
-            ResetPair(4f); w.Abilities.GrantCounterOpportunity();
+            ResetPair(4f); w.Abilities.EquipVariation(GenericParryFixture()); w.Abilities.GrantCounterOpportunity();
             yield return new WaitForSeconds(1.3f);
             Check(!w.Abilities.HasCounterOpportunity, "Oportunidade de counter expira sem ataque automático");
 
-            foreach (string id in new[] { "Assassin_Defense_Base", "Assassin_Defense_B" })
+            foreach (string id in new[] { "Assassin_Defense_Base" })
             {
                 ResetPair(1.4f); events.Clear();
                 var defense = Ability(id); a.Abilities.EquipVariation(defense);
@@ -560,25 +566,28 @@ namespace BattleRoyaleX
 
             foreach (string id in new[] { "Warrior_Move_Base", "Warrior_Move_A", "Warrior_Move_B" })
             {
-                ResetPair(6f); events.Clear();
+                ResetPair(id=="Warrior_Move_A" ? 4f : 6f); events.Clear();
                 AbilityDefinition pursuit = Ability(id);
                 w.Abilities.EquipLabVariation(pursuit);
-                a.Motor.Teleport(new Vector3(3f,1f,1.4f));
+                a.Motor.Teleport(new Vector3(id=="Warrior_Move_A" ? 2f : 3f,1f,id=="Warrior_Move_Base" ? 0f : 1.4f));
                 a.Motor.FaceDirection(Vector3.forward);
                 Physics.SyncTransforms();
                 Vector3 warriorStart = w.transform.position;
-                a.Motor.SetMoveInput(Vector2.up);
+                if(id!="Warrior_Move_Base") a.Motor.SetMoveInput(Vector2.up);
                 bool used = w.Abilities.TryUse(AbilitySlot.Movement,Vector3.right);
-                yield return new WaitForSeconds(0.72f);
+                yield return new WaitForSeconds(1.1f);
                 a.Motor.StopMovementImmediately();
-                Check(used && Near(a.Health.MaxHealth-a.Health.CurrentHealth,pursuit.damage,0.08f) && Count(CombatEventKind.Hit,a)==1,
-                    id+": persegue alvo em movimento e causa dano uma vez");
-                Check(w.transform.position.z>warriorStart.z+0.25f,
-                    id+": trajetória corrige direção durante a perseguição");
+                // Moving target can escape the short pursuit's delayed extra strike; a stationary fixture below proves its bonus.
+                float expectedDamage=pursuit.damage;
+                Debug.Log($"[BRX PURSUIT004 PROBE] id={id} used={used} damage={a.Health.MaxHealth-a.Health.CurrentHealth} expected={expectedDamage} hits={Count(CombatEventKind.Hit,a)} w={w.transform.position} a={a.transform.position} gap={Vector3.Distance(w.transform.position,a.transform.position)} targetMove={a.MovementSlowMultiplier} busy={w.Abilities.IsActionBusy}");
+                Check(used && Near(a.Health.MaxHealth-a.Health.CurrentHealth,expectedDamage,0.08f) && Count(CombatEventKind.Hit,a)==1,
+                    id+": arremesso ou perseguição acerta uma vez; alvo em fuga pode escapar do golpe extra");
+                Check(id=="Warrior_Move_Base" ? Vector3.Distance(w.transform.position,warriorStart)<0.03f : w.transform.position.z>warriorStart.z+0.25f,
+                    id+": arremesso não move; perseguições corrigem direção");
             }
 
             ResetPair(4f); events.Clear();
-            AbilityDefinition impact = Ability("Warrior_Move_A");
+            AbilityDefinition impact = Ability("Warrior_Move_Base");
             w.Abilities.EquipLabVariation(impact);
             Vector3 targetBefore = a.transform.position;
             w.Abilities.TryUse(AbilitySlot.Movement,Vector3.right);
@@ -587,7 +596,7 @@ namespace BattleRoyaleX
                 "Impacto do Guerreiro joga o inimigo para trás pela distância configurada");
 
             ResetPair(6f); events.Clear();
-            w.Abilities.EquipLabVariation(impact);
+            w.Abilities.EquipLabVariation(Ability("Warrior_Move_A"));
             var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
             wall.name="Test_WarriorPursuitWall";
             wall.transform.position=new Vector3(0f,1.5f,0f);

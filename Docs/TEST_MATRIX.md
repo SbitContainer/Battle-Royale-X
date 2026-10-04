@@ -184,3 +184,23 @@
 - [ ] Retarget/Animator das quatro classes.
 - [ ] Materiais URP e VFX finais não escondem personagens ou áreas de resposta.
 - [ ] Guerreiro e Assassino mantêm dano, cooldown, timing e sensação aprovados.
+
+## 19. BRX-COMBAT-004 e INPUT-005 (regras novas autorizadas)
+
+Expectativas anteriores do Guerreiro são históricas: Guarda agora anula por 2 s; Fortaleza protege 1,5 s e lança três escudos; Usurpador captura/reenvia skill com janela de 2 s. Arremesso de Escudo não desloca o personagem. Básicos usam cadência, sem cooldown de habilidade. Parry genérico permanece testado por fixture independente, não como variante atual.
+
+- [ ] Segurar skill primeiro permite iniciar analógico com segundo dedo.
+- [ ] Mudar direção do analógico durante mira não conserva a direção anterior.
+- [ ] Soltar/cancelar/perder dedo do analógico para somente movimento, sem lançar skill.
+- [ ] Soltar/cancelar skill não cancela movimento mantido pelo outro dedo.
+- [ ] Linha de mira não captura raycasts/toques sobre região de movimento.
+- [ ] Menu/perda de foco limpa os dois gestos; layout salvo preservado.
+- [ ] Básico contínuo nas quatro classes respeita cadência e termina ao soltar.
+- [ ] Básico do Guerreiro não empurra; clash empurra ambos.
+- [ ] Fortaleza ignora também dano direto e perde proteção ao reset/troca.
+- [ ] Captura não aceita básico; recast copia comportamento, interrompe básico e expira em 2 s.
+- [ ] Perseguição curta só aplica golpe extra se alvo continuar em contato após antecipação.
+- [ ] Áreas permitem regular distância; Gancho compartilha consulta de contato entre preview/executor.
+- [ ] Atualização GitHub código anterior → novo solicita consentimento Android, sem depuração.
+
+EventSystem/snapshots de toque no Editor não comprovam a trajetória física de dois dedos Android. Registrar essa camada separadamente.

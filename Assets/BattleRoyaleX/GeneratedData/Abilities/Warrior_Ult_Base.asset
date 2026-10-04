@@ -13,35 +13,36 @@ MonoBehaviour:
   m_Name: Warrior_Ult_Base
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.AbilityDefinition
   abilityId: Warrior_Ult_Base
-  displayName: Postura de Guerra
+  displayName: "Basti\xE3o Explosivo"
   slot: 3
   variantIndex: 0
   classRestricted: 1
   requiredClass: 0
-  behavior: 9
-  tags: 0
+  behavior: 33
+  tags: 1041
   visualProfile: {fileID: 11400000, guid: db48831a07b20634bbc4c8a3638df776, type: 2}
-  cooldown: 30
-  energyCost: 45
-  startup: 0.24
+  defenseInteractionRule: {fileID: 0}
+  cooldown: 25
+  energyCost: 38
+  startup: 0.85
   activeTime: 0.12
-  recovery: 0.16
+  recovery: 0.24
   skillLockOnHit: 0
   comboSteps: 1
   comboInputBuffer: 0.18
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
-  attackKind: 0
-  damage: 8
+  attackKind: 3
+  damage: 18
   range: 0
   width: 1
   height: 1.5
-  knockback: 0
+  knockback: 0.8
   clashable: 0
   blockable: 1
   parryable: 1
-  reflectable: 0
-  nullifiable: 0
+  reflectable: 1
+  nullifiable: 1
   canDestroyMagicalProjectiles: 0
   interceptable: 0
   interceptDamageReduction: 0.6
@@ -52,23 +53,28 @@ MonoBehaviour:
   heavy: 0
   attackInteractionCooldown: 30
   projectileSpeed: 14
-  explosionRadius: 1.8
+  explosionRadius: 2.2
   clashDamageFactor: 0.25
   turnRate: 240
-  slowPercent: 0.25
+  slowPercent: 0.3
   pullStrength: 5
-  fieldRadius: 3
-  fieldDuration: 3
+  fieldRadius: 2.2
+  fieldDuration: 2
   secondActivationDelay: 0.2
   secondActivationWindow: 2
+  fieldTickInterval: 0.6
+  captureRecastWindow: 2
   projectileCount: 1
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
   defenseKind: 0
-  defenseDuration: 0.45
+  defenseDuration: 2
   perfectWindow: 0.12
-  damageReduction: 0.7
+  damageReduction: 0.45
   specialInteractionCooldown: 0
   movementDistance: 4
   movementDuration: 0.16
@@ -103,9 +109,10 @@ MonoBehaviour:
   redirectOnDefense: 0
   redirectDistance: 3
   redirectDuration: 0.18
-  buffDuration: 5
-  damageMultiplier: 1.12
+  buffDuration: 1.8
+  damageMultiplier: 1
   moveSpeedMultiplier: 1
-  staggerResistanceMultiplier: 1.35
-  defenseWindowMultiplier: 1.1
+  staggerResistanceMultiplier: 1
+  defenseWindowMultiplier: 1
   movementCooldownMultiplier: 1
+  attackSpeedMultiplier: 1

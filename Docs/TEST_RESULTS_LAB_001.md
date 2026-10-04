@@ -1,4 +1,4 @@
-# Matriz ao vivo — 25/09/2026 19:52:18
+# Matriz ao vivo — 03/10/2026 22:00:36
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -11,35 +11,35 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Personagens permanecem no plano XZ
 - PASSOU: Ataque do Guerreiro causa dano uma vez por ativação via física
 - PASSOU: Contato com dano gera partículas de sangue direcionais
-- PASSOU: Cooldown impede spam
+- PASSOU: Cadência das fases impede spam sem cooldown de básico
 - PASSOU: Ataque do Assassino causa dano uma vez por ativação via física
 - PASSOU: Sem friendly fire na mesma equipe
 - PASSOU: Dois ataques físicos colidem em Clash
 - PASSOU: Clash causa apenas dano reduzido nos dois
 - PASSOU: Micro-stagger do Clash inicia e expira
 - PASSOU: Clash cancela ambas as hitboxes
-- PASSOU: Guarda reduz dano
+- PASSOU: Guarda anula ataque básico totalmente
 - PASSOU: Parry perfeito zera dano e aplica micro-stagger no atacante
 - PASSOU: Parry fora da janela perfeita defende parcialmente
 - PASSOU: Esquiva reativa evita o golpe recebido na janela
-- PASSOU: Dash percorre a distância configurada
-- PASSOU: Travessia cruza o adversário
+- PASSOU: Arremesso de escudo mantém o Guerreiro parado
+- PASSOU: Travessia lança adaga, causa dano leve e arma teleporte
 - PASSOU: Retorno volta dentro da janela
 - PASSOU: Retorno expira e respeita cooldown
 - PASSOU: Travessia do Assassino causa 24 de dano uma única vez
 - PASSOU: Guarda reduz travessia de 24 para 6 de dano
 - PASSOU: Parry nega travessia e abre contra-ataque manual
 - PASSOU: Contra-ataque do Guerreiro exige básico e adiciona 6 de dano uma vez
-- PASSOU: Investida do Guerreiro causa apenas 6 de dano uma vez
+- PASSOU: Arremesso de escudo causa o dano configurado uma vez
 - PASSOU: Travessia não causa friendly fire
 - PASSOU: Travessia fora do trajeto não acerta
 - PASSOU: Parede bloqueia dash e dano além dela
-- PASSOU: Buff de ultimate inicia
+- PASSOU: Ultimate de explosão ativa sem buff legado de dano
 - PASSOU: Buff expira e todos os modificadores voltam a 1.0
 - PASSOU: Cinco Cortes cobra energia uma vez e aceita exatamente cinco dashes manuais
 - PASSOU: Cinco Cortes causa 12 por travessia e 60 no total sem defesa
 - PASSOU: Cinco Cortes encerra cargas e mantém cooldown iniciado no primeiro cast
-- PASSOU: Execução aumenta ameaça e preserva controle do oponente
+- PASSOU: Execução golpeia e oculta sem buff antigo nem travar controle do oponente
 - PASSOU: Mochila inicia com três slots
 - PASSOU: Quarto item recusado sem upgrade
 - PASSOU: Usar mochila de drop aumenta capacidade para quatro
@@ -68,20 +68,17 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Ataque físico marcado anula magia via física
 - PASSOU: Anulação entra em cooldown separado de 30 s
 - PASSOU: Durante cooldown novo ataque não anula magia
-- PASSOU: Warrior_Defense_Base: defesa real abre counter sem causar dano automático
-- PASSOU: Warrior_Defense_Base: próximo básico empurra longe, dano único e controle preservado
-- PASSOU: Warrior_Defense_A: defesa real abre counter sem causar dano automático
-- PASSOU: Warrior_Defense_A: próximo básico empurra longe, dano único e controle preservado
-- PASSOU: Warrior_Defense_B: defesa real abre counter sem causar dano automático
-- PASSOU: Warrior_Defense_B: próximo básico empurra longe, dano único e controle preservado
+- PASSOU: Warrior_Defense_Base: defesa não causa dano gratuito; captura exclui básico e outras anulam
+- PASSOU: Warrior_Defense_Base: básico após defesa dá impacto sem empurrar nem counter legado
+- PASSOU: Warrior_Defense_A: defesa não causa dano gratuito; captura exclui básico e outras anulam
+- PASSOU: Warrior_Defense_A: básico após defesa dá impacto sem empurrar nem counter legado
+- PASSOU: Warrior_Defense_B: defesa não causa dano gratuito; captura exclui básico e outras anulam
+- PASSOU: Warrior_Defense_B: básico após defesa dá impacto sem empurrar nem counter legado
 - PASSOU: Counter também pode ser bloqueado: dano e empurrão reduzidos
 - PASSOU: Oportunidade de counter expira sem ataque automático
 - PASSOU: Assassin_Defense_Base: defesa no contato muda direção e atravessa o atacante
 - PASSOU: Assassin_Defense_Base: travessia defensiva causa só 2–3 de dano uma vez
 - PASSOU: Assassin_Defense_Base: viagem encerra sem invulnerabilidade ou ação presa
-- PASSOU: Assassin_Defense_B: defesa no contato muda direção e atravessa o atacante
-- PASSOU: Assassin_Defense_B: travessia defensiva causa só 2–3 de dano uma vez
-- PASSOU: Assassin_Defense_B: viagem encerra sem invulnerabilidade ou ação presa
 - PASSOU: Esquiva defensiva respeita paredes e não causa dano atrás delas
 - PASSOU: Bot se aproxima por movimento e investida usando APIs normais
 - PASSOU: Bot observa skill real, mas não reage antes do atraso humano
@@ -92,12 +89,12 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Reset cancela viagem, iframe e efeitos defensivos transitórios
 - PASSOU: Bot Parado não anda nem ataca
 - PASSOU: Bot Parado + ataque golpeia em alcance sem deslizar
-- PASSOU: Warrior_Move_Base: persegue alvo em movimento e causa dano uma vez
-- PASSOU: Warrior_Move_Base: trajetória corrige direção durante a perseguição
-- PASSOU: Warrior_Move_A: persegue alvo em movimento e causa dano uma vez
-- PASSOU: Warrior_Move_A: trajetória corrige direção durante a perseguição
-- PASSOU: Warrior_Move_B: persegue alvo em movimento e causa dano uma vez
-- PASSOU: Warrior_Move_B: trajetória corrige direção durante a perseguição
+- PASSOU: Warrior_Move_Base: arremesso ou perseguição acerta uma vez; alvo em fuga pode escapar do golpe extra
+- PASSOU: Warrior_Move_Base: arremesso não move; perseguições corrigem direção
+- PASSOU: Warrior_Move_A: arremesso ou perseguição acerta uma vez; alvo em fuga pode escapar do golpe extra
+- PASSOU: Warrior_Move_A: arremesso não move; perseguições corrigem direção
+- PASSOU: Warrior_Move_B: arremesso ou perseguição acerta uma vez; alvo em fuga pode escapar do golpe extra
+- PASSOU: Warrior_Move_B: arremesso não move; perseguições corrigem direção
 - PASSOU: Impacto do Guerreiro joga o inimigo para trás pela distância configurada
 - PASSOU: Perseguição do Guerreiro respeita parede e não causa dano remoto
 - PASSOU: Caçada 1 segue dash lateral, causa dano leve e libera segundo acionamento
@@ -109,10 +106,9 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Caçada sem alvo em alcance não consome energia
 - PASSOU: Caçada encontra parede: termina por limite sem atravessar cenário nem causar dano remoto
 - PASSOU: Assassino bot utiliza a segunda etapa da Caçada pela mesma API do jogador
-- PASSOU: Travessia aplica +35% velocidade após avanço sem substituir buff de ultimate
-- PASSOU: Bônus de Travessia expira após 2 segundos independentemente da ultimate
+- PASSOU: Travessia prepara teleporte sem bônus antigo nem substituir buff externo
+- PASSOU: Travessia não modifica bônus independentes da ultimate
 - PASSOU: Assassin_Defense_Base: golpe aos 0,72 s dispara travessia longa com dano único baixo
-- PASSOU: Assassin_Defense_B: golpe aos 0,72 s dispara travessia longa com dano único baixo
 - PASSOU: Esquiva expirada não evita golpe nem dispara travessia
 - PASSOU: Esquiva já protege no acionamento, inclusive antes do primeiro frame ativo
 - PASSOU: Esquiva ignora golpes físicos, projéteis, área, magia e dano direto repetidos durante 1 segundo
@@ -125,18 +121,127 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Personagem local recebe acabamento fosco enquanto oculto
 - PASSOU: Hitbox existente de atacante dentro da fumaça não causa dano
 - PASSOU: Fim da fumaça restaura visibilidade e possibilidade de ataque
-- PASSOU: Mobile mostra seletores 1/2/3 no canto inferior esquerdo
+- PASSOU: Os três seletores A/B/C estão acessíveis na tela de combate
+- PASSOU: Toques reais nos três seletores alternam A/B/C de Mago e Arqueiro
 - PASSOU: Botão 1 alterna Defesa Base/A/B sem consumir runa
 - PASSOU: Botão 2 alterna Movimento de A para B
 - PASSOU: Botão 3 alterna Ultimate de A para B
 - PASSOU: Botão do laboratório alterna bot Normal/Parado/Parado + ataque
 - PASSOU: Menu mobile pausa combate e identifica jogador Assassino
+- PASSOU: Menu de classe mantém os seletores como controles da arena
 - PASSOU: Seletor mobile troca a classe do slot jogador para Guerreiro e mantém oponente Guerreiro bot
-- PASSOU: Troca de volta restaura Assassino no slot jogador e Guerreiro no slot bot
+- PASSOU: Seletor mobile alcança a classe Mago
+- PASSOU: Seletor mobile alcança a classe Arqueiro
+- PASSOU: Ciclo completo restaura Assassino no slot jogador e Guerreiro no slot bot
+- PASSOU: Menu permite selecionar diretamente a classe, sem percorrer todas as opções
 - PASSOU: Informações técnicas são geradas dos valores reais das habilidades
 - PASSOU: Botões padrão têm diâmetro duplicado: ataque 328 e defesa 232
 - PASSOU: Arrastar/redimensionar e serializar/restaurar layout mantém posição/tamanho sem lançar habilidade
 - PASSOU: Salvar layout persiste preferências locais e retoma combate
+- PASSOU: Básico inicia e rejeita repetição no mesmo instante
+- PASSOU: Básico do Guerreiro não exibe cooldown nem empurra alvo
+- PASSOU: Warrior_Basic: cadência positiva por fases, sem cooldown de dados
+- PASSOU: Assassin_Basic: cadência positiva por fases, sem cooldown de dados
+- PASSOU: Mage_Basic: cadência positiva por fases, sem cooldown de dados
+- PASSOU: Archer_Basic: cadência positiva por fases, sem cooldown de dados
+- PASSOU: Segurar básico encadeia golpes; soltar termina sem ação presa
+- PASSOU: Guarda anula básico/área e permanece durante ataque próprio, sem counter
+- PASSOU: Guarda termina após dois segundos e volta a receber dano
+- PASSOU: Fortaleza: três faces chanfradas translúcidas sem colisão visual
+- PASSOU: Fortaleza anula dano direto, projétil e área mesmo sem flags bloqueáveis
+- PASSOU: Fortaleza dispara exatamente três escudos ao fim da proteção
+- PASSOU: Escudos da Fortaleza saem separados por 120 graus
+- PASSOU: Fortaleza não mantém imunidade depois de 1,5 segundos
+- PASSOU: Trocar variante encerra imunidade da Fortaleza anterior
+- PASSOU: Usurpador não absorve nem bloqueia ataque básico
+- PASSOU: Usurpador absorve skill de área e identifica a origem
+- PASSOU: Recast interrompe básico, usa snapshot original e não cobra segunda energia
+- PASSOU: Skill capturada de campo continua sendo campo, não projétil genérico
+- PASSOU: Reset elimina snapshot e efeitos capturados do proprietário
+- PASSOU: Captura expira em dois segundos e respeita cooldown original
+- PASSOU: Perseguição curta contra alvo parado aplica contato de 18 e golpe extra de 6 uma vez cada
+- PASSOU: Fugir no intervalo do segundo golpe impede dano remoto da perseguição curta
+- PASSOU: Warrior_Ult_Base: conjuração visível durante startup
+- PASSOU: Warrior_Ult_Base: ultimate protege enquanto executa a ofensiva
+- PASSOU: Warrior_Ult_Base: dano de explosão/campo/ondas corresponde a todos os pulsos
+- PASSOU: Warrior_Ult_Base: evento de ultimate e execução de área preservados
+- PASSOU: Warrior_Ult_Base: alcance local e dano máximo reduzido
+- PASSOU: Warrior_Ult_Base: dados correspondem aos valores congelados de VISUAL-006
+- PASSOU: Warrior_Ult_Base: mirar longe não desloca área nem acerta fora do raio
+- PASSOU: Warrior_Ult_A: conjuração visível durante startup
+- PASSOU: Warrior_Ult_A: ultimate protege enquanto executa a ofensiva
+- PASSOU: Warrior_Ult_A: dano de explosão/campo/ondas corresponde a todos os pulsos
+- PASSOU: Warrior_Ult_A: evento de ultimate e execução de área preservados
+- PASSOU: Warrior_Ult_A: alcance local e dano máximo reduzido
+- PASSOU: Warrior_Ult_A: dados correspondem aos valores congelados de VISUAL-006
+- PASSOU: Warrior_Ult_A: mirar longe não desloca área nem acerta fora do raio
+- PASSOU: Warrior_Ult_B: conjuração visível durante startup
+- PASSOU: Warrior_Ult_B: ultimate protege enquanto executa a ofensiva
+- PASSOU: Warrior_Ult_B: dano de explosão/campo/ondas corresponde a todos os pulsos
+- PASSOU: Warrior_Ult_B: evento de ultimate e execução de área preservados
+- PASSOU: Warrior_Ult_B: alcance local e dano máximo reduzido
+- PASSOU: Warrior_Ult_B: dados correspondem aos valores congelados de VISUAL-006
+- PASSOU: Warrior_Ult_B: mirar longe não desloca área nem acerta fora do raio
+- PASSOU: Ruptura: alvo a 2,8 m não recebe as duas ondas interiores
+- PASSOU: Ruptura: alvo a 2,8 m recebe apenas terceira onda de 6
+- PASSOU: Interromper conjuração cancela dano e limpa carga visual
+- PASSOU: Mira de área regula distância curta e longa no mesmo alcance
+- PASSOU: Centro selecionado não ultrapassa alcance autorizado
+- PASSOU: Warrior_Defense_Base: defesa usa composição tridimensional de referência
+- PASSOU: Warrior_Defense_Base: reset remove superfície e recursos da apresentação
+- PASSOU: Warrior_Defense_A: defesa usa composição tridimensional de referência
+- PASSOU: Warrior_Defense_A: reset remove superfície e recursos da apresentação
+- PASSOU: Básico passo 1: corte de referência presente
+- PASSOU: Básico passo 2: corte de referência presente
+- PASSOU: Básico passo 3: corte de referência presente
+- PASSOU: Eventos de apresentação não aplicam dano nem consomem energia
+- PASSOU: Explosion: volume animado sem colisão ou física de gameplay
+- PASSOU: Explosion: composição tem volume e respeita limite de 14 renderers auxiliares
+- PASSOU: Explosion: shaders da composição estão disponíveis e suportados
+- PASSOU: Explosion: término visual limpa host e helper
+- PASSOU: GroundField: volume animado sem colisão ou física de gameplay
+- PASSOU: GroundField: composição tem volume e respeita limite de 14 renderers auxiliares
+- PASSOU: GroundField: shaders da composição estão disponíveis e suportados
+- PASSOU: GroundField: término visual limpa host e helper
+- PASSOU: Shockwave: volume animado sem colisão ou física de gameplay
+- PASSOU: Shockwave: composição tem volume e respeita limite de 14 renderers auxiliares
+- PASSOU: Shockwave: shaders da composição estão disponíveis e suportados
+- PASSOU: Shockwave: término visual limpa host e helper
+- PASSOU: Linha de mira não intercepta toques do analógico
+- PASSOU: Segurar skill primeiro permite iniciar e mover analógico com outro dedo
+- PASSOU: Dedo da skill não altera direção do analógico
+- PASSOU: Analógico muda direção enquanto mantém mira da skill
+- PASSOU: Soltar analógico para movimento sem soltar ou lançar skill
+- PASSOU: Cancelar mira não cancela dedo de movimento
+- PASSOU: Cancelamento físico limpa direção antiga do analógico
+- PASSOU: Menu limpa os dois dedos sem movimento preso
+- PASSOU: Execução segue alvo que avança lateralmente e golpeia uma única vez
+- PASSOU: Execução oculta após golpe por 2 s, sem imunidade nem buff legado
+- PASSOU: Invisibilidade mantém silhueta legível ao próprio jogador
+- PASSOU: Execução esconde modelo da perspectiva adversária
+- PASSOU: Golpe direcionado à posição acerta Assassino invisível
+- PASSOU: Execução restaura visibilidade após 2 segundos
+- PASSOU: Execução sem alvo em alcance não gasta energia
+- PASSOU: Parede limita Execução: sem dano remoto nem invisibilidade gratuita
+- PASSOU: Travessia lança adaga, causa 4 de dano único e não avança no primeiro toque
+- PASSOU: Segundo toque teleporta e golpeia por 12, sem repetir dano nem custo de energia
+- PASSOU: Adaga permite um só teleporte e não reinicia recarga
+- PASSOU: Janela de 3 s expira e remove adaga sem teleporte automático
+- PASSOU: Troca de variante cancela a adaga antiga e sua reativação
+- PASSOU: Adaga para na parede e teleporta somente ao lado livre, sem dano atrás do cenário
+- PASSOU: Parede de fase I14 cancela adaga e teleporte usando a interação existente
+- PASSOU: Círculo possui cinco adagas com rastros, sem dash nem invulnerabilidade garantida
+- PASSOU: Órbita aplica seis pulsos de 2 por 3 s sem duplicar por collider
+- PASSOU: Órbita expira e remove as cinco adagas
+- PASSOU: Defesa orbital usa exatamente 50% por golpe físico/projétil/área/magia e não sorteia collider duplicado
+- PASSOU: Reset limpa órbita, invisibilidade e janela de adaga
+- PASSOU: Regra código 1 aceita todos, independentemente da lista de exceções
+- PASSOU: Regra código 2 exclui somente IDs definidos, não a categoria ultimate
+- PASSOU: Exceção código 2 atravessa defesa orbital mesmo com chance de repelir em 100% no teste
+- PASSOU: Órbita defende também área direta sem hitbox, preservando defesa antiga das outras classes
+- PASSOU: Órbita pode repelir explosão I07 sem impedir choque mágico ou seu cancelamento
+- PASSOU: Área direta respeita exceção do perfil R02, sem exclusão global de ultimates
+- PASSOU: Troca de defesa não mantém órbita escondida da variante antiga
 - PASSOU: SkillLock bloqueia skill sem impedir movimento
 - PASSOU: MovementLock não bloqueia skill e impede apenas deslocamento
 - PASSOU: Defesa cancela basic em startup e inicia no mesmo input
@@ -156,17 +261,32 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Slots V1 preservam serialização dos assets aprovados por aliases de compatibilidade
 - PASSOU: Troca runtime seleciona as quatro classes sem alterar o Guerreiro adversário
 - PASSOU: Troca de classe restaura HP e energia
+- PASSOU: Orbe básico curva para o adversário até o limite de 20 graus
 - PASSOU: Faíscas Caçadoras cria três projéteis seeking de baixo dano
 - PASSOU: Projéteis seeking possuem apresentação visível durante o deslocamento
 - PASSOU: Campo de Lentidão reduz velocidade sem stun ou MovementLock
+- PASSOU: Pântano causa dano periódico ao inimigo dentro da área
 - PASSOU: Campo mágico mostra limites no chão na posição real da habilidade
 - PASSOU: Campo refinado mantém fluxo visual limitado a 32 partículas por emissor
 - PASSOU: Clones usam silhuetas renderizadas sem duplicar hitboxes ou hurtboxes
 - PASSOU: Ecos Arcanos cria três clones e permite teleportar ou deixar a janela expirar
+- PASSOU: Três ecos avançam e cada um dispara um orbe de dano leve
+- PASSOU: Blink atravessa o inimigo com dano e deixa alma visual atrasada
+- PASSOU: Pulso de Repulsão causa dano, empurra radialmente e aplica lentidão
 - PASSOU: Convergência combina projétil lento e rápido e aplica cooldown de sucesso
 - PASSOU: Convergência emite onda visual com raio real e sem colisores adicionais
 - PASSOU: Armadilha Gravitacional puxa sem retirar movimento ou skills
+- PASSOU: Arqueiro: básico mais leve e Flecha Pesada fina, rápida e de longa distância
+- PASSOU: Arqueiro: armadilha, gancho, chuva e Sobrecarga usam os parâmetros especificados
+- PASSOU: Ataque básico do Arqueiro aponta para o inimigo dentro do alcance mesmo se estava virado para trás
+- PASSOU: Flecha Pesada ganha dano com a distância real percorrida
+- PASSOU: Flecha Pesada detecta o alvo mesmo ao atravessar vários metros em um quadro
+- PASSOU: Armadilha permanece armada até o inimigo entrar na proximidade e então causa dano
+- PASSOU: Sobrecarga aplica +30% movimento e -30% recarga de mobilidade por 4 s
+- PASSOU: Chuva de Flechas permanece na área e aplica pulsos de dano
+- PASSOU: Gancho lança corda e puxa mesmo sem superfície ou inimigo acertado
 - PASSOU: Passos Laterais aceita dois deslocamentos com direções independentes
+- PASSOU: Mago também aponta o básico para o inimigo dentro do alcance sem mira manual
 - PASSOU: Guerreiro intercepta apenas projétil marcado e reduz 60% do dano restante
 - PASSOU: Regeneração natural inicia fora de combate e reinicia atraso ao receber dano
 - PASSOU: Troca de classe cancela efeitos, projéteis e coroutines pertencentes à classe anterior
@@ -197,4 +317,4 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Morte visual permanece ativa no mobile até o reinício da rodada
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 194 passaram; 0 falharam.
+Resultado: 314 passaram; 0 falharam.

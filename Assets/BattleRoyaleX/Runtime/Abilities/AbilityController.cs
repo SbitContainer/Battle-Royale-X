@@ -34,6 +34,8 @@ namespace BattleRoyaleX
         float defenseJourneyUntil;
         bool defenseRedirected;
         AbilityDefinition currentAction;
+        float archerOverloadUntil;
+        Vector3 actionAimPoint;
 
         public bool IsComboInProgress => comboInProgress;
         public bool IsActionBusy => actionBusy;
@@ -48,6 +50,8 @@ namespace BattleRoyaleX
 
         void Update()
         {
+            UpdateAssassinEffects();
+            UpdateWarriorEffects();
             if (Time.time >= defenseJourneyUntil) defenseJourney = null;
             if (huntAbility != null && (Time.time > huntExpiresAt || huntTarget == null || huntTarget.Health.IsDead)) ClearHunt();
             if (runtime != null && runtime.Health.IsDead && (actionBusy || comboInProgress || chargedSequenceActive || HasCounterOpportunity))
@@ -70,14 +74,45 @@ namespace BattleRoyaleX
         }
 
         public AbilityDefinition GetEquipped(AbilitySlot slot) => equipped.TryGetValue(slot, out var value) ? value : null;
+        public void ReleaseBasicAttackInput() => comboQueued = false;
         public bool TryUse(AbilitySlot slot) => TryUseInternal(slot, Vector3.zero, false);
         public bool TryUse(AbilitySlot slot, Vector3 worldDirection) => TryUseInternal(slot, worldDirection, worldDirection.sqrMagnitude > 0.001f);
+        public bool TryUseAimed(AbilitySlot slot, Vector3 worldDirection, Vector3 groundPoint) =>
+            TryUseInternal(slot, worldDirection, worldDirection.sqrMagnitude > 0.001f, groundPoint);
 
-        bool TryUseInternal(AbilitySlot slot, Vector3 worldDirection, bool hasDirection)
+        bool TryUseInternal(AbilitySlot slot, Vector3 worldDirection, bool hasDirection, Vector3? groundPoint = null)
         {
             if (runtime == null || runtime.Health == null || runtime.Health.IsDead) return false;
             AbilityDefinition ability = GetEquipped(slot);
             if (ability == null) return false;
+            if (ability.behavior == AbilityBehavior.WarriorSkillCapture && CanBorrowedRecast())
+                return TryBorrowedRecast(worldDirection, hasDirection);
+            if (ability.behavior == AbilityBehavior.WarriorSkillCapture && HasCapturedSkill)
+                return TryCastCapturedSkill(worldDirection, hasDirection, groundPoint);
+            CharacterRuntime assistedTarget = null;
+            if (!hasDirection && (runtime.Definition.characterClass == CharacterClass.Archer ||
+                runtime.Definition.characterClass == CharacterClass.Mage) && ability.abilityId != "Archer_S1_B")
+            {
+                CharacterRuntime nearest = FindNearestVisibleTarget(ability.range);
+                if (nearest != null)
+                {
+                    assistedTarget = nearest;
+                    worldDirection = nearest.transform.position - transform.position;
+                    worldDirection.y = 0f;
+                    hasDirection = worldDirection.sqrMagnitude > 0.001f;
+                }
+            }
+            // Archer basic attacks always lock onto the nearest valid enemy inside their own range.
+            if (ability.abilityId == "Archer_Basic")
+            {
+                CharacterRuntime nearest = FindNearestVisibleTarget(ability.range);
+                if (nearest != null)
+                {
+                    worldDirection = nearest.transform.position - transform.position;
+                    worldDirection.y = 0f;
+                    hasDirection = true;
+                }
+            }
             if (ability.requiresSurfacePoint)
             {
                 Vector3 hookDirection = hasDirection ? worldDirection : runtime.Motor.Facing;
@@ -87,6 +122,8 @@ namespace BattleRoyaleX
             }
             // Movement/defense remain available to escape, but offensive actions are suppressed inside smoke.
             if (SmokeField.PreventsAttack(runtime) && IsOffensiveBehavior(ability.behavior)) return false;
+            if (ability.behavior == AbilityBehavior.DaggerTeleport && CanDaggerRecast(ability))
+                return TryDaggerRecast(ability);
 
             if (ability.behavior == AbilityBehavior.HuntSequence && IsHuntRecastReady)
                 return TryHuntRecast();
@@ -94,7 +131,7 @@ namespace BattleRoyaleX
             if (chargedSequenceActive && ability == chargedSequenceAbility)
                 return TryChargedDashRecast(ability, worldDirection, hasDirection);
 
-            if (TryUseV1SecondActivation(ability)) return true;
+            if (TryUseV1SecondActivation(ability, worldDirection, hasDirection)) return true;
 
             if (slot == AbilitySlot.BasicAttack && ability.behavior == AbilityBehavior.MeleeAttack && ability.comboSteps > 1)
                 return TryUseBasicCombo(ability, worldDirection, hasDirection);
@@ -118,10 +155,11 @@ namespace BattleRoyaleX
             }
 
             float currentReadyAt = readyAt.TryGetValue(slot, out float t) ? t : 0f;
-            CharacterRuntime acquired = ability.behavior == AbilityBehavior.HuntSequence ? FindHuntTarget(ability, worldDirection) : null;
+            CharacterRuntime acquired = ability.behavior == AbilityBehavior.HuntSequence || ability.behavior == AbilityBehavior.ExecutionStrike ? FindHuntTarget(ability, worldDirection) : null;
             CharacterRuntime pursuitTarget = ability.pursueTarget ? FindPursuitTarget(ability, worldDirection, hasDirection) : null;
-            if (ability.behavior == AbilityBehavior.HuntSequence && acquired == null) return false;
-            if (Time.time < currentReadyAt || !runtime.Energy.TrySpend(ability.energyCost)) return false;
+            if ((ability.behavior == AbilityBehavior.HuntSequence || ability.behavior == AbilityBehavior.ExecutionStrike) && acquired == null) return false;
+            if (ability.behavior == AbilityBehavior.ExecutionStrike) pursuitTarget = acquired;
+            if ((!isBasic && Time.time < currentReadyAt) || !runtime.Energy.TrySpend(ability.energyCost)) return false;
             if (comboInProgress) CancelBasicCombo();
             if (hasDirection) runtime.Motor.FaceDirection(worldDirection);
             if (ability.behavior != AbilityBehavior.Guard && ability.behavior != AbilityBehavior.Parry)
@@ -129,7 +167,7 @@ namespace BattleRoyaleX
 
             float cooldown = ability.cooldown;
             if (IsMovementBehavior(ability.behavior)) cooldown *= runtime.Modifiers.movementCooldownMultiplier;
-            readyAt[slot] = Time.time + Mathf.Max(0f, cooldown);
+            if (!isBasic) readyAt[slot] = Time.time + Mathf.Max(0f, cooldown);
 
             if (ability.behavior == AbilityBehavior.ChargedDashSequence || ability.behavior == AbilityBehavior.MultiDash)
                 return BeginChargedSequence(ability);
@@ -142,13 +180,17 @@ namespace BattleRoyaleX
             actionBusy = true;
             int id = ++actionSerial;
             currentAction = ability;
+            actionAimPoint = groundPoint ?? (assistedTarget != null ? assistedTarget.transform.position :
+                transform.position + runtime.Motor.Facing * Mathf.Max(0f, ability.range));
+            actionAimPoint.y = transform.position.y;
+            actionAimPoint = AbilityAimSolution.ClampGroundPoint(transform.position, actionAimPoint, ability);
             defenseRedirected = false;
             if (ability.behavior == AbilityBehavior.Dodge)
                 runtime.State.SetInvulnerable(ability.startup + ability.invulnerabilityDuration);
-            CharacterVisualAnimator visuals = GetComponentInChildren<CharacterVisualAnimator>(true);
+            CharacterVisualAnimator visuals = GetComponentInChildren<CharacterVisualAnimator>();
             if (visuals != null) visuals.PlayAbility(ability);
             CombatEvents.Raise(new CombatEventData(AbilityEventFor(ability), transform.position, runtime, runtime,
-                ability.behavior == AbilityBehavior.UltimateBuff ? ability.buffDuration : 0f,
+                ability.behavior == AbilityBehavior.UltimateBuff || ability.behavior == AbilityBehavior.TimedBuff ? ability.buffDuration : 0f,
                 ability, AbilityPhase.Startup, id, runtime.Motor.Facing));
             StartCoroutine(Execute(ability, id, pursuitTarget));
             return true;
@@ -163,12 +205,10 @@ namespace BattleRoyaleX
                 comboQueued = true;
                 return true;
             }
-            float ready = readyAt.TryGetValue(AbilitySlot.BasicAttack, out float value) ? value : 0f;
-            if (Time.time < ready || !runtime.Energy.TrySpend(ability.energyCost)) return false;
+            if (!runtime.Energy.TrySpend(ability.energyCost)) return false;
             if (hasDirection) runtime.Motor.FaceDirection(worldDirection);
             runtime.Defense.Deactivate();
             comboCounterBonus = ConsumeCounterBonus();
-            readyAt[AbilitySlot.BasicAttack] = Time.time + Mathf.Max(0.05f, ability.cooldown);
             comboRoutine = StartCoroutine(ExecuteBasicCombo(ability));
             return true;
         }
@@ -184,14 +224,16 @@ namespace BattleRoyaleX
                 if (visuals != null) visuals.PlayBasicStep(step);
                 CombatEvents.Raise(new CombatEventData(CombatEventKind.AbilityAttack, transform.position, runtime, runtime,
                     step, ability, AbilityPhase.Startup, comboId, runtime.Motor.Facing));
-                float startup = ComboStartup(ability, step);
+                float startup = ComboStartup(ability, step) / BasicAttackSpeed;
                 if (startup > 0f) yield return new WaitForSeconds(startup);
                 if (runtime.Health.IsDead || runtime.State.IsStaggered || comboId != actionSerial) break;
                 CombatEvents.Raise(new CombatEventData(CombatEventKind.AbilityAttack, transform.position, runtime, runtime,
                     step, ability, AbilityPhase.Active, comboId, runtime.Motor.Facing));
                 SpawnMeleeHitbox(ability, ComboDamageMultiplier(ability, step), step == ability.comboSteps ? 1.08f : 1f,
                     step == 1 ? comboCounterBonus : 0f, step == 1 ? comboCounterKnockback : 0f);
-                float recovery = ComboRecovery(ability, step);
+                yield return new WaitForSeconds(ability.activeTime / BasicAttackSpeed);
+                if (comboId != actionSerial || runtime.Health.IsDead) break;
+                float recovery = ComboRecovery(ability, step) / BasicAttackSpeed;
                 comboQueueOpensAt = Time.time + Mathf.Max(0f, recovery - ability.comboInputBuffer);
                 comboQueueClosesAt = Time.time + recovery;
                 CombatEvents.Raise(new CombatEventData(CombatEventKind.AbilityAttack, transform.position, runtime, runtime,
@@ -301,11 +343,18 @@ namespace BattleRoyaleX
 
         static CombatEventKind AbilityEventFor(AbilityDefinition ability)
         {
+            if (ability.slot == AbilitySlot.Ultimate) return CombatEventKind.AbilityUltimate;
             switch (ability.behavior)
             {
                 case AbilityBehavior.Guard:
                 case AbilityBehavior.Parry:
                 case AbilityBehavior.SmokeEscape: return CombatEventKind.AbilityGuard;
+                case AbilityBehavior.OrbitingDaggers: return CombatEventKind.AbilityGuard;
+                case AbilityBehavior.WarriorFortress:
+                case AbilityBehavior.WarriorSkillCapture: return CombatEventKind.AbilityGuard;
+                case AbilityBehavior.WarriorShieldCharge:
+                case AbilityBehavior.WarriorPursuitStrike:
+                case AbilityBehavior.WarriorPursuitLong: return CombatEventKind.AbilityMove;
                 case AbilityBehavior.Dodge:
                 case AbilityBehavior.Dash:
                 case AbilityBehavior.DashThrough:
@@ -315,6 +364,8 @@ namespace BattleRoyaleX
                 case AbilityBehavior.MultiDash:
                 case AbilityBehavior.ChargedDashSequence:
                 case AbilityBehavior.HuntSequence: return CombatEventKind.AbilityMove;
+                case AbilityBehavior.Grapple: return CombatEventKind.AbilityMove;
+                case AbilityBehavior.TimedBuff:
                 case AbilityBehavior.UltimateBuff:
                 case AbilityBehavior.ComboProjectileUltimate: return CombatEventKind.AbilityUltimate;
                 default: return CombatEventKind.AbilityAttack;
@@ -323,48 +374,83 @@ namespace BattleRoyaleX
 
         static bool IsMovementBehavior(AbilityBehavior behavior)
         {
+            if (behavior == AbilityBehavior.WarriorShieldCharge || behavior == AbilityBehavior.WarriorPursuitStrike ||
+                behavior == AbilityBehavior.WarriorPursuitLong) return true;
             return behavior == AbilityBehavior.Dodge || behavior == AbilityBehavior.Dash ||
                 behavior == AbilityBehavior.DashThrough || behavior == AbilityBehavior.DashReturn ||
                 behavior == AbilityBehavior.Blink || behavior == AbilityBehavior.CloneTeleport ||
                 behavior == AbilityBehavior.MultiDash || behavior == AbilityBehavior.ChargedDashSequence ||
-                behavior == AbilityBehavior.HuntSequence;
+                behavior == AbilityBehavior.HuntSequence || behavior == AbilityBehavior.Grapple ||
+                behavior == AbilityBehavior.DaggerTeleport || behavior == AbilityBehavior.ExecutionStrike;
         }
 
         static bool IsOffensiveBehavior(AbilityBehavior behavior)
         {
+            if (behavior == AbilityBehavior.WarriorShieldCharge || behavior == AbilityBehavior.WarriorPursuitStrike ||
+                behavior == AbilityBehavior.WarriorPursuitLong || behavior == AbilityBehavior.WarriorGroundBlast ||
+                behavior == AbilityBehavior.WarriorGroundField || behavior == AbilityBehavior.WarriorGroundWaves) return true;
             return behavior == AbilityBehavior.MeleeAttack || behavior == AbilityBehavior.ProjectileAttack ||
                 behavior == AbilityBehavior.SeekingProjectile || behavior == AbilityBehavior.MultiShot ||
                 behavior == AbilityBehavior.AreaAttack || behavior == AbilityBehavior.SlowField ||
                 behavior == AbilityBehavior.PullTrap || behavior == AbilityBehavior.Repulsion ||
                 behavior == AbilityBehavior.ComboProjectileUltimate || behavior == AbilityBehavior.UltimateBuff ||
                 behavior == AbilityBehavior.TimedBuff || behavior == AbilityBehavior.HuntSequence ||
-                behavior == AbilityBehavior.ChargedDashSequence || behavior == AbilityBehavior.MultiDash;
+                behavior == AbilityBehavior.ChargedDashSequence || behavior == AbilityBehavior.MultiDash ||
+                behavior == AbilityBehavior.ArrowRain || behavior == AbilityBehavior.Grapple ||
+                behavior == AbilityBehavior.ExecutionStrike || behavior == AbilityBehavior.DaggerTeleport ||
+                behavior == AbilityBehavior.OrbitingDaggers;
         }
 
         IEnumerator Execute(AbilityDefinition ability, int id, CharacterRuntime pursuitTarget)
         {
-            if (ability.startup > 0f) yield return new WaitForSeconds(ability.startup);
+            float speed = ability.slot == AbilitySlot.BasicAttack ? BasicAttackSpeed : 1f;
+            if (ability.startup > 0f) yield return new WaitForSeconds(ability.startup / speed);
             if (!ActionStillValid(id)) { FinishAction(id); yield break; }
             CombatEvents.Raise(new CombatEventData(AbilityEventFor(ability), transform.position, runtime, runtime,
-                ability.behavior == AbilityBehavior.UltimateBuff ? ability.buffDuration : 0f,
+                ability.behavior == AbilityBehavior.UltimateBuff || ability.behavior == AbilityBehavior.TimedBuff ? ability.buffDuration : 0f,
                 ability, AbilityPhase.Active, id, runtime.Motor.Facing));
             switch (ability.behavior)
             {
+                case AbilityBehavior.WarriorFortress: BeginWarriorFortress(ability); break;
+                case AbilityBehavior.WarriorSkillCapture: BeginWarriorCapture(ability); break;
+                case AbilityBehavior.WarriorShieldCharge:
+                case AbilityBehavior.WarriorPursuitStrike:
+                case AbilityBehavior.WarriorPursuitLong: yield return ExecuteWarriorMovement(ability, pursuitTarget, id); break;
+                case AbilityBehavior.WarriorGroundBlast:
+                case AbilityBehavior.WarriorGroundField:
+                case AbilityBehavior.WarriorGroundWaves: BeginWarriorGroundEffect(ability); break;
                 case AbilityBehavior.MeleeAttack: SpawnMeleeHitbox(ability, 1f, 1f, ConsumeCounterBonus()); break;
+                case AbilityBehavior.ExecutionStrike: yield return ExecuteExecution(ability, pursuitTarget, id); break;
+                case AbilityBehavior.DaggerTeleport: ThrowTeleportDagger(ability); break;
+                case AbilityBehavior.OrbitingDaggers: BeginOrbitingDaggers(ability); break;
                 case AbilityBehavior.ProjectileAttack: SpawnProjectileHitbox(ability); break;
                 case AbilityBehavior.SeekingProjectile: SpawnSeekingProjectile(ability); break;
                 case AbilityBehavior.MultiShot: SpawnMultiShot(ability); break;
                 case AbilityBehavior.AreaAttack:
-                    if (ability.activeTime > 0.5f) yield return ExecuteAreaPulses(ability);
+                    if (ability.activeTime > 0.5f)
+                    {
+                        GameObject areaVisual = new GameObject("AreaPresentation_" + ability.abilityId);
+                        areaVisual.transform.position = GroundCastPosition(ability);
+                        areaVisual.AddComponent<AreaCastPresentation>();
+                        areaVisual.AddComponent<OwnedAbilityEffect>().Configure(runtime, ability);
+                        Destroy(areaVisual, ability.activeTime);
+                        yield return ExecuteAreaPulses(ability);
+                    }
                     else SpawnAreaHitbox(ability);
                     break;
                 case AbilityBehavior.SlowField: SpawnSlowField(ability); break;
                 case AbilityBehavior.PullTrap: SpawnPullField(ability); break;
+                case AbilityBehavior.ArrowRain: SpawnArrowRain(ability); break;
+                case AbilityBehavior.Grapple:
+                    yield return ExecuteGrapple(ability);
+                    break;
                 case AbilityBehavior.Repulsion: SpawnAreaHitbox(ability); break;
                 case AbilityBehavior.Guard:
                 case AbilityBehavior.Parry:
                     runtime.Defense.Activate(ability.defenseKind, ability.defenseDuration, ability.perfectWindow,
                         ability.damageReduction, ability.specialInteractionCooldown, ability);
+                    if (IsWarrior && ability.behavior == AbilityBehavior.Guard)
+                        BeginWarriorGuardPresentation(ability);
                     FinishAction(id);
                     yield break;
                 case AbilityBehavior.Dodge:
@@ -380,6 +466,12 @@ namespace BattleRoyaleX
                 case AbilityBehavior.DashThrough:
                     Vector3 castFacing = runtime.Motor.Facing;
                     if (ability.fireProjectileOnMove) SpawnV1Projectile(ability, castFacing, 1f, 1f);
+                    if (ability.abilityId == "Archer_S2_A")
+                    {
+                        CharacterVisualAnimator visual = GetComponentInChildren<CharacterVisualAnimator>();
+                        if (visual != null) gameObject.AddComponent<ArcherBackflipVisual>().Begin(visual.transform,
+                            ability.movementDuration + 0.08f);
+                    }
                     if (ability.reverseMovement) runtime.Motor.FaceDirection(-castFacing);
                     ExecuteMovement(ability, ability.movementDistance, pursuitTarget: pursuitTarget);
                     while (runtime.Motor.IsDashing && !runtime.Health.IsDead) yield return null;
@@ -395,7 +487,9 @@ namespace BattleRoyaleX
                     while (runtime.Motor.IsDashing && !runtime.Health.IsDead) yield return null;
                     break;
                 case AbilityBehavior.Blink:
-                    ExecuteBlink(ability);
+                    MageSoulEcho.Create(runtime);
+                    ExecuteMovement(ability, ability.movementDistance);
+                    while (runtime.Motor.IsDashing && !runtime.Health.IsDead) yield return null;
                     break;
                 case AbilityBehavior.CloneTeleport:
                     BeginCloneTeleport(ability);
@@ -407,12 +501,15 @@ namespace BattleRoyaleX
                 case AbilityBehavior.TimedBuff:
                     if (ability.damage > 0f) SpawnAreaHitbox(ability);
                     runtime.ApplyTimedModifiers(ability.ToRuntimeModifiers(), ability.buffDuration);
+                    if (ability.abilityId == "Archer_Ult_B") archerOverloadUntil = Time.time + ability.buffDuration;
                     break;
             }
+            if (ability.slot == AbilitySlot.BasicAttack && ActionStillValid(id))
+                yield return new WaitForSeconds(ability.activeTime / speed);
             if (ActionStillValid(id) && ability.recovery > 0f)
             {
                 runtime.State.SetActionRecovery(true);
-                yield return new WaitForSeconds(ability.recovery);
+                yield return new WaitForSeconds(ability.recovery / speed);
                 runtime.State.SetActionRecovery(false);
             }
             FinishAction(id);
@@ -449,7 +546,7 @@ namespace BattleRoyaleX
                 delta.y = 0f;
                 float sqr = delta.sqrMagnitude;
                 if (sqr < 0.01f || sqr > bestDistance || Vector3.Dot(aim, delta.normalized) < 0.15f) continue;
-                if (SmokeField.BlocksSight(transform.position, candidate.transform.position)) continue;
+                if (candidate.Abilities.IsExecutionHidden || SmokeField.BlocksSight(transform.position, candidate.transform.position)) continue;
                 best = candidate;
                 bestDistance = sqr;
             }
@@ -459,7 +556,7 @@ namespace BattleRoyaleX
         Vector3 PursuitDestination(CharacterRuntime target, float stopDistance)
         {
             if (target == null || target.Health == null || target.Health.IsDead ||
-                SmokeField.BlocksSight(transform.position, target.transform.position)) return transform.position;
+                target.Abilities.IsExecutionHidden || SmokeField.BlocksSight(transform.position, target.transform.position)) return transform.position;
             Vector3 delta = target.transform.position - transform.position;
             delta.y = 0f;
             if (delta.sqrMagnitude <= stopDistance * stopDistance) return transform.position;
@@ -583,9 +680,11 @@ namespace BattleRoyaleX
             DamagePacket packet = new DamagePacket(runtime, ability, runtime.Motor.Facing);
             packet.damage = packet.damage * damageMultiplier + bonusDamage * runtime.Modifiers.damageMultiplier;
             packet.knockback *= damageMultiplier;
+            if (IsWarrior && ability.slot == AbilitySlot.BasicAttack) packet.knockback = 0f;
             packet.isCounter = bonusDamage > 0f || counterPush > 0f;
             if (packet.isCounter) packet.knockback = Mathf.Max(packet.knockback, counterPush);
-            hitbox.Configure(runtime, packet, new Vector3(ability.width, ability.height, range), ability.activeTime);
+            hitbox.Configure(runtime, packet, new Vector3(ability.width, ability.height, range),
+                ability.activeTime / (ability.slot == AbilitySlot.BasicAttack ? BasicAttackSpeed : 1f));
         }
 
         Hitbox SpawnProjectileHitbox(AbilityDefinition ability)
@@ -595,11 +694,26 @@ namespace BattleRoyaleX
             go.transform.rotation = Quaternion.LookRotation(runtime.Motor.Facing, Vector3.up);
             Hitbox hitbox = go.AddComponent<Hitbox>();
             DamagePacket packet = new DamagePacket(runtime, ability, runtime.Motor.Facing);
-            hitbox.Configure(runtime, packet, new Vector3(ability.width, ability.height, Mathf.Max(0.5f, ability.width)), 4f);
+            float lifetime = ability.range > 0f ? Mathf.Max(0.15f, ability.range /
+                Mathf.Max(0.1f, ability.projectileSpeed)) : 4f;
+            hitbox.Configure(runtime, packet, new Vector3(ability.width, ability.height, Mathf.Max(0.5f, ability.width)), lifetime);
             ProjectileHitboxMover mover = go.AddComponent<ProjectileHitboxMover>();
             mover.direction = runtime.Motor.Facing;
             mover.speed = ability.projectileSpeed;
-            mover.maxLifetime = 4f;
+            mover.maxLifetime = lifetime;
+            if (runtime.Definition != null && runtime.Definition.characterClass == CharacterClass.Mage &&
+                ability.slot == AbilitySlot.BasicAttack)
+            {
+                SeekingProjectileMover bend = go.AddComponent<SeekingProjectileMover>();
+                bend.Configure(runtime, ability.projectileSpeed, ability.turnRate, lifetime, 20f, ability.range);
+            }
+            if (ability.abilityId == "Archer_Basic" && Time.time < archerOverloadUntil)
+            {
+                SeekingProjectileMover bend = go.AddComponent<SeekingProjectileMover>();
+                bend.Configure(runtime, ability.projectileSpeed, 220f, lifetime, 25f, ability.range);
+            }
+            if (ability.abilityId == "Archer_S1_B")
+                go.AddComponent<ArcherDistanceDamage>().Configure(ability.range);
             go.AddComponent<ProjectileInteractionState>();
             go.AddComponent<OwnedAbilityEffect>().Configure(runtime, ability);
             return hitbox;
@@ -607,7 +721,7 @@ namespace BattleRoyaleX
 
         void SpawnAreaHitbox(AbilityDefinition ability)
         {
-            Vector3 center = transform.position + runtime.Motor.Facing * Mathf.Max(0f, ability.range);
+            Vector3 center = ability.behavior == AbilityBehavior.Repulsion ? transform.position : GroundCastPosition(ability);
             GameObject go = new GameObject($"Area_{ability.displayName}");
             go.transform.position = center;
             Hitbox hitbox = go.AddComponent<Hitbox>();
@@ -616,7 +730,15 @@ namespace BattleRoyaleX
             hitbox.Configure(runtime, packet, Vector3.one * 0.1f, ability.activeTime);
             go.GetComponent<Collider>().enabled = false;
             foreach (Collider collider in Physics.OverlapSphere(center, radius, ~0, QueryTriggerInteraction.Collide))
+            {
+                if (ability.behavior == AbilityBehavior.Repulsion)
+                {
+                    Vector3 away = collider.transform.position - center; away.y = 0f;
+                    if (away.sqrMagnitude > 0.001f)
+                    { packet.direction = away.normalized; hitbox.UpdatePacket(packet); }
+                }
                 hitbox.TryResolveHurtbox(collider.GetComponent<Hurtbox>());
+            }
         }
 
         public void GrantCounterOpportunity(AbilityDefinition defendedWith = null)
@@ -656,6 +778,9 @@ namespace BattleRoyaleX
         public void ResetTransientState()
         {
             ResetVersion++;
+            archerOverloadUntil = 0f;
+            ClearAssassinEffects();
+            ClearWarriorEffects();
             StopAllCoroutines();
             actionSerial++;
             foreach (Hitbox hitbox in FindObjectsByType<Hitbox>())
@@ -707,6 +832,8 @@ namespace BattleRoyaleX
         {
             if (variation == null || variation.slot == AbilitySlot.BasicAttack) return false;
             if (variation.classRestricted && runtime.Definition != null && runtime.Definition.characterClass != variation.requiredClass) return false;
+            if (GetEquipped(variation.slot) != variation) CancelAssassinSlot(variation.slot);
+            if (GetEquipped(variation.slot) != variation) ClearWarriorEffects();
             if (variation.slot == AbilitySlot.Ultimate) { EndChargedSequence(AbilityPhase.Cancelled); ClearHunt(); }
             if (variation.behavior == AbilityBehavior.Guard || variation.behavior == AbilityBehavior.Parry ||
                 variation.behavior == AbilityBehavior.Dodge || variation.behavior == AbilityBehavior.SmokeEscape)
@@ -719,6 +846,8 @@ namespace BattleRoyaleX
 
         public bool EquipLabVariation(AbilityDefinition variation)
         {
+            if (variation == null || (variation.classRestricted && runtime.Definition.characterClass != variation.requiredClass)) return false;
+            ResetTransientState();
             if (!EquipVariation(variation)) return false;
             readyAt[variation.slot] = 0f;
             return true;
@@ -741,6 +870,7 @@ namespace BattleRoyaleX
 
         public float GetCooldownRemaining(AbilitySlot slot)
         {
+            if (slot == AbilitySlot.BasicAttack) return 0f;
             float t = readyAt.TryGetValue(slot, out float value) ? value : 0f;
             return Mathf.Max(0f, t - Time.time);
         }

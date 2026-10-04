@@ -1,5 +1,7 @@
 # Handoff para Astra / Codex
 
+> Contexto histórico da primeira integração. Para continuar o projeto atual de quatro classes, começar por [HANDOFF.md](HANDOFF.md) e [MAPA.md](MAPA.md). As regras de separação entre gameplay e apresentação abaixo continuam válidas; não recriar o projeto nem remover entregas posteriores.
+
 ## Missão
 
 Não redesenhe a arquitetura do jogo. O núcleo lógico já está no pacote. Sua tarefa é **integrar, compilar, conectar assets, testar e corrigir incompatibilidades reais da Unity**.

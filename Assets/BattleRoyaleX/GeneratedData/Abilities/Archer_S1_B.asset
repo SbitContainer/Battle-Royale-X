@@ -32,10 +32,10 @@ MonoBehaviour:
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
   attackKind: 2
-  damage: 30
-  range: 12
-  width: 0.55
-  height: 1.5
+  damage: 20
+  range: 22
+  width: 0.28
+  height: 0.55
   knockback: 1
   clashable: 1
   blockable: 1
@@ -51,7 +51,7 @@ MonoBehaviour:
   fragmentTrigger: 0
   heavy: 1
   attackInteractionCooldown: 30
-  projectileSpeed: 11
+  projectileSpeed: 65
   explosionRadius: 2.5
   clashDamageFactor: 0.25
   turnRate: 240

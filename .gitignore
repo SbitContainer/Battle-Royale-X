@@ -9,6 +9,9 @@ UserSettings/
 MemoryCaptures/
 Recordings/
 
+# Chat attachments are references, not game source/build inputs.
+.codex-remote-attachments/
+
 # Accidental nested Unity projects; the repository root is the playable project.
 /BTX/
 /My project/

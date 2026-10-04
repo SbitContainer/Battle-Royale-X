@@ -32,7 +32,7 @@ MonoBehaviour:
   comboSecondDamageMultiplier: 1
   comboThirdDamageMultiplier: 1.25
   attackKind: 3
-  damage: 3
+  damage: 4
   range: 5
   width: 1
   height: 1.5

@@ -20,10 +20,10 @@ namespace BattleRoyaleX.EditorTools
 
             PlayerSettings.companyName = "SbitContainer";
             PlayerSettings.productName = "Battle Royale X";
-            PlayerSettings.bundleVersion = "0.8.0-blood-death";
+            PlayerSettings.bundleVersion = "0.9.2-effects-lab";
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.sbitcontainer.battleroyalex.prototype");
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
-            PlayerSettings.Android.bundleVersionCode = 8;
+            PlayerSettings.Android.bundleVersionCode = 11;
             // Support the common 32-bit and 64-bit Android devices used for local tests.
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;

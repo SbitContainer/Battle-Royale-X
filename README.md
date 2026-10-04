@@ -1,6 +1,12 @@
 # Battle Royale X — Prototype 01
 
-Pacote de código para validar o combate local 2.5D entre **Guerreiro** e **Assassino** antes de investir créditos do Astra/Codex em integração visual e multiplayer.
+Laboratório de combate local 2.5D em Unity 6 + URP, com **Guerreiro, Assassino, Mago e Arqueiro**, controles Android, bot e variantes A/B/C. O projeto começou como pacote Guerreiro x Assassino; as seções históricas abaixo não anulam as entregas posteriores.
+
+## Continuação atual
+
+Antes de alterar, leia [AGENTS.md](AGENTS.md), [estado atual](Docs/HANDOFF.md), [contrato do projeto](Docs/PROJETO.md) e [mapa de impacto](Docs/MAPA.md). A [adoção da arquitetura reutilizável](Docs/engenharia/ADOCAO.md) organiza os métodos e ferramentas sem reescrever o combate.
+
+Para abrir o projeto existente, use a raiz que contém Assets, Packages e ProjectSettings no Unity Hub. Não crie outro projeto dentro desta pasta. APK atual publicado: [Android lab 12 / 0.9.12-lab](https://github.com/SbitContainer/Battle-Royale-X/releases/tag/android-lab-12), com atualizador pelo GitHub e instalação física ainda pendente. Consulte [atualizações sem ADB](Docs/ANDROID_GITHUB_UPDATES.md) e o [registro do artefato](Docs/engenharia/releases/android-lab-12.json). [Effects Lab 0.9.2](Docs/EFFECTS_LAB_092.md) é histórico; resultados anteriores não significam nova validação a cada leitura.
 
 ## Objetivo
 
@@ -29,13 +35,13 @@ O pacote deixa pronto o máximo possível de lógica determinística:
 
 - Unity 6.x
 - Projeto 3D/URP recomendado
-- Código sem dependências de assets de terceiros
+- Núcleo de combate separado da apresentação; a apresentação atual contém assets de terceiros documentados em Docs/THIRD_PARTY_NOTICES.md e Docs/EFFECTS_LAB_092.md.
 
 ### Entrada temporária
 
-O protótipo usa `UnityEngine.Input` para reduzir dependências. No Unity, deixe **Active Input Handling = Both** ou **Input Manager (Old)** durante o teste inicial. Depois o Astra pode substituir `PrototypeLocalInput` pelo Input System oficial sem alterar o núcleo de combate.
+O protótipo usa `UnityEngine.Input`. O build Android atual configura **Input Manager (Old)**; não usar Both como orientação para esse APK. Uma migração ao Input System exige tarefa e testes próprios, preservando o núcleo de combate.
 
-## Instalação
+## Instalação do pacote original como referência histórica
 
 1. Crie um projeto Unity 6 3D/URP vazio.
 2. Copie a pasta `Assets/BattleRoyaleX` deste pacote para a pasta `Assets` do projeto.

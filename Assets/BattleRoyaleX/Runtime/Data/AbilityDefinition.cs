@@ -15,6 +15,8 @@ namespace BattleRoyaleX
         public AbilityBehavior behavior;
         public AbilityTags tags;
         public AbilityVisualProfile visualProfile;
+        [Tooltip("Shared eligibility rule; null preserves existing block/parry/projectile flags.")]
+        public DefenseInteractionRule defenseInteractionRule;
 
         [Header("Costs / Timing")]
         [Min(0f)] public float cooldown = 3f;
@@ -65,10 +67,16 @@ namespace BattleRoyaleX
         [Min(0f)] public float fieldDuration = 3f;
         [Min(0f)] public float secondActivationDelay = 0.2f;
         [Min(0f)] public float secondActivationWindow = 2f;
+        [Min(0.1f)] public float fieldTickInterval = 0.6f;
+        [Min(0.1f)] public float captureRecastWindow = 2f;
         [Min(1)] public int projectileCount = 1;
         [Range(0f, 90f)] public float spreadAngle = 8f;
         [Min(0f)] public float comboSuccessCooldown = 28f;
         [Min(0f)] public float comboFailureCooldown = 12f;
+        [Header("Assassin variants")]
+        [Min(0f)] public float stealthDuration = 2f;
+        [Min(0f)] public float secondStrikeDamage = 12f;
+        [Range(0f, 1f)] public float repelChance = 0.5f;
 
         [Header("Defense")]
         public DefenseKind defenseKind = DefenseKind.None;
@@ -134,6 +142,7 @@ namespace BattleRoyaleX
         [Min(0.01f)] public float staggerResistanceMultiplier = 1f;
         [Min(0.01f)] public float defenseWindowMultiplier = 1f;
         [Min(0.01f)] public float movementCooldownMultiplier = 1f;
+        [Min(0.01f)] public float attackSpeedMultiplier = 1f;
 
         public RuntimeModifiers ToRuntimeModifiers() => new RuntimeModifiers
         {
@@ -141,7 +150,8 @@ namespace BattleRoyaleX
             moveSpeedMultiplier = moveSpeedMultiplier,
             staggerResistanceMultiplier = staggerResistanceMultiplier,
             defenseWindowMultiplier = defenseWindowMultiplier,
-            movementCooldownMultiplier = movementCooldownMultiplier
+            movementCooldownMultiplier = movementCooldownMultiplier,
+            attackSpeedMultiplier = attackSpeedMultiplier
         };
     }
 }

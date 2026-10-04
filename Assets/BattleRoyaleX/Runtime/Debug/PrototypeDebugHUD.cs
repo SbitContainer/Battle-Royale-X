@@ -12,6 +12,8 @@ namespace BattleRoyaleX
 
         void OnGUI()
         {
+            // The phone uses MENU / SKILLS; the desktop-only lab panel obscures the left touch area.
+            if (Application.isMobilePlatform) return;
             if (labButton == null)
             {
                 labButton = new GUIStyle(GUI.skin.button);

@@ -21,7 +21,8 @@ MonoBehaviour:
   behavior: 0
   tags: 1033
   visualProfile: {fileID: 11400000, guid: aed34e4ac8cb0e147ba724d1a4217a9e, type: 2}
-  cooldown: 1.55
+  defenseInteractionRule: {fileID: 0}
+  cooldown: 0
   energyCost: 0
   startup: 0.15
   activeTime: 0.12
@@ -36,7 +37,7 @@ MonoBehaviour:
   range: 2.2
   width: 1.25
   height: 1.5
-  knockback: 1.5
+  knockback: 0
   clashable: 1
   blockable: 1
   parryable: 1
@@ -61,10 +62,15 @@ MonoBehaviour:
   fieldDuration: 3
   secondActivationDelay: 0.2
   secondActivationWindow: 2
+  fieldTickInterval: 0.6
+  captureRecastWindow: 2
   projectileCount: 1
   spreadAngle: 8
   comboSuccessCooldown: 28
   comboFailureCooldown: 12
+  stealthDuration: 2
+  secondStrikeDamage: 12
+  repelChance: 0.5
   defenseKind: 0
   defenseDuration: 0.45
   perfectWindow: 0.12
@@ -109,3 +115,4 @@ MonoBehaviour:
   staggerResistanceMultiplier: 1
   defenseWindowMultiplier: 1
   movementCooldownMultiplier: 1
+  attackSpeedMultiplier: 1

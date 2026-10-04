@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Var_Warrior_Ret
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleX.ItemDefinition
   itemId: Var_Warrior_Ret
-  displayName: "Runa: Retalia\xE7\xE3o"
+  displayName: "Runa: Dom\xEDnio de Ferro"
   kind: 3
   icon: {fileID: 0}
   amount: 0

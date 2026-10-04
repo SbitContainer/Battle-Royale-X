@@ -112,6 +112,7 @@ namespace BattleRoyaleX.EditorTools
             colorOverLifetime.color = gradient;
             ParticleSystemRenderer renderer = root.GetComponent<ParticleSystemRenderer>();
             renderer.sharedMaterial = MaterialFor(Path.GetFileNameWithoutExtension(path), color);
+            PrototypeSkillVfxPolish.Decorate(root, path);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
             return prefab;
@@ -124,6 +125,12 @@ namespace BattleRoyaleX.EditorTools
         static GameObject CreateWorldPrefab(string path, Color color, bool field, bool arrow)
         {
             GameObject root = new GameObject(Path.GetFileNameWithoutExtension(path));
+            if (path.Contains("Archer_S1_B_Projectile")) color = new Color(0.76f, 0.96f, 1f, 1f);
+            if (path.Contains("Archer_S1_A_Projectile")) color = new Color(1f, 0.86f, 0.26f, 1f);
+            bool swamp = path.Contains("Mage_S1_C_Field");
+            bool flamePulse = path.Contains("Mage_S2_C_Field");
+            if (swamp) color = new Color(0.23f, 0.78f, 0.43f, 0.72f);
+            if (flamePulse) color = new Color(1f, 0.39f, 0.08f, 0.9f);
             Material material = MaterialFor(root.name, field ? Color.white : color);
             if (field)
             {
@@ -144,8 +151,8 @@ namespace BattleRoyaleX.EditorTools
                         line.SetPosition(i, new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius);
                     }
                 }
-                // Small runic spokes keep the boundary readable without filling the whole disc.
-                for (int i = 0; i < 12; i++)
+                // Mage field effects are physical shapes, without the generic rune marks.
+                for (int i = 0; i < (swamp || flamePulse ? 0 : 12); i++)
                 {
                     GameObject mark = new GameObject("Rune_" + i);
                     mark.transform.SetParent(root.transform, false);
@@ -174,7 +181,22 @@ namespace BattleRoyaleX.EditorTools
                     new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.8f, 0.2f), new GradientAlphaKey(0f, 1f) });
                 fade.color = gradient;
                 motes.GetComponent<ParticleSystemRenderer>().sharedMaterial = MaterialFor(root.name + "_Motes", Color.white);
-                root.AddComponent<ArcaneFieldPresentation>();
+                root.AddComponent<ArcaneFieldPresentation>().inward = !flamePulse;
+                if (swamp)
+                {
+                    GameObject surface = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    surface.name = "TranslucentSwamp";
+                    Object.DestroyImmediate(surface.GetComponent<Collider>());
+                    surface.transform.SetParent(root.transform, false);
+                    surface.transform.localPosition = new Vector3(0f, 0.008f, 0f);
+                    surface.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+                    surface.transform.localScale = Vector3.one * 1.8f;
+                    surface.GetComponent<Renderer>().sharedMaterial = MaterialFor(root.name + "_Water",
+                        new Color(0.08f, 0.38f, 0.26f, 0.46f));
+                    AddMageBubbles(root.transform, root.name, new Color(0.40f, 1f, 0.64f, 0.8f), true);
+                }
+                if (flamePulse) AddMageBubbles(root.transform, root.name,
+                    new Color(1f, 0.48f, 0.1f, 0.95f), false);
             }
             else
             {
@@ -182,17 +204,50 @@ namespace BattleRoyaleX.EditorTools
                 core.name = arrow ? "ArrowCore" : "ArcaneCore";
                 Object.DestroyImmediate(core.GetComponent<Collider>());
                 core.transform.SetParent(root.transform, false);
-                core.transform.localScale = arrow ? new Vector3(0.08f, 0.08f, 0.65f) : Vector3.one * 0.26f;
+                core.transform.localScale = arrow ? path.Contains("Archer_S1_B_Projectile") ?
+                    new Vector3(0.045f, 0.045f, 1.1f) : new Vector3(0.08f, 0.08f, 0.65f) :
+                    path.Contains("Mage_S1_B_Projectile") ? Vector3.one * 1.15f : Vector3.one * 0.26f;
                 core.GetComponent<Renderer>().sharedMaterial = material;
                 TrailRenderer trail = root.AddComponent<TrailRenderer>();
-                trail.sharedMaterial = material; trail.time = arrow ? 0.12f : 0.24f;
-                trail.startWidth = arrow ? 0.09f : 0.22f; trail.endWidth = 0f;
+                trail.sharedMaterial = material; trail.time = arrow ?
+                    path.Contains("Archer_S1_A_Projectile") ? 0.28f : 0.12f : 0.24f;
+                trail.startWidth = arrow ? path.Contains("Archer_S1_B_Projectile") ? 0.18f :
+                    path.Contains("Archer_S1_A_Projectile") ? 0.14f : 0.09f : 0.22f; trail.endWidth = 0f;
                 trail.minVertexDistance = 0.06f; trail.startColor = color;
                 trail.endColor = new Color(color.r, color.g, color.b, 0f);
             }
+            PrototypeSkillVfxPolish.Decorate(root, path);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
             return prefab;
+        }
+
+        static void AddMageBubbles(Transform parent, string materialName, Color color, bool swamp)
+        {
+            GameObject effect = new GameObject(swamp ? "RisingBubbles" : "FlameSparks");
+            effect.transform.SetParent(parent, false);
+            ParticleSystem particles = effect.AddComponent<ParticleSystem>();
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = particles.main;
+            main.loop = swamp; main.duration = swamp ? 1.2f : 0.55f;
+            main.startLifetime = swamp ? 0.8f : 0.48f;
+            main.startSpeed = swamp ? 0.4f : 2.4f;
+            main.startSize = swamp ? 0.10f : 0.24f;
+            main.startColor = color; main.maxParticles = swamp ? 24 : 48;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
+            var emission = particles.emission;
+            emission.rateOverTime = swamp ? 16f : 0f;
+            if (!swamp) emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)36) });
+            var shape = particles.shape;
+            shape.shapeType = ParticleSystemShapeType.Circle;
+            shape.radius = swamp ? 0.85f : 0.45f;
+            shape.rotation = new Vector3(90f, 0f, 0f);
+            var fade = particles.colorOverLifetime; fade.enabled = true;
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(new[] { new GradientColorKey(color, 0f), new GradientColorKey(color, 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.2f), new GradientAlphaKey(0f, 1f) });
+            fade.color = gradient;
+            effect.GetComponent<ParticleSystemRenderer>().sharedMaterial = MaterialFor(materialName + "_Bubbles", Color.white);
         }
         static bool IsArea(AbilityDefinition ability) => ability.attackKind == AttackKind.Area ||
             ability.behavior == AbilityBehavior.AreaAttack || ability.behavior == AbilityBehavior.SlowField ||
