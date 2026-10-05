@@ -1,4 +1,4 @@
-# Matriz ao vivo — 04/10/2026 22:47:01
+# Matriz ao vivo — 04/10/2026 23:24:58
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -242,6 +242,8 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Órbita pode repelir explosão I07 sem impedir choque mágico ou seu cancelamento
 - PASSOU: Área direta respeita exceção do perfil R02, sem exclusão global de ultimates
 - PASSOU: Troca de defesa não mantém órbita escondida da variante antiga
+- PASSOU: RELEASE010 Resources retém Lit transparente sem normal map
+- PASSOU: RELEASE010 Resources retém Lit transparente com normal map
 - PASSOU: VISUAL009 Execução mostra modelo realmente transparente ao proprietário, com shader transparente
 - PASSOU: VISUAL009 furtividade preserva texturas, não altera material compartilhado e não revela sombra sólida
 - PASSOU: VISUAL009 adversário não enxerga o modelo furtivo
@@ -343,4 +345,4 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Morte visual permanece ativa no mobile até o reinício da rodada
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 340 passaram; 0 falharam.
+Resultado: 342 passaram; 0 falharam.

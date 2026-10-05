@@ -38,6 +38,16 @@ namespace BattleRoyaleX
         IEnumerator TestAssassinVisual009()
         {
             stage = "VISUAL009: referências Assassino, fumaça e furtividade local";
+            // Resources assets retain the two runtime Lit keyword combinations in Android builds.
+            foreach (bool normal in new[] { false, true })
+            {
+                Material retained = Resources.Load<Material>(normal ? "StealthLitTransparentNormal" : "StealthLitTransparent");
+                Check(retained != null && retained.shader.name == "Universal Render Pipeline/Lit" &&
+                    retained.IsKeywordEnabled("_SURFACE_TYPE_TRANSPARENT") &&
+                    retained.IsKeywordEnabled("_NORMALMAP") == normal && retained.GetFloat("_Surface") == 1f &&
+                    retained.GetFloat("_ZWrite") == 0f && retained.renderQueue == 3000,
+                    "RELEASE010 Resources retém Lit transparente" + (normal ? " com normal map" : " sem normal map"));
+            }
             ResetPair(3f); SmokeVisibility.LocalPlayer = a;
             var mesh = a.GetComponentInChildren<SkinnedMeshRenderer>();
             Material[] originals = mesh.sharedMaterials;
