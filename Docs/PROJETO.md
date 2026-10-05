@@ -6,7 +6,7 @@ Inventário local de 03/10/2026. Este documento aplica o kit de engenharia ao la
 - Git: `main`, HEAD observado `d2b0b067fe7613523c1d740351699f7a7fe63d9c`, origin `https://github.com/SbitContainer/Battle-Royale-X.git`. Árvore já continha alterações e arquivos não rastreados. Não foi feito fetch; alinhamento com remoto não comprovado.
 - Engine: `ProjectSettings/ProjectVersion.txt` fixa Unity 6000.6.1f1; `Packages/manifest.json` declara URP 17.6.0, Input System 1.20.0 e Test Framework 1.8.0. Não atualizar versões nesta adoção.
 - Produto: laboratório local 2.5D, Guerreiro, Assassino, Mago e Arqueiro, bot, variantes A/B/C, inventário/loot e apresentação URP. Android é a plataforma física de teste; Editor é outra camada.
-- Android: pacote `com.sbitcontainer.battleroyalex.prototype`. Última entrega documentada: 0.9.15-lab, versionCode 15, publicada em 03/10/2026 local, registro `engenharia/releases/android-lab-15.json`. Instalação/validação atual no aparelho não confirmadas nesta entrega.
+- Android: pacote `com.sbitcontainer.battleroyalex.prototype`. Última entrega documentada: 0.9.17-lab, versionCode 17, publicada em 04/10/2026 local, registro `engenharia/releases/android-lab-17.json`. Instalação/validação atual no aparelho não confirmadas nesta entrega.
 
 ## Fontes de verdade
 

@@ -1,8 +1,10 @@
 # Continuação do Battle Royale X
 
-## Publicação suspensa — BRX-RELEASE-010 (04/10/2026)
+## APK publicado — BRX-RELEASE-010 (04/10/2026 local)
 
-APK16/0.9.16-lab compilou com zero erros e saída Unity0; pacote, versão, certificado e hash passaram na ferramenta de publicação em modo offline. **Não publicado nem instalado.** Auditoria identificou risco específico de stripping da variante transparente URP Lit da furtividade local: nenhum material Lit transparente serializado retém o keyword habilitado apenas em runtime. Editor não comprova efeito Android. Aguardar permissão para dois materiais técnicos Resources (+ .meta) que preservem transparência com/sem normal map; depois novo APK, sem sobrescrever16. Não alterar gameplay/configuração global. Release15 continua distribuída. Evidências e próximo passo em [BRX-RELEASE-010](engenharia/tarefas/BRX-RELEASE-010.md).
+**0.9.17-lab/código17 publicado e verificado:** [release](https://github.com/SbitContainer/Battle-Royale-X/releases/tag/android-lab-17), [APK](https://github.com/SbitContainer/Battle-Royale-X/releases/download/android-lab-17/BattleRoyaleX-17.apk). Inclui VISUAL-009 e dois materiais técnicos Resources que retêm Lit transparente com/sem normal map, aprovados após permissão do usuário. Sem alteração de gameplay, aparência aprovada ou configurações globais. APK16 foi preservado mas nunca publicado pelo risco detectado de stripping.
+
+342 PASS / 0 FAIL na matriz,48/0 visuais,16/0 engenharia,10/0 publisher. Unity saída0/zero erros; pacote/certificado original e1156 inputs Git conferidos. ForwardLit80 variantes por API,32 adicionais versus16. Fonte/tag970ded62; downloads públicos APK/catálogo/inventário e API latest17 verificados. Recibo [android-lab-17.json](engenharia/releases/android-lab-17.json), histórico [BRX-RELEASE-010](engenharia/tarefas/BRX-RELEASE-010.md). **Não instalado; aparência/toque/FPS e ciclo Android A→B NÃO EXECUTADOS / AGUARDANDO_VALIDACAO.** Abrir jogo e aceitar atualização, ou instalar APK pelo navegador sobre a versão existente, sem desinstalar. Próximo teste físico: Execução translúcida por2s, fumaça local legível/ocultação adversária e restauração após efeito/troca de classe.
 
 ## Entrega atual — BRX-VISUAL-009 (04/10/2026)
 
