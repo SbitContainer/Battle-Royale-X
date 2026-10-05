@@ -1,4 +1,4 @@
-# Matriz ao vivo — 03/10/2026 22:00:36
+# Matriz ao vivo — 04/10/2026 22:47:01
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -242,6 +242,32 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Órbita pode repelir explosão I07 sem impedir choque mágico ou seu cancelamento
 - PASSOU: Área direta respeita exceção do perfil R02, sem exclusão global de ultimates
 - PASSOU: Troca de defesa não mantém órbita escondida da variante antiga
+- PASSOU: VISUAL009 Execução mostra modelo realmente transparente ao proprietário, com shader transparente
+- PASSOU: VISUAL009 furtividade preserva texturas, não altera material compartilhado e não revela sombra sólida
+- PASSOU: VISUAL009 adversário não enxerga o modelo furtivo
+- PASSOU: VISUAL009 fim da Execução restaura materiais, propriedades, sombras e visibilidade exatamente
+- PASSOU: VISUAL009 fumaça sombria usa shader orgânico com partículas limitadas e mantém supressão original
+- PASSOU: VISUAL009 próprio modelo segue legível e translúcido na fumaça
+- PASSOU: VISUAL009 fumaça continua ocultando modelo para adversário
+- PASSOU: VISUAL009 limpar fumaça restaura modelo sem dano/custo introduzido pela apresentação
+- PASSOU: VISUAL009 estilo 0 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 0 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 1 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 1 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 2 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 2 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 3 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 3 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 4 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 4 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 5 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 5 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 6 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 6 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 7 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 7 remove efeito ao terminar
+- PASSOU: VISUAL009 estilo 8 limitado e sem física/autoridade de dano
+- PASSOU: VISUAL009 estilo 8 remove efeito ao terminar
 - PASSOU: SkillLock bloqueia skill sem impedir movimento
 - PASSOU: MovementLock não bloqueia skill e impede apenas deslocamento
 - PASSOU: Defesa cancela basic em startup e inicia no mesmo input
@@ -317,4 +343,4 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Morte visual permanece ativa no mobile até o reinício da rodada
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 314 passaram; 0 falharam.
+Resultado: 340 passaram; 0 falharam.

@@ -373,6 +373,7 @@ namespace BattleRoyaleX
             yield return TestWarriorRework();
             yield return TestIndependentMobileMotion();
             yield return TestAssassinRework();
+            yield return TestAssassinVisual009();
             yield return TestCombatLab001();
             yield return TestProductionV1();
             yield return TestVariationPresentation();

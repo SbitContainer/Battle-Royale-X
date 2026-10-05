@@ -38,6 +38,8 @@ Setor release: `Editor/PrototypeApkReleaseBuild.cs` gera APK versionado da cena 
 
 ## Assassino e catálogo de interações — 03/10/2026
 
+Apresentação [BRX-VISUAL-009](engenharia/tarefas/BRX-VISUAL-009.md): `CombatVFXRouter` conecta fases/acertos do Assassino a `AssassinReferenceVfx` e `AssassinVisualAttachment`, sem autoridade física. O presenter genérico não duplica casts; sangue/morte permanecem. `AssassinDaggersPresentation` apresenta a Travessia/órbita; `OwnedAbilityEffect` não sobrepõe o projétil antigo. `SmokeField` usa `AssassinMist` apenas na fumaça de escape; a regra espacial/ataques não muda. `SmokeVisibility` cria materiais transparentes locais, oculta o modelo adversário e restaura materiais/propriedades/sombras ao sair do estado. Consumidores: perspectiva local, troca de classe/reset/morte, cena e shaders Resources; testes/capturas em `PrototypeLiveTests.AssassinVisual.cs`.
+
 `AbilityController.Assassin.cs` executa Execução, Travessia e Círculo de Adagas. `AssassinDaggerAnchor` controla a posição física da adaga; `AssassinDaggersPresentation` somente apresenta lâminas/rastros. `DefenseInteractionRule` é o perfil reutilizável de elegibilidade, consumido por DefenseController e pela órbita. `AbilityInteractionMapping.Export` gera a lista de IDs/flags em ABILITY_INTERACTIONS; o catálogo numerado das regras existentes é [INTERACTION_RULES.md](INTERACTION_RULES.md).
 
 Invisibilidade → SmokeVisibility, aquisição de alvos/preview, perseguição e bot. Janela de adaga → CanRecast/UI, reset e troca de variante. Teste representativo: `PrototypeLiveTests.Assassin.cs`. Gerador limitado: `PrototypeDataFactory.UpdateAssassinVariants`, sem reconstruir cena nem regenerar dados das outras classes.

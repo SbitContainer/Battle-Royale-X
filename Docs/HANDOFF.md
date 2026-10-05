@@ -1,5 +1,13 @@
 # Continuação do Battle Royale X
 
+## Entrega atual — BRX-VISUAL-009 (04/10/2026)
+
+Assassino recebeu efeitos violeta/prata/grafite inspirados nas seis referências: conjuração, rastros reais de avanço, três silhuetas sombrias procedurais, contatos de Execução/Caçada/Cinco Cortes, marcador de Retorno e adagas facetadas com trilhas violetas. Modelo atual preservado. Contra-Sombra usa fumaça orgânica mais densa de fora, mais leve para o proprietário, com borda suave no chão. Execução mostra o próprio personagem realmente translúcido (alpha .34) durante os mesmos dois segundos de furtividade; adversário continua sem enxergar modelo/adagas/efeitos vinculados. Texturas, materiais/propriedades e sombras são restaurados ao terminar o estado.
+
+**Candidato final: 340 PASS / 0 FAIL na matriz de combate/UI, 48 PASS / 0 FAIL estruturais visuais, 16 PASS / 0 FAIL de engenharia.** Unity6000.6.1f1, log Logs/visual009-matrix3.log; 14 capturas finais inspecionadas em Docs/engenharia/evidencias/BRX-VISUAL-009. Duas rodadas anteriores339/1 pelo contraste local legado; hipótese inicial incompleta e causa real (componente vermelho .62 acima do limite .6) registradas/corrigidas, sem modificar o teste. Revisão independente aprovada. SHA256136/136 GeneratedData e5/5 AbilityController*.cs idênticos à entrada. Nenhuma alteração de dano/timing/alcance/cooldown ou regeneração de dados/cena.
+
+Registro/arquivos em [BRX-VISUAL-009](engenharia/tarefas/BRX-VISUAL-009.md); fontes, metas e capturas entram no commit da tarefa conforme autorização vigente. **Nenhum novo APK/build/publicação/instalação nesta etapa.** Release15 abaixo continua sendo o APK distribuído, não contém esta nova etapa até nova geração/publicação autorizada. Android aparência/toque/FPS NÃO EXECUTADOS / AGUARDANDO_VALIDACAO. Próximo passo: pedir autorização para gerar/publicar novo APK, depois teste físico.
+
 ## Entrega atual — BRX-RELEASE-008 (03/10/2026 local)
 
 Pedido explícito do usuário: publicar efeitos VISUAL-007 e registrar todo trabalho no Git. Fonte integrada e histórico local enviados a `origin/main`: commit `0d28b6b` (398 arquivos), seguido de `f60282a` com lockfile idêntico e quinze capturas reais em Docs/engenharia/evidencias/BRX-VISUAL-007. Regra de registro contínuo no Git salva em AGENTS.md; caches/temporários/anexos não entram na fonte. Nada foi rebalanceado nesta entrega.

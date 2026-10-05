@@ -16,6 +16,8 @@ namespace BattleRoyaleX
         void Start()
         {
             if (Ability == null || Ability.visualProfile == null) return;
+            // Travessia has a physical dagger presentation; don't overlay the legacy rune projectile.
+            if (Ability.behavior == AbilityBehavior.DaggerTeleport && GetComponent<AssassinDaggersPresentation>() != null) return;
             AbilityVisualProfile profile = Ability.visualProfile;
             bool projectile = GetComponent<ProjectileHitboxMover>() != null;
             bool field = GetComponent<SlowField>() != null || GetComponent<PullField>() != null ||

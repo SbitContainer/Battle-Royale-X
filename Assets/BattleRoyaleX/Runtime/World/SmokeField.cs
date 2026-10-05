@@ -99,10 +99,11 @@ namespace BattleRoyaleX
             main.duration = Mathf.Max(0.5f, duration);
             main.startLifetime = new ParticleSystem.MinMaxCurve(1.8f, 3.2f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.04f, 0.18f);
-            main.startSize = new ParticleSystem.MinMaxCurve(Radius * 0.34f, Radius * 0.62f);
+            main.startSize = new ParticleSystem.MinMaxCurve(Radius * (SuppressesAttacks ? .40f : .34f), Radius * (SuppressesAttacks ? .70f : .62f));
             main.startColor = new ParticleSystem.MinMaxGradient(
-                new Color(0.16f, 0.21f, 0.28f, 0.85f),
-                new Color(0.42f, 0.49f, 0.56f, 0.75f));
+                SuppressesAttacks ? new Color(0.11f, 0.045f, 0.20f, 0.94f) : new Color(0.16f, 0.21f, 0.28f, 0.85f),
+                SuppressesAttacks ? new Color(0.43f, 0.16f, 0.66f, 0.82f) : new Color(0.42f, 0.49f, 0.56f, 0.75f));
+            if (SuppressesAttacks) main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
             main.maxParticles = 96;
             main.simulationSpace = ParticleSystemSimulationSpace.Local;
 
@@ -124,10 +125,12 @@ namespace BattleRoyaleX
             Gradient fade = new Gradient();
             fade.SetKeys(
                 new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(new Color(0.68f, 0.75f, 0.80f), 1f) },
-                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.58f, 0.18f), new GradientAlphaKey(0.42f, 0.72f), new GradientAlphaKey(0f, 1f) });
+                new[] { new GradientAlphaKey(SuppressesAttacks ? .55f : 0f, 0f),
+                    new GradientAlphaKey(SuppressesAttacks ? .86f : .58f, .18f),
+                    new GradientAlphaKey(SuppressesAttacks ? .68f : .42f, .72f), new GradientAlphaKey(0f, 1f) });
             color.color = fade;
 
-            Shader shader = Resources.Load<Shader>("SmokeCloud");
+            Shader shader = Resources.Load<Shader>(SuppressesAttacks ? "AssassinMist" : "SmokeCloud");
             if (shader == null) shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
             if (shader != null) smokeMaterial = new Material(shader) { name = "BRX_SoftSmoke" };
             ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
@@ -137,7 +140,7 @@ namespace BattleRoyaleX
             renderer.receiveShadows = false;
             renderer.sortingFudge = 2f;
 
-            ParticleCount = 64;
+            ParticleCount = SuppressesAttacks ? 96 : 64;
             particles.Emit(ParticleCount);
             particles.Play();
         }
@@ -154,7 +157,7 @@ namespace BattleRoyaleX
             line.loop = true;
             line.positionCount = 49;
             line.widthMultiplier = 0.08f;
-            line.startColor = line.endColor = new Color(0.60f, 0.72f, 0.80f, 0.34f);
+            line.startColor = line.endColor = SuppressesAttacks ? new Color(.65f,.26f,1f,.26f) : new Color(0.60f, 0.72f, 0.80f, 0.34f);
             line.shadowCastingMode = ShadowCastingMode.Off;
             line.receiveShadows = false;
             for (int i = 0; i < line.positionCount; i++)

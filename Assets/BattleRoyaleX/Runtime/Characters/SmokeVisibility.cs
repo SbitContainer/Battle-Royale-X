@@ -1,67 +1,89 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace BattleRoyaleX
 {
-    // Local training perspective only. Never deactivates gameplay, colliders, animations or incoming damage.
+    // Perspective only: never changes colliders, targeting or damage immunity.
     public sealed class SmokeVisibility : MonoBehaviour
     {
         public static CharacterRuntime LocalPlayer { get; set; }
         CharacterRuntime actor;
-        Renderer[] meshes;
-        MaterialPropertyBlock tint;
-        int mode = -1;
-        bool[] originalEnabled;
-        MaterialPropertyBlock[] originalBlocks;
-
-        void Start()
+        CharacterDefinition definition;
+        int mode;
+        readonly List<Snapshot> snapshots = new List<Snapshot>();
+        sealed class Snapshot
         {
-            actor = GetComponent<CharacterRuntime>();
-            var all = GetComponentsInChildren<Renderer>();
-            meshes = System.Array.FindAll(all, r => r is SkinnedMeshRenderer || r is MeshRenderer);
-            tint = new MaterialPropertyBlock();
-            originalEnabled = new bool[meshes.Length];
-            originalBlocks = new MaterialPropertyBlock[meshes.Length];
-            for (int i = 0; i < meshes.Length; i++)
-            {
-                originalEnabled[i] = meshes[i].enabled;
-                originalBlocks[i] = new MaterialPropertyBlock(); meshes[i].GetPropertyBlock(originalBlocks[i]);
-            }
+            public Renderer renderer;
+            public bool enabled;
+            public ShadowCastingMode shadows;
+            public Material[] materials, ghosts;
+            public MaterialPropertyBlock block;
         }
-
+        void Start() { actor = GetComponent<CharacterRuntime>(); }
         void LateUpdate()
         {
-            if (meshes == null) return;
-            bool inside = SmokeField.Contains(transform.position) || actor != null && actor.Abilities.IsExecutionHidden;
-            int next = !inside || LocalPlayer == null ? 0 : actor == LocalPlayer ? 1 : 2;
+            if (actor == null) return;
+            if (definition != actor.Definition) { Restore(); definition = actor.Definition; }
+            bool concealed = !actor.Health.IsDead &&
+                (SmokeField.Contains(transform.position) || actor.Abilities.IsExecutionHidden);
+            int next = !concealed || LocalPlayer == null ? 0 : actor == LocalPlayer ? 1 : 2;
             if (next == mode) return;
-            mode = next;
-            for (int i = 0; i < meshes.Length; i++)
+            Restore(); mode = next;
+            if (mode == 0) return;
+            // Active model/weapon geometry only; not transient owned effects.
+            foreach (Renderer renderer in GetComponentsInChildren<Renderer>())
             {
-                if (meshes[i] == null) continue;
-                meshes[i].enabled = originalEnabled[i] && mode != 2;
-                if (mode == 1)
+                if (!(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer)) continue;
+                if (renderer.GetComponentInParent<OwnedAbilityEffect>() != null) continue;
+                var state = new Snapshot { renderer = renderer, enabled = renderer.enabled,
+                    shadows = renderer.shadowCastingMode, materials = renderer.sharedMaterials,
+                    block = new MaterialPropertyBlock() };
+                renderer.GetPropertyBlock(state.block); snapshots.Add(state);
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                if (mode == 2) { renderer.enabled = false; continue; }
+                state.ghosts = new Material[state.materials.Length];
+                for (int i = 0; i < state.materials.Length; i++)
                 {
-                    // Frosted/dimmed owner retains the original texture and readable silhouette.
-                    meshes[i].GetPropertyBlock(tint);
-                    tint.SetColor("_BaseColor", new Color(0.48f, 0.55f, 0.63f, 1f));
-                    tint.SetFloat("_Smoothness", 0f);
-                    meshes[i].SetPropertyBlock(tint);
+                    Material original = state.materials[i];
+                    if (original == null) continue;
+                    var ghost = new Material(original) { name = original.name + "_LocalStealth" };
+                    ghost.SetFloat("_Surface", 1f);
+                    ghost.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                    ghost.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                    ghost.SetFloat("_ZWrite", 0f);
+                    ghost.SetFloat("_AlphaClip", 0f);
+                    ghost.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                    ghost.DisableKeyword("_ALPHATEST_ON");
+                    ghost.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    ghost.SetOverrideTag("RenderType", "Transparent");
+                    ghost.renderQueue = (int)RenderQueue.Transparent;
+                    ghost.SetShaderPassEnabled("ShadowCaster", false);
+                    state.ghosts[i] = ghost;
                 }
-                else if (originalBlocks != null && i < originalBlocks.Length && originalBlocks[i] != null)
-                    meshes[i].SetPropertyBlock(originalBlocks[i]);
+                renderer.sharedMaterials = state.ghosts;
+                var tint = new MaterialPropertyBlock(); renderer.GetPropertyBlock(tint);
+                tint.SetColor("_BaseColor", new Color(.48f, .38f, .68f, .34f));
+                tint.SetFloat("_Smoothness", 0f); renderer.SetPropertyBlock(tint);
             }
         }
-
-        void OnDisable()
+        void Restore()
         {
-            if (meshes == null || originalEnabled == null || originalBlocks == null) return;
-            for (int i = 0; i < meshes.Length; i++) if (meshes[i] != null)
+            foreach (Snapshot state in snapshots)
             {
-                if (i < originalEnabled.Length) meshes[i].enabled = originalEnabled[i];
-                if (i < originalBlocks.Length && originalBlocks[i] != null) meshes[i].SetPropertyBlock(originalBlocks[i]);
+                if (state.renderer != null)
+                {
+                    state.renderer.sharedMaterials = state.materials;
+                    state.renderer.SetPropertyBlock(state.block);
+                    state.renderer.enabled = state.enabled;
+                    state.renderer.shadowCastingMode = state.shadows;
+                }
+                if (state.ghosts != null) foreach (Material ghost in state.ghosts)
+                    if (ghost != null) Destroy(ghost);
             }
-            mode = -1;
+            snapshots.Clear(); mode = 0;
         }
-        void OnDestroy() { if (LocalPlayer == actor) LocalPlayer = null; }
+        void OnDisable() => Restore();
+        void OnDestroy() { Restore(); if (LocalPlayer == actor) LocalPlayer = null; }
     }
 }

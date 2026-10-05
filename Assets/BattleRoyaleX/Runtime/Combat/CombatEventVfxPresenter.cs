@@ -70,6 +70,11 @@ namespace BattleRoyaleX
         }
         void Present(CombatEventData e)
         {
+            // Dedicated Assassin presentation replaces old generic rune casts, not blood/death.
+            if (e.ability != null && e.ability.classRestricted && e.ability.requiredClass == CharacterClass.Assassin &&
+                (e.kind == CombatEventKind.AbilityAttack || e.kind == CombatEventKind.AbilityGuard ||
+                e.kind == CombatEventKind.AbilityMove || e.kind == CombatEventKind.AbilityUltimate ||
+                e.kind == CombatEventKind.DefenseRedirect)) return;
             if(e.ability!=null && e.ability.classRestricted && e.ability.requiredClass==CharacterClass.Warrior &&
                 e.ability.slot==AbilitySlot.BasicAttack && e.kind==CombatEventKind.AbilityAttack) return;
             // The Warrior now owns these visuals. Do not overlay the old identical ring/aura on every variant.

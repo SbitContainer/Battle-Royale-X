@@ -17,6 +17,7 @@ namespace BattleRoyaleX
 
         void OnCombatEvent(CombatEventData data)
         {
+            if (PresentAssassin(data)) return;
             CharacterRuntime defender=data.kind==CombatEventKind.Block?data.target:
                 data.kind==CombatEventKind.Reflect||data.kind==CombatEventKind.Parry?data.source:null;
             if(defender!=null&&defender.Definition!=null&&defender.Definition.characterClass==CharacterClass.Warrior)
@@ -185,6 +186,75 @@ namespace BattleRoyaleX
                 data.ability.behavior == AbilityBehavior.WarriorGroundWaves ? 2f : 0f;
             if(kind==WarriorSkillPresentation.Kind.Slash)phase=Mathf.Clamp(Mathf.RoundToInt(data.value)-1,0,2);
             instance.AddComponent<WarriorSkillPresentation>().Begin(data.source, kind, lifetime, radius, phase, follow);
+        }
+
+        bool PresentAssassin(CombatEventData data)
+        {
+            if (data.source == null || data.ability == null || !data.ability.classRestricted ||
+                data.ability.requiredClass != CharacterClass.Assassin) return false;
+            bool cast = data.kind == CombatEventKind.AbilityAttack || data.kind == CombatEventKind.AbilityGuard ||
+                data.kind == CombatEventKind.AbilityMove || data.kind == CombatEventKind.AbilityUltimate;
+            int style;
+            float lifetime, radius;
+            bool follow = true;
+            if (cast)
+            {
+                if (data.phase != AbilityPhase.Startup && data.phase != AbilityPhase.Active) return true;
+                if (data.phase == AbilityPhase.Active && data.ability.behavior == AbilityBehavior.DashReturn &&
+                    !data.source.Abilities.CanRecast(AbilitySlot.Movement)) StartCoroutine(ReturnMarker(data.source, data.ability));
+                style = data.phase == AbilityPhase.Startup ? 0 : data.ability.slot == AbilitySlot.BasicAttack ? 7 :
+                    data.ability.slot == AbilitySlot.Defense ? 8 : 1;
+                lifetime = data.phase == AbilityPhase.Startup ? Mathf.Max(.12f, data.ability.startup) :
+                    data.ability.slot == AbilitySlot.BasicAttack ? .24f : Mathf.Max(.2f, data.ability.activeTime);
+                lifetime = Mathf.Min(lifetime, .65f);
+                radius = data.ability.slot == AbilitySlot.BasicAttack ? .85f : 1.1f;
+                // Smoke and orbit own their persistent visuals; this is only the activation flash.
+                if (data.ability.behavior == AbilityBehavior.SmokeEscape ||
+                    data.ability.behavior == AbilityBehavior.OrbitingDaggers) { style = 0; lifetime = .3f; }
+            }
+            else if (data.kind == CombatEventKind.Hit && data.value > 0f)
+            {
+                style = data.ability.behavior == AbilityBehavior.ExecutionStrike ? 2 :
+                    data.ability.behavior == AbilityBehavior.HuntSequence ? 3 :
+                    data.ability.behavior == AbilityBehavior.ChargedDashSequence ? 4 : 6;
+                lifetime = .38f; radius = .55f; follow = false;
+            }
+            else if (data.kind == CombatEventKind.DefenseRedirect)
+            { style = 8; lifetime = .55f; radius = 1.1f; }
+            else return false;
+            if (transform.childCount >= 28) return true;
+            var instance = new GameObject("Assassin_Reference_" + style);
+            instance.transform.SetParent(transform, true);
+            instance.transform.position = follow ? data.source.transform.position :
+                data.target != null ? data.target.transform.position : data.position;
+            Vector3 direction = data.direction.sqrMagnitude > .001f ? data.direction : data.source.Motor.Facing;
+            direction.y = 0f;
+            if (direction.sqrMagnitude > .001f) instance.transform.rotation = Quaternion.LookRotation(direction);
+            instance.AddComponent<OwnedAbilityEffect>().Configure(data.source, null);
+            instance.AddComponent<AssassinReferenceVfx>().Begin(style, lifetime, radius);
+            Destroy(instance, lifetime);
+            if (follow) instance.AddComponent<AssassinVisualAttachment>().Initialize(data.source);
+            if (cast && data.ability.visualProfile != null && data.ability.visualProfile.castClip != null)
+                AudioSource.PlayClipAtPoint(data.ability.visualProfile.castClip, data.position);
+            if (!cast && data.ability.visualProfile != null && data.ability.visualProfile.impactClip != null)
+                AudioSource.PlayClipAtPoint(data.ability.visualProfile.impactClip, data.position);
+            return true;
+        }
+
+        System.Collections.IEnumerator ReturnMarker(CharacterRuntime owner, AbilityDefinition ability)
+        {
+            // Active event precedes arming the real return point by one statement/frame.
+            yield return null;
+            if (owner == null || !owner.Abilities.CanRecast(AbilitySlot.Movement)) yield break;
+            var marker = new GameObject("Assassin_ReturnAnchor");
+            marker.transform.SetParent(transform, true);
+            marker.transform.position = owner.Abilities.PreviewAimPoint(AbilitySlot.Movement, owner.Motor.Facing, true, 1f);
+            marker.AddComponent<OwnedAbilityEffect>().Configure(owner, null);
+            marker.AddComponent<AssassinReferenceVfx>().Begin(5, ability.returnWindow, .6f);
+            Destroy(marker, ability.returnWindow);
+            while (marker != null && owner != null && !owner.Health.IsDead &&
+                owner.Abilities.GetEquipped(AbilitySlot.Movement) == ability && owner.Abilities.CanRecast(AbilitySlot.Movement)) yield return null;
+            if (marker != null) Destroy(marker);
         }
     }
 }
