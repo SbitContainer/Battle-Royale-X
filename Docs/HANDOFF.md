@@ -1,5 +1,9 @@
 # Continuação do Battle Royale X
 
+## Publicação suspensa — BRX-RELEASE-010 (04/10/2026)
+
+APK16/0.9.16-lab compilou com zero erros e saída Unity0; pacote, versão, certificado e hash passaram na ferramenta de publicação em modo offline. **Não publicado nem instalado.** Auditoria identificou risco específico de stripping da variante transparente URP Lit da furtividade local: nenhum material Lit transparente serializado retém o keyword habilitado apenas em runtime. Editor não comprova efeito Android. Aguardar permissão para dois materiais técnicos Resources (+ .meta) que preservem transparência com/sem normal map; depois novo APK, sem sobrescrever16. Não alterar gameplay/configuração global. Release15 continua distribuída. Evidências e próximo passo em [BRX-RELEASE-010](engenharia/tarefas/BRX-RELEASE-010.md).
+
 ## Entrega atual — BRX-VISUAL-009 (04/10/2026)
 
 Assassino recebeu efeitos violeta/prata/grafite inspirados nas seis referências: conjuração, rastros reais de avanço, três silhuetas sombrias procedurais, contatos de Execução/Caçada/Cinco Cortes, marcador de Retorno e adagas facetadas com trilhas violetas. Modelo atual preservado. Contra-Sombra usa fumaça orgânica mais densa de fora, mais leve para o proprietário, com borda suave no chão. Execução mostra o próprio personagem realmente translúcido (alpha .34) durante os mesmos dois segundos de furtividade; adversário continua sem enxergar modelo/adagas/efeitos vinculados. Texturas, materiais/propriedades e sombras são restaurados ao terminar o estado.
