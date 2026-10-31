@@ -1,5 +1,9 @@
 # Continuação do Battle Royale X
 
+## Espaço local liberado — BRX-MAINT-012 (31/10/2026)
+
+Após autorização explícita de limpar caches/antigos sem afetar projetos, removidas24folhas geradas: binários/builds históricos INDUSTRIOM54–60 e Gradle9.1transforms. Espaço livre2,88->11,66GiB, ganho observado8,78GiB; zero erros. Código CNCtracked/index e7arquivos protegidos (instaladores66/65/64, app instalado, BRX17, lockfile/config) idênticos antes/depois; fontes congeladas preservadas, nenhum banco/backup/OneDrive alvo. Cache8.14.3 preservado por guarda conservadora. Exclusão permanente: builds históricos exigem download/rebuild se necessários; transforms regeneram. Scripts, revisão independente e lista exata em [BRX-MAINT-012](engenharia/tarefas/BRX-MAINT-012.md). Não equivale a teste de produto nem restauração visual do Desktop. BUG011 continua pendente abaixo.
+
 ## Correção de clones preparada — BRX-BUG-011 (31/10/2026)
 
 Atualização de ambiente: Hub aberto a pedido do usuário; tela Licenças mostra Personal cadastrada, sem login solicitado. Licença do Editor/batch ainda não retestada. Apenas122–129MB de RAM física livres de7530MB e alerta Hub mínimo512MB: não iniciar Editor/build pesado até liberar memória. Nenhum app encerrado/conta alterada. Pedir autorização específica antes de fechar apps do usuário.
