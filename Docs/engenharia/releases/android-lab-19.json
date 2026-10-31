@@ -1,0 +1,12 @@
+{
+    "schemaVersion":  1,
+    "status":  "PUBLISHED_VERIFIED",
+    "publishedAtUtc":  "2026-10-31T22:24:34.4789216Z",
+    "releaseUrl":  "https://github.com/SbitContainer/Battle-Royale-X/releases/tag/android-lab-19",
+    "apkUrl":  "https://github.com/SbitContainer/Battle-Royale-X/releases/download/android-lab-19/BattleRoyaleX-19.apk",
+    "catalogUrl":  "https://github.com/SbitContainer/Battle-Royale-X/releases/download/android-lab-19/brx-update.json",
+    "apkSha256":  "4f9eed80ee3bb39209601ebde27e7fb8b1d3da5f5460ea64e63dd8be4539e4e2",
+    "versionCode":  19,
+    "certificateSha256":  "9cb3ed07529afefbd8f304a78fe349484ccf445357d7f777ca530a493598dc17",
+    "deviceValidation":  "NOT_EXECUTED"
+}
