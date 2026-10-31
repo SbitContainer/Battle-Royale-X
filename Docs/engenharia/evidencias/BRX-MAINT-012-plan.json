@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "scope": "User-authorized old generated Server54-60 builds and two Gradle transform caches only",
+  "freeBytesBefore": 3205853184,
+  "cncTrackedDigest": "e7a898cc9d7052054654a02df202b5599428b9617deabc7334e766bae7f3be1c",
+  "targets": [
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-bootstrap58-20261022\\apps\\desktop-app\\dist-server",
+      "kind": "historical-server-build",
+      "version": "0.1.58",
+      "bytes": 871476080,
+      "files": 385,
+      "fingerprint": "14bf73cdb894a0498ad5825eab7fad7c27227103b9847906d084fe9aa34de426"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-bootstrap58-20261022\\runtime-data\\windows-server\\backend",
+      "kind": "historical-server-build",
+      "version": "0.1.58",
+      "bytes": 262928608,
+      "files": 244,
+      "fingerprint": "847a06e31ac805f232c02609d071275024a5f7b7f18c43d5ef2652d5cdd7c9e2"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-bootstrap58-20261022\\runtime-data\\windows-server\\pyinstaller-work",
+      "kind": "historical-server-build",
+      "version": "0.1.58",
+      "bytes": 10457459,
+      "files": 17,
+      "fingerprint": "fb3ca5e471671bbea4ad250c7d0778a0155b63a6ff7f25124f79734faae56fe4"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-bootstrap58-20261022\\runtime-data\\windows-server\\packages",
+      "kind": "historical-server-build",
+      "version": "0.1.58",
+      "bytes": 184757981,
+      "files": 2,
+      "fingerprint": "7b226199460370ae6ce3048e62d563f5ca88831d8115a6bea8de34321af9ae90"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-diagnostic56-20261021\\apps\\desktop-app\\dist-server",
+      "kind": "historical-server-build",
+      "version": "0.1.56",
+      "bytes": 871443019,
+      "files": 384,
+      "fingerprint": "8280fe4e24273449bf1f91e45113bdab7f197fdb9a883bbb0d84c27d5e25cd25"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-diagnostic56-20261021\\runtime-data\\windows-server\\backend",
+      "kind": "historical-server-build",
+      "version": "0.1.56",
+      "bytes": 262925779,
+      "files": 244,
+      "fingerprint": "e2c3daed36dfaf45ac4f1ca7db9e37e48b0a32296a27623ab25fe6452b8721c2"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-diagnostic56-20261021\\runtime-data\\windows-server\\pyinstaller-work",
+      "kind": "historical-server-build",
+      "version": "0.1.56",
+      "bytes": 10429041,
+      "files": 17,
+      "fingerprint": "9683fa64eeefbe826bb323c0d8689543a93a1c99208d366d7b7b6c84b9d90c18"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-dual60-20261023\\apps\\desktop-app\\dist-server",
+      "kind": "historical-server-build",
+      "version": "0.1.60",
+      "bytes": 871609949,
+      "files": 386,
+      "fingerprint": "ebabe4f1cb014dccd2980390877ed27167ad4155f741335e32fc18304067bd3e"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-dual60-20261023\\runtime-data\\windows-server\\backend",
+      "kind": "historical-server-build",
+      "version": "0.1.60",
+      "bytes": 262950666,
+      "files": 244,
+      "fingerprint": "1ec508982e6cfb0cf9756ff284995b1602928df155d812bcaa80f8befaf35d23"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-dual60-20261023\\runtime-data\\windows-server\\pyinstaller-work",
+      "kind": "historical-server-build",
+      "version": "0.1.60",
+      "bytes": 10529034,
+      "files": 17,
+      "fingerprint": "819906c32d8440b15b952883ebd0b549c683075a65dad2672175633e50860e9a"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-dual60-20261023\\runtime-data\\windows-server\\packages",
+      "kind": "historical-server-build",
+      "version": "0.1.60",
+      "bytes": 184799473,
+      "files": 3,
+      "fingerprint": "6aa60374d7261510f441455c71bd6670df9544cd392017335149ee6cafd17a4e"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-onboarding59-20261023\\apps\\desktop-app\\dist-server",
+      "kind": "historical-server-build",
+      "version": "0.1.59",
+      "bytes": 871553165,
+      "files": 386,
+      "fingerprint": "f22b5cfca90c8b2f33d6030f1cc04b9598e37c0dbb32b094a1072729192f88c5"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-onboarding59-20261023\\runtime-data\\windows-server\\backend",
+      "kind": "historical-server-build",
+      "version": "0.1.59",
+      "bytes": 262933839,
+      "files": 244,
+      "fingerprint": "cd84701963d86f1fbc7d6c63c68e2255a0f89daf3c4fff942c819d5e614b78f3"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-onboarding59-20261023\\runtime-data\\windows-server\\pyinstaller-work",
+      "kind": "historical-server-build",
+      "version": "0.1.59",
+      "bytes": 10473436,
+      "files": 17,
+      "fingerprint": "edcf90de18380daf433cff7414b823a6cc6dbe7cdfef586de395c82b038480a2"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-onboarding59-20261023\\runtime-data\\windows-server\\packages",
+      "kind": "historical-server-build",
+      "version": "0.1.59",
+      "bytes": 184780136,
+      "files": 3,
+      "fingerprint": "7e65b21877e162c66c9e588ce42a695fb4dccb0204e3786d41aeea6ba0cb648e"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-package55-20261021\\apps\\desktop-app\\dist-server",
+      "kind": "historical-server-build",
+      "version": "0.1.55",
+      "bytes": 820846065,
+      "files": 381,
+      "fingerprint": "0e2e1516b2aebbb4539569b7a2847a2cc4e353ff8f3034fb33f6c951de1a76dd"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-package55-20261021\\runtime-data\\windows-server\\backend",
+      "kind": "historical-server-build",
+      "version": "0.1.55",
+      "bytes": 262919064,
+      "files": 244,
+      "fingerprint": "85f11b8e311c578058eb10743acf1acb53f0e4428f7557868f4b3d186f910b6e"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-sd-verified-20261020\\apps\\desktop-app\\dist-server",
+      "kind": "historical-server-build",
+      "version": "0.1.54",
+      "bytes": 801162551,
+      "files": 381,
+      "fingerprint": "558a874e43bdffd98b784bd3ed840314dd9c5c8f4897efe9ef0550c537e98b7c"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-sd-verified-20261020\\runtime-data\\windows-server\\backend",
+      "kind": "historical-server-build",
+      "version": "0.1.54",
+      "bytes": 262919064,
+      "files": 244,
+      "fingerprint": "43850f679a363758aac42f135e50bc15c1c7d5dfb7b23e200c79e2bdac8321c5"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-sd-verified-20261020\\runtime-data\\windows-server\\pyinstaller-work",
+      "kind": "historical-server-build",
+      "version": "0.1.54",
+      "bytes": 10427246,
+      "files": 17,
+      "fingerprint": "c7288cb777214cb7f015a18b4dc9bb3233179a39c32202c7bd717fe3e9512a60"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-support57-20261021\\apps\\desktop-app\\dist-server",
+      "kind": "historical-server-build",
+      "version": "0.1.57",
+      "bytes": 871473217,
+      "files": 385,
+      "fingerprint": "0b1d057b5ed9aa06e311a3742eddee5f892ac2a3eb1d0cf5cb0d9b67ebc4c3fc"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-support57-20261021\\runtime-data\\windows-server\\backend",
+      "kind": "historical-server-build",
+      "version": "0.1.57",
+      "bytes": 262925779,
+      "files": 244,
+      "fingerprint": "2258c42e84f4497114de11b9d645655a02e22751452adb10288b5500f5ff8585"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-support57-20261021\\runtime-data\\windows-server\\pyinstaller-work",
+      "kind": "historical-server-build",
+      "version": "0.1.57",
+      "bytes": 10429041,
+      "files": 17,
+      "fingerprint": "52079dd77a07f4d34835d274094181e06bddb08a656e9e6f8b9714951506d954"
+    },
+    {
+      "path": "C:\\Users\\netor\\.gradle\\caches\\9.1.0\\transforms",
+      "kind": "gradle-transform",
+      "version": "",
+      "bytes": 998396266,
+      "files": 4470,
+      "fingerprint": "adb2082aa6ef89dc3eb5126c719cf4ae170128cde8689d3e73e7f652f1a24f14"
+    }
+  ],
+  "skipped": [
+    {
+      "path": "C:\\Users\\netor\\.gradle\\caches\\8.14.3\\transforms",
+      "reason": "Potential source, industrial data or credential content; preserve target"
+    }
+  ],
+  "protected": [
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\preparation66-20261030-v2\\apps\\desktop-app\\dist-server\\INDUSTRIOM-Server-Setup-0.1.66.exe",
+      "sha256": "1DB61151953EE7356F845B77100A7F913D62784C34BA0E61CABFF18150E758A7"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-keyboard65-20261029\\apps\\desktop-app\\dist-server\\INDUSTRIOM-Server-Setup-0.1.65.exe",
+      "sha256": "70396CDBC8995B6909E9D2C5325DDDA2E5E61CBE1CB817990DFCCA43FCC6CECA"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-keyboard64-20261029\\apps\\desktop-app\\dist-server\\INDUSTRIOM-Server-Setup-0.1.64.exe",
+      "sha256": "9533ADB124796B8589E1E115867BE51626380680983794C51BEDCE089021BCE4"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\apps\\desktop-app\\electron-builder.server.json",
+      "sha256": "7DF26CDD594DBAFFA1AA758D414ECBB8EF38F40DF9B3195D2AB7DDCCC305F6FF"
+    },
+    {
+      "path": "C:\\Users\\netor\\OneDrive\\Desktop\\Battle Royale X\\Builds\\Releases\\17\\BattleRoyaleX-17.apk",
+      "sha256": "BF8EABD80CC2ABDFEA7C26F608FBE21AC81DF400716CD13261ADB474CA99F5B0"
+    },
+    {
+      "path": "C:\\Users\\netor\\OneDrive\\Desktop\\Battle Royale X\\Packages\\packages-lock.json",
+      "sha256": "2E761A905E58EEEFDA4A979DA21975E1458FF77754A7A15D33A2B83984614723"
+    },
+    {
+      "path": "C:\\Users\\netor\\AppData\\Local\\Programs\\INDUSTRIOM Server\\resources\\app.asar",
+      "sha256": "DAF932FDF87C9E0B62032DC2D653E3E136C128B4FC18C827357B1271CA3B15E9"
+    }
+  ]
+}
