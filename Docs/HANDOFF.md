@@ -1,6 +1,10 @@
 # Continuação do Battle Royale X
 
-Ambiente Desktop31/10: OneDrive reaberto a pedido; apontamento Desktop restaurado para OneDrive/Desktop com autorização, sem mover arquivos. Após relato de ícones ainda ausentes, usuário autorizou reinício; reiniciado somente Explorer da sessão, processo novo respondendo e pasta correta com26itens visíveis/27totais. Conferência visual da tela aguarda usuário; não reiniciar PC nem alterar conta. Não houve novo teste Unity/BUG011 nesta recuperação.
+## Segunda limpeza local — BRX-MAINT-013 (31/10/2026)
+
+Removido apenas cache Gradle8.14.3/transforms (2,07GiB lógicos), após comprovar que o único PEM bloqueado era certificado público Expo idêntico ao original preservado. Sem exceção genérica a chaves/PEM. Oito hashes protegidos e digest CNCtracked/index iguais, zero erros; espaço livre14,10->16,14GiB durante Execute. npm cache verify coletou mais63,2MiB desnecessários. Nenhuma fonte/dado/SDK/dependência instalada/OneDrive foi alvo de exclusão; caches regeneram e próximo build pode demorar mais. Sem novo APK/teste de gameplay. Plano, revisão, limitações e resultado em [BRX-MAINT-013](engenharia/tarefas/BRX-MAINT-013.md). Usuário confirmou que Desktop voltou após reinício do Explorer.
+
+Ambiente Desktop31/10: OneDrive reaberto a pedido; apontamento Desktop restaurado para OneDrive/Desktop com autorização, sem mover arquivos. Após relato de ícones ainda ausentes, usuário autorizou reinício; reiniciado somente Explorer da sessão, processo novo respondendo e pasta correta com26itens visíveis/27totais. Usuário confirmou “voltou” antes da MAINT013; não reiniciar PC nem alterar conta. Não houve novo teste Unity/BUG011 nesta recuperação.
 
 ## Espaço local liberado — BRX-MAINT-012 (31/10/2026)
 

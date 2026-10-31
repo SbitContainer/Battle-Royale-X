@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "status": "REMOVED_AND_VERIFIED",
+  "planSha256": "A4DB14C82622D6CF1926092C8F855F9D7000F2C742E8EBE178445E675F145342",
+  "removed": [
+    {
+      "path": "C:\\Users\\netor\\.gradle\\caches\\8.14.3\\transforms",
+      "kind": "gradle-transform",
+      "version": "",
+      "bytes": 2221121382,
+      "files": 26784,
+      "fingerprint": "67ee2b85accda9b352d9e16b14fc01ee2394434df87d6844c940b0983d5f5dab"
+    }
+  ],
+  "errors": [],
+  "protectedVerified": true,
+  "cncTrackedSourceUnchanged": true,
+  "freeBefore": 15134175232,
+  "freeAfter": 17332133888,
+  "freeDeltaBytes": 2197958656,
+  "permanentDeletion": true,
+  "cloudDeletion": false,
+  "note": "Historical generated binaries require rebuild/download if needed later; sources and current/rollback artifacts preserved. Gradle transforms regenerate.",
+  "npmVerification": {
+    "status": "VERIFIED_AND_GARBAGE_COLLECTED",
+    "verifiedContentCount": 319,
+    "verifiedContentBytes": 517931251,
+    "garbageCollectedCount": 36,
+    "garbageCollectedBytes": 66282853
+  }
+}
