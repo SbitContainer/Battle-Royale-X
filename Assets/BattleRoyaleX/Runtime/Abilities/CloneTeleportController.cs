@@ -41,17 +41,22 @@ namespace BattleRoyaleX
         {
             SkinnedMeshRenderer[] skins = source.GetComponentsInChildren<SkinnedMeshRenderer>();
             if (skins.Length == 0) return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            // Shader.Find succeeds in the Editor even when that shader is absent from the Player.
+            // Reuse the serialized Resources shader already included in Android, including its alpha blend.
+            Shader shader = Resources.Load<Shader>("BRXCombatFx");
+            if (shader == null)
+            {
+                Debug.LogWarning("[BRX CLONE] Missing Resources/BRXCombatFx; using visible capsule projection.");
+                return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            }
             GameObject projection = new GameObject("ArcaneProjection");
             projection.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
             ArcaneProjectionResources resources = projection.AddComponent<ArcaneProjectionResources>();
-            Shader shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color");
             Material material = new Material(shader);
-            material.color = new Color(0.15f, 0.85f, 1f, 0.38f);
-            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", material.color);
-            material.SetFloat("_Surface", 1f); material.SetFloat("_ZWrite", 0f);
-            material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetColor("_Tint", new Color(0.15f, 0.85f, 1f, 0.38f));
+            // Mode 1 supplies hologram colour/alpha independently of baked mesh vertex colours.
+            material.SetFloat("_Mode", 1f);
             material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
             resources.material = material;
             foreach (SkinnedMeshRenderer skin in skins)

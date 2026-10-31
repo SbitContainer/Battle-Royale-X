@@ -1,5 +1,11 @@
 # Continuação do Battle Royale X
 
+## Correção de clones preparada — BRX-BUG-011 (31/10/2026)
+
+Relato humano: Ecos Arcanos recebe toque, não mostra clones e bloqueia outras skills. Fonte corrigida de forma delimitada para usar o shader Resources/BRXCombatFx já incluído no Android, em vez de Shader.Find em shader não referenciado pelo APK17. Afeta as projeções de Ecos/Blink; sem alterar dano/timing/dados. Testes preparados: botão real via EventSystem, diferença de pixels com/sem clones, recast por arraste, básico e outra skill durante escolha, expiração e troca de classe. **Não executados:** Unity encerrou198 por licença inválida antes de compilar/PlayMode. Usuário deve entrar no Unity Hub e verificar Licenças. Node16/0 e governança60 referências passaram, apenas estáticos. Estado PARCIALMENTE_VERIFICADO / AGUARDANDO_VALIDACAO, sem captura gerada, APK/publicação/instalação. Histórico/arquivos em [BRX-BUG-011](engenharia/tarefas/BRX-BUG-011.md).
+
+Próximas partes ainda pendentes: reproduzir fluidez da animação dos básicos versus cadência (não mudar dano), confirmar visual das skills no aparelho e só depois criar pranchas Mago/Arqueiro. Revisão estática não encontrou ID de skill ligado ao básico. Não transferir efeitos entre slots por hipótese. Último APK público continua17 abaixo; não contém esta correção preparada.
+
 ## APK publicado — BRX-RELEASE-010 (04/10/2026 local)
 
 **0.9.17-lab/código17 publicado e verificado:** [release](https://github.com/SbitContainer/Battle-Royale-X/releases/tag/android-lab-17), [APK](https://github.com/SbitContainer/Battle-Royale-X/releases/download/android-lab-17/BattleRoyaleX-17.apk). Inclui VISUAL-009 e dois materiais técnicos Resources que retêm Lit transparente com/sem normal map, aprovados após permissão do usuário. Sem alteração de gameplay, aparência aprovada ou configurações globais. APK16 foi preservado mas nunca publicado pelo risco detectado de stripping.

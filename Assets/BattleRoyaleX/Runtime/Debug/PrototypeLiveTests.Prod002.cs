@@ -107,6 +107,8 @@ namespace BattleRoyaleX
             Check(clonesFireUsed && cloneShots == 3 && FindObjectsByType<ArcaneCloneMotion>().Length == 3,
                 "Três ecos avançam e cada um dispara um orbe de dano leve");
 
+            yield return TestMageCloneTouch011(lab);
+
             ResetPair(2.2f); lab.EquipVariation(AbilitySlot.Skill2, 0);
             a.Motor.FaceDirection(Vector3.left); Physics.SyncTransforms();
             bool blinkUsed = a.Abilities.TryUse(AbilitySlot.Skill2, Vector3.left);
