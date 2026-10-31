@@ -1,5 +1,7 @@
 # Continuação do Battle Royale X
 
+Estado de sincronização31/10 apósMAINT013: usuário pediu pausar processo OneDrive; app temporariamente encerrado (zero OneDrive.exe após verificação), sem alterar conta/autostart/Desktop nem apagar arquivos. Desktop26itens visíveis preservado,15,86GiB livres. Pode retomar ao abrir OneDrive/iniciar Windows; não é pausa24h configurada. Fonte Unity continua aguardando testes do BUG011.
+
 ## Segunda limpeza local — BRX-MAINT-013 (31/10/2026)
 
 Removido apenas cache Gradle8.14.3/transforms (2,07GiB lógicos), após comprovar que o único PEM bloqueado era certificado público Expo idêntico ao original preservado. Sem exceção genérica a chaves/PEM. Oito hashes protegidos e digest CNCtracked/index iguais, zero erros; espaço livre14,10->16,14GiB durante Execute. npm cache verify coletou mais63,2MiB desnecessários. Nenhuma fonte/dado/SDK/dependência instalada/OneDrive foi alvo de exclusão; caches regeneram e próximo build pode demorar mais. Sem novo APK/teste de gameplay. Plano, revisão, limitações e resultado em [BRX-MAINT-013](engenharia/tarefas/BRX-MAINT-013.md). Usuário confirmou que Desktop voltou após reinício do Explorer.
