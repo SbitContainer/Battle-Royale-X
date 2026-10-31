@@ -1,5 +1,7 @@
 # Continuação do Battle Royale X
 
+Ambiente Desktop31/10: OneDrive reaberto a pedido; apontamento Desktop restaurado para OneDrive/Desktop com autorização, sem mover arquivos. Após relato de ícones ainda ausentes, usuário autorizou reinício; reiniciado somente Explorer da sessão, processo novo respondendo e pasta correta com26itens visíveis/27totais. Conferência visual da tela aguarda usuário; não reiniciar PC nem alterar conta. Não houve novo teste Unity/BUG011 nesta recuperação.
+
 ## Espaço local liberado — BRX-MAINT-012 (31/10/2026)
 
 Após autorização explícita de limpar caches/antigos sem afetar projetos, removidas24folhas geradas: binários/builds históricos INDUSTRIOM54–60 e Gradle9.1transforms. Espaço livre2,88->11,66GiB, ganho observado8,78GiB; zero erros. Código CNCtracked/index e7arquivos protegidos (instaladores66/65/64, app instalado, BRX17, lockfile/config) idênticos antes/depois; fontes congeladas preservadas, nenhum banco/backup/OneDrive alvo. Cache8.14.3 preservado por guarda conservadora. Exclusão permanente: builds históricos exigem download/rebuild se necessários; transforms regeneram. Scripts, revisão independente e lista exata em [BRX-MAINT-012](engenharia/tarefas/BRX-MAINT-012.md). Não equivale a teste de produto nem restauração visual do Desktop. BUG011 continua pendente abaixo.
