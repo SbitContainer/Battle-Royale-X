@@ -7,6 +7,21 @@ $ErrorActionPreference='Stop'
 $script:CncRepo='C:\dev\CNC-code-clean'
 $script:BrxRepo='C:\Users\netor\OneDrive\Desktop\Battle Royale X'
 $script:GradleTargets=@('C:\Users\netor\.gradle\caches\8.14.3\transforms','C:\Users\netor\.gradle\caches\9.1.0\transforms')
+$script:ExpoCacheCert='C:\Users\netor\.gradle\caches\8.14.3\transforms\0353d247b7f46263cc66b2b61255f242\transformed\out\assets\expo-root.pem'
+$script:ExpoSourceCert='C:\dev\CNC-code-clean\apps\mobile-app\node_modules\expo-updates\android\src\main\certificates\expo-root.pem'
+$script:ExpoCertSha='901E7B0DA287CA154FC09D982D37769B09EE291255B239265B5B0A8B75165BAA'
+
+function Test-VerifiedPublicExpoCert([string]$Path,[string]$Kind) {
+    if($Kind -cne 'gradle-transform' -or $Path -cne $script:ExpoCacheCert){return $false}
+    if(-not (Test-Path -LiteralPath $script:ExpoSourceCert -PathType Leaf)){return $false}
+    if((Get-Item -LiteralPath $script:ExpoSourceCert -Force).Attributes -band [IO.FileAttributes]::ReparsePoint){return $false}
+    if((Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash -cne $script:ExpoCertSha -or
+       (Get-FileHash -LiteralPath $script:ExpoSourceCert -Algorithm SHA256).Hash -cne $script:ExpoCertSha){return $false}
+    $pem=[IO.File]::ReadAllText($Path)
+    if($pem.Contains('PRIVATE KEY')){return $false}
+    $cert=[Security.Cryptography.X509Certificates.X509Certificate2]::CreateFromPem($pem)
+    try { return -not $cert.HasPrivateKey } finally { $cert.Dispose() }
+}
 
 function Get-TextDigest([string]$Value) {
     $sha=[Security.Cryptography.SHA256]::Create()
@@ -55,8 +70,12 @@ function Get-TargetState($Target,$Processes) {
     $children=@(Get-ChildItem -LiteralPath $resolved -Recurse -Force -ErrorAction Stop)
     if(@($children|Where-Object {($_.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0}).Count){throw 'Nested reparse point'}
     $files=@($children|Where-Object {-not $_.PSIsContainer})
-    if(@($files|Where-Object {$_.Extension.ToLowerInvariant() -in @('.db','.sqlite','.sqlite3','.pem','.key','.pfx','.p12','.nc','.cnc','.tap','.industriom-bank') -or $_.Name -eq '.env'}).Count) {
-        throw 'Potential source, industrial data or credential content; preserve target'
+    $sensitive=@($files|Where-Object {$_.Extension.ToLowerInvariant() -in @('.db','.sqlite','.sqlite3','.pem','.key','.pfx','.p12','.nc','.cnc','.tap','.industriom-bank') -or $_.Name -eq '.env'})
+    foreach($file in $sensitive) {
+        # One exact public dependency certificate, not a generic PEM/private-key exception.
+        if(-not (Test-VerifiedPublicExpoCert $file.FullName $Target.kind)) {
+            throw 'Potential source, industrial data or credential content; preserve target'
+        }
     }
     $metadata=@($files|Sort-Object FullName|ForEach-Object {$_.FullName+'|'+$_.Length+'|'+$_.LastWriteTimeUtc.Ticks})
     [pscustomobject]@{bytes=[long](($files|Measure-Object Length -Sum).Sum);files=$files.Count;fingerprint=Get-TextDigest ($metadata -join "`n")}
@@ -69,7 +88,8 @@ function Get-ProtectedFiles {
       ($script:CncRepo+'\apps\desktop-app\electron-builder.server.json'),
       ($script:BrxRepo+'\Builds\Releases\17\BattleRoyaleX-17.apk'),
       ($script:BrxRepo+'\Packages\packages-lock.json'),
-      'C:\Users\netor\AppData\Local\Programs\INDUSTRIOM Server\resources\app.asar'
+      'C:\Users\netor\AppData\Local\Programs\INDUSTRIOM Server\resources\app.asar',
+      $script:ExpoSourceCert
     )
     foreach($path in $paths){
         if(-not (Test-Path -LiteralPath $path -PathType Leaf)){throw ('Required protected file missing: '+$path)}

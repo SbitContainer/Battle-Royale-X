@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "scope": "User-authorized old generated Server54-60 builds and two Gradle transform caches only",
+  "freeBytesBefore": 14962688000,
+  "cncTrackedDigest": "e7a898cc9d7052054654a02df202b5599428b9617deabc7334e766bae7f3be1c",
+  "targets": [
+    {
+      "path": "C:\\Users\\netor\\.gradle\\caches\\8.14.3\\transforms",
+      "kind": "gradle-transform",
+      "version": "",
+      "bytes": 2221121382,
+      "files": 26784,
+      "fingerprint": "67ee2b85accda9b352d9e16b14fc01ee2394434df87d6844c940b0983d5f5dab"
+    }
+  ],
+  "skipped": [],
+  "protected": [
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\preparation66-20261030-v2\\apps\\desktop-app\\dist-server\\INDUSTRIOM-Server-Setup-0.1.66.exe",
+      "sha256": "1DB61151953EE7356F845B77100A7F913D62784C34BA0E61CABFF18150E758A7"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-keyboard65-20261029\\apps\\desktop-app\\dist-server\\INDUSTRIOM-Server-Setup-0.1.65.exe",
+      "sha256": "70396CDBC8995B6909E9D2C5325DDDA2E5E61CBE1CB817990DFCCA43FCC6CECA"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\.codex\\tmp\\release-keyboard64-20261029\\apps\\desktop-app\\dist-server\\INDUSTRIOM-Server-Setup-0.1.64.exe",
+      "sha256": "9533ADB124796B8589E1E115867BE51626380680983794C51BEDCE089021BCE4"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\apps\\desktop-app\\electron-builder.server.json",
+      "sha256": "7DF26CDD594DBAFFA1AA758D414ECBB8EF38F40DF9B3195D2AB7DDCCC305F6FF"
+    },
+    {
+      "path": "C:\\Users\\netor\\OneDrive\\Desktop\\Battle Royale X\\Builds\\Releases\\17\\BattleRoyaleX-17.apk",
+      "sha256": "BF8EABD80CC2ABDFEA7C26F608FBE21AC81DF400716CD13261ADB474CA99F5B0"
+    },
+    {
+      "path": "C:\\Users\\netor\\OneDrive\\Desktop\\Battle Royale X\\Packages\\packages-lock.json",
+      "sha256": "2E761A905E58EEEFDA4A979DA21975E1458FF77754A7A15D33A2B83984614723"
+    },
+    {
+      "path": "C:\\Users\\netor\\AppData\\Local\\Programs\\INDUSTRIOM Server\\resources\\app.asar",
+      "sha256": "DAF932FDF87C9E0B62032DC2D653E3E136C128B4FC18C827357B1271CA3B15E9"
+    },
+    {
+      "path": "C:\\dev\\CNC-code-clean\\apps\\mobile-app\\node_modules\\expo-updates\\android\\src\\main\\certificates\\expo-root.pem",
+      "sha256": "901E7B0DA287CA154FC09D982D37769B09EE291255B239265B5B0A8B75165BAA"
+    }
+  ]
+}

@@ -27,4 +27,10 @@ foreach($path in @('C:\Users\netor\.gradle','C:\Users\netor\.gradle\caches',
 }
 Assert-AllowedRole 'C:\Users\netor\.gradle\caches\8.14.3\transforms' 'gradle-transform' ''; $passed++
 Assert-AllowedRole 'C:\Users\netor\.gradle\caches\9.1.0\transforms' 'gradle-transform' ''; $passed++
+if(Test-VerifiedPublicExpoCert 'C:\Users\netor\.gradle\caches\8.14.3\transforms\other\expo-root.pem' 'gradle-transform'){throw 'Wrong certificate path accepted'}; $passed++
+if(Test-VerifiedPublicExpoCert $script:ExpoCacheCert 'historical-server-build'){throw 'Certificate exception allowed outside Gradle'}; $passed++
+if(Test-Path -LiteralPath $script:ExpoCacheCert) {
+    if(-not (Test-VerifiedPublicExpoCert $script:ExpoCacheCert 'gradle-transform')){throw 'Expected public certificate did not match dependency source'}
+    $passed++
+}
 Write-Output ('CLEANUP_PATH_TESTS pass='+$passed+' fail=0; no deletion executed')
