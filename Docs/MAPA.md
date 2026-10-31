@@ -38,7 +38,7 @@ Setor release: `Editor/PrototypeApkReleaseBuild.cs` gera APK versionado da cena 
 
 ## Assassino e catálogo de interações — 03/10/2026
 
-Clones Mago [BRX-BUG-011](engenharia/tarefas/BRX-BUG-011.md): `CloneTeleportController.CreateProjection` e consumidor `MageSoulEcho` dependem de `Resources/BRXCombatFx`, modo1 com `_Tint` e alpha blend, sem Shader.Find de URP/Unlit ausente do Player. `PrototypeLiveTests.MageClone.cs` prepara prova EventSystem/render diferencial/recast/liberação de outra skill; execução bloqueada por licença Unity em31/10, não aprovação Android. O vínculo visual não altera dano/teleporte.
+Clones Mago [BRX-BUG-011](engenharia/tarefas/BRX-BUG-011.md): `CloneTeleportController.CreateProjection` e consumidor `MageSoulEcho` dependem de `Resources/BRXCombatFx`, modo1 com `_Tint` e alpha blend, sem Shader.Find de URP/Unlit ausente do Player. `PrototypeLiveTests.MageClone.cs` valida EventSystem/render diferencial/recast/liberação de outra skill; foco10/0 e matriz350/0 no Editor em31/10, com capturas inspecionadas. `RunMageClonesBatch` seleciona foco via SessionState consumida no Start; `-brxKeepEditorOpen` preserva janela após execução. Android continua aguardando validação. O vínculo visual não altera dano/teleporte.
 
 Retenção Android [BRX-RELEASE-010](engenharia/tarefas/BRX-RELEASE-010.md): `Assets/Resources/StealthLitTransparent.mat` e `StealthLitTransparentNormal.mat` retêm URP Lit `_SURFACE_TYPE_TRANSPARENT` com/sem `_NORMALMAP` para os clones runtime de SmokeVisibility. Não substituem materiais de personagem; não alterar stripping global. Consumidores: importação Resources, keywords do shader e build Android. Duas verificações na matriz AssassinVisual confirmam importação; aparência GPU física continua pendente.
 

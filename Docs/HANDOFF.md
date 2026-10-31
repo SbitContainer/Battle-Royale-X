@@ -1,5 +1,9 @@
 # Continuação do Battle Royale X
 
+## Clones validados no Editor — BRX-BUG-011 (31/10/2026)
+
+Unity6000.6.1f1 aberta em interface gráfica, licença resolvida nesta execução. Foco Ecos Arcanos: **10 PASS/0 FAIL**; matriz completa: **350 PASS/0 FAIL**; estrutura visual:48/0; engenharia Node:16/0; governança:60 referências aprovadas. Três clones visíveis confirmados por capturas com/sem projeções (5307 pixels diferentes no foco), além de básico/outra skill durante recast, arraste para escolher, expiração e troca de classe sem ação presa. Evidências e limites em [BRX-BUG-011](engenharia/tarefas/BRX-BUG-011.md). Unity deixada aberta, Play Mode encerrado. **VALIDADO_EDITOR / AGUARDANDO_VALIDACAO_ANDROID**: nenhum APK gerado/publicado/instalado; APK17 não contém a correção. Os bloqueios de ambiente abaixo são históricos e não o resultado atual do Editor. OneDrive permanece fechado.
+
 Estado de sincronização31/10 apósMAINT013: usuário pediu pausar processo OneDrive; app temporariamente encerrado (zero OneDrive.exe após verificação), sem alterar conta/autostart/Desktop nem apagar arquivos. Desktop26itens visíveis preservado,15,86GiB livres. Pode retomar ao abrir OneDrive/iniciar Windows; não é pausa24h configurada. Fonte Unity continua aguardando testes do BUG011.
 
 ## Segunda limpeza local — BRX-MAINT-013 (31/10/2026)

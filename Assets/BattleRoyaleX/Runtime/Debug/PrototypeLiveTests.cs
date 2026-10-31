@@ -26,13 +26,15 @@ namespace BattleRoyaleX
 
         IEnumerator Start()
         {
+            bool mageClonesOnly = SessionState.GetBool("BRX.LiveTests.MageClonesOnly", false);
+            SessionState.SetBool("BRX.LiveTests.MageClonesOnly", false);
             previousCaptureDelta = Time.captureDeltaTime;
             ownsCaptureStep = true;
             // Repeatable simulation time, not an FPS benchmark. Restore the editor setting at completion or interruption.
             Time.captureDeltaTime = 1f / 60f;
-            reportPath = Path.GetFullPath("Docs/TEST_RESULTS_LAB_001.md");
+            reportPath = Path.GetFullPath(mageClonesOnly ? "Logs/Bug011/focused-report.md" : "Docs/TEST_RESULTS_LAB_001.md");
             Directory.CreateDirectory(Path.GetDirectoryName(reportPath));
-            File.WriteAllText(reportPath, "# Matriz ao vivo — " + DateTime.Now + "\n\nTestes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.\n\n");
+            File.WriteAllText(reportPath, (mageClonesOnly ? "# Ecos Arcanos — teste focado, não matriz completa — " : "# Matriz ao vivo — ") + DateTime.Now + "\n\nTestes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.\n\n");
             CombatEvents.Raised += Record;
             Application.logMessageReceived += OnLog;
             // Freeze the timer before the first frame: shader warmup can make that frame longer than the drop delay.
@@ -46,6 +48,16 @@ namespace BattleRoyaleX
             if (w == null || a == null) { Check(false, "Cena contém os dois jogadores"); yield break; }
             foreach (var c in characters) c.GetComponent<PrototypeLocalInput>().enabled = false;
             foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
+            if (mageClonesOnly)
+            {
+                var lab = FindAnyObjectByType<PrototypeLabController>();
+                Check(lab != null && lab.SwitchPlayerClass(CharacterClass.Mage), "BUG011 laboratório seleciona Mago para reprodução focada");
+                foreach (var bot in FindObjectsByType<PrototypeTrainingBot>()) bot.enabled = false;
+                if (lab != null) yield return TestMageCloneTouch011(lab);
+                Check(runtimeErrors == 0, "BUG011 nenhuma exceção durante criação/escolha/expiração de clones");
+                CompleteTestRun("BRX CLONE FINAL");
+                yield break;
+            }
             stage = "Movimento e enquadramento inicial";
             yield return new WaitForSeconds(2f);
             Check(FullBodyVisible(w) && FullBodyVisible(a), "Câmera enquadra o corpo inteiro dos dois no spawn");
@@ -392,9 +404,14 @@ namespace BattleRoyaleX
             Check(defeated.GetBool("Dead") && (defeatedCurrent.IsName("Death") || defeatedNext.IsName("Death")),
                 "Morte visual permanece ativa no mobile até o reinício da rodada");
             Check(runtimeErrors==0,"Nenhum erro ou exceção durante a execução");
+            CompleteTestRun("BRX LIVE FINAL");
+        }
+
+        void CompleteTestRun(string marker)
+        {
             stage="CONCLUÍDO — "+passed+" passaram / "+failed+" falharam"; finished=true;
             File.AppendAllText(reportPath,"\nResultado: "+passed+" passaram; "+failed+" falharam.\n");
-            Debug.Log("[BRX LIVE FINAL] pass="+passed+" fail="+failed+" report="+reportPath);
+            Debug.Log("["+marker+"] pass="+passed+" fail="+failed+" report="+reportPath);
             Time.captureDeltaTime = previousCaptureDelta; ownsCaptureStep = false;
             foreach(var c in new[]{w,a}) c.GetComponent<PrototypeLocalInput>().enabled=true;
         }

@@ -14,10 +14,13 @@ namespace BattleRoyaleX.EditorTools
         {
             Application.logMessageReceived += (message, stack, type) =>
             {
-                if (!SessionState.GetBool(Batch, false) || !message.StartsWith("[BRX LIVE FINAL]")) return;
+                if (!SessionState.GetBool(Batch, false) ||
+                    !(message.StartsWith("[BRX LIVE FINAL]") || message.StartsWith("[BRX CLONE FINAL]"))) return;
                 SessionState.SetBool(Batch, false);
                 int exitCode = message.Contains(" fail=0 ") ? 0 : 1;
-                EditorApplication.delayCall += () => EditorApplication.Exit(exitCode);
+                if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-brxKeepEditorOpen") >= 0)
+                    EditorApplication.delayCall += () => EditorApplication.isPlaying = false;
+                else EditorApplication.delayCall += () => EditorApplication.Exit(exitCode);
             };
             EditorApplication.playModeStateChanged += state =>
             {
@@ -41,6 +44,24 @@ namespace BattleRoyaleX.EditorTools
                 "Assets/BattleRoyaleX/GeneratedScenes/Prototype01_Arena.unity");
             SessionState.SetBool(Batch, true);
             Run();
+        }
+
+        public static void RunMageClonesBatch()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                Debug.LogWarning("Stop Play Mode before running the clone test.");
+                return;
+            }
+            SessionState.SetBool("BRX.LiveTests.MageClonesOnly", true);
+            try { RunBatch(); }
+            catch
+            {
+                SessionState.SetBool("BRX.LiveTests.MageClonesOnly", false);
+                SessionState.SetBool(Pending, false);
+                SessionState.SetBool(Batch, false);
+                throw;
+            }
         }
 
         [MenuItem("Battle Royale X/Prototype 01/Run Live Test Matrix")]

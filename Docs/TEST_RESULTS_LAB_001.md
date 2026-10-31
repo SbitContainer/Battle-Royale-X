@@ -1,4 +1,4 @@
-# Matriz ao vivo — 04/10/2026 23:24:58
+# Matriz ao vivo — 31/10/2026 18:19:55
 
 Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não substituem avaliação humana de diversão.
 
@@ -299,6 +299,14 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Clones usam silhuetas renderizadas sem duplicar hitboxes ou hurtboxes
 - PASSOU: Ecos Arcanos cria três clones e permite teleportar ou deixar a janela expirar
 - PASSOU: Três ecos avançam e cada um dispara um orbe de dano leve
+- PASSOU: BUG011 toque cria três clones e libera a ação sem perder recast
+- PASSOU: BUG011 projeções usam shader Resources incluído no Android e malhas reais
+- PASSOU: BUG011 clones produzem pixels visíveis na câmera, não apenas objetos existentes
+- PASSOU: BUG011 ataque básico não fica bloqueado pela escolha de clone
+- PASSOU: BUG011 outra skill executa pelo botão enquanto a escolha de clone continua disponível
+- PASSOU: BUG011 segundo toque arrastado escolhe o clone e encerra a janela sem travar
+- PASSOU: BUG011 expirar sem escolher clone limpa ecos e permite outro ataque
+- PASSOU: BUG011 trocar classe cancela escolha de clone e não deixa ação presa
 - PASSOU: Blink atravessa o inimigo com dano e deixa alma visual atrasada
 - PASSOU: Pulso de Repulsão causa dano, empurra radialmente e aplica lentidão
 - PASSOU: Convergência combina projétil lento e rápido e aplica cooldown de sucesso
@@ -345,4 +353,4 @@ Testes no Play Mode, com comandos às APIs reais e colisões da Unity. Não subs
 - PASSOU: Morte visual permanece ativa no mobile até o reinício da rodada
 - PASSOU: Nenhum erro ou exceção durante a execução
 
-Resultado: 342 passaram; 0 falharam.
+Resultado: 350 passaram; 0 falharam.
